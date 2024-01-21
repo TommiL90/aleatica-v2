@@ -11,11 +11,12 @@ import {
 import {
   NavBarFirstSubItem,
   NavBarSecondSubItem,
-  NavbarItem as NavBarType,
   navbarList,
 } from './navbarList'
 import Link from 'next/link'
-import { ChevronDown } from 'lucide-react'
+import { BiChevronDown } from 'react-icons/bi'
+
+import React from 'react'
 
 const NavbarSubItem: React.FC<{ subItem: NavBarFirstSubItem }> = ({
   subItem,
@@ -65,38 +66,32 @@ const NavbarSecondSubItem: React.FC<{ subItem: NavBarSecondSubItem }> = ({
 
 export const Navbar = () => (
   <nav>
-    <Menubar>
+    <Menubar className="border-none bg-transparent">
       {navbarList.map((item, index) => (
-        <NavbarItem key={index} item={item} />
+        <MenubarMenu key={index}>
+          {item.href ? (
+            <MenubarTrigger className="cursor-pointer text-neutral-100">
+              <Link href={item.href}>{item.title}</Link>
+            </MenubarTrigger>
+          ) : (
+            <MenubarTrigger className="group  text-neutral-100">
+              <span>{item.title}</span>
+              <BiChevronDown
+                className="relative top-[1px] ml-1 h-3 w-3 transform transition-transform duration-200 group-hover:rotate-180"
+                aria-hidden="true"
+              />
+            </MenubarTrigger>
+          )}
+
+          {item.firstSubItems && (
+            <MenubarContent>
+              {item.firstSubItems.map((firstSubItem, subIndex) => (
+                <NavbarSubItem key={subIndex} subItem={firstSubItem} />
+              ))}
+            </MenubarContent>
+          )}
+        </MenubarMenu>
       ))}
     </Menubar>
   </nav>
-)
-
-const NavbarItem: React.FC<{ item: NavBarType }> = ({ item }) => (
-  <>
-    {item.href ? (
-      <MenubarMenu>
-        <MenubarTrigger className="cursor-pointer">
-          <Link href={item.href}>{item.title}</Link>
-        </MenubarTrigger>
-      </MenubarMenu>
-    ) : (
-      <MenubarMenu>
-        <MenubarTrigger className="group">
-          <span>{item.title}</span>
-          <ChevronDown
-            className="relative top-[1px] ml-1 h-3 w-3 transform transition-transform duration-200 group-hover:rotate-180"
-            aria-hidden="true"
-          />
-        </MenubarTrigger>
-        <MenubarContent>
-          {item.firstSubItems &&
-            item.firstSubItems.map((firstSubItem, index) => (
-              <NavbarSubItem key={index} subItem={firstSubItem} />
-            ))}
-        </MenubarContent>
-      </MenubarMenu>
-    )}
-  </>
 )
