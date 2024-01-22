@@ -1,11 +1,13 @@
 'use client'
 
 import * as React from 'react'
+import useSWR from 'swr'
 
 import {
   BiSolidSortAlt,
   BiChevronDown,
   BiDotsHorizontalRounded,
+  BiSearch,
 } from 'react-icons/bi'
 import {
   ColumnDef,
@@ -37,8 +39,42 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
+
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import api from '@/services/api'
+import { useState } from 'react'
+
+interface Project {
+  mtBusinessUnit: string
+  mtYear: string
+  code: string
+  version: string
+  type: string
+  projectTasks: any[]
+  responsibles: any[]
+  name: string
+  description: string
+  conclusion?: any
+  mtBusinessUnitId: number
+  status: number
+  mtYearId: number
+  id: number
+}
+
+interface Result {
+  currentPage: number
+  pageCount: number
+  pageSize: number
+  recordCount: number
+  results: Project[]
+}
+
+interface Data {
+  status: number
+  result: Result
+  errorMessage?: any
+}
 
 export type Payment = {
   id: string
@@ -79,6 +115,8 @@ const data: Payment[] = [
     email: 'carmella@hotmail.com',
   },
 ]
+
+const fetcher = (url: string) => api.get(url).then((res) => res.data)
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -172,14 +210,28 @@ export const columns: ColumnDef<Payment>[] = [
 ]
 
 export default function DataTableDemo() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
+  const [pageIndex, setPageIndex] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [sort, setSort] = useState(1)
+  const [searchInput, setSearchInput] = useState('')
+  const [filtroUnidad, setFiltroUnidad] = useState('')
+  const [filtroYear, setFiltroYear] = useState('')
+  const [filtroTipo, setFiltroTipo] = useState('')
+
+  const {
+    data: dataRes,
+    mutate,
+    isLoading,
+  } = useSWR<Data>(
+    `${process.env.API_URL}/Project/GetAllPaginated?Page=${pageIndex}&PageSize=${pageSize}&SearchByProp=Code&SearchCriteria=${searchInput}&MtBusinessUnitId=${filtroUnidad}&MtYearId=${filtroYear}&Type=${filtroTipo}`,
+    fetcher,
+  )
+  console.log(dataRes)
   const table = useReactTable({
     data,
     columns,
@@ -200,117 +252,145 @@ export default function DataTableDemo() {
   })
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <BiChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
+    <section className="max-h-screen w-full lg:m-auto lg:w-10/12">
+      <div className="mx-auto max-w-screen-xl px-4 pb-8 pt-8">
+        <div className="relative w-full overflow-x-auto p-4 shadow-md sm:rounded-lg">
+          <h2>Proyectos en Desarrollo</h2>
+
+          <p className="mb-4 mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+            Lista de proyectos en desarrollo
+          </p>
+          <div className="flex items-center py-4">
+            <div className="flex">
+              <Button className="rounded-br-none rounded-tr-none" type="button">
+                Filtros
+              </Button>
+              <div className="relative w-full">
+                <Input
+                  type="search"
+                  placeholder="Filter emails..."
+                  className="w-60 max-w-sm rounded-bl-none rounded-tl-none"
+                  value={
+                    (table.getColumn('email')?.getFilterValue() as string) ?? ''
+                  }
+                  onChange={(event) =>
+                    table.getColumn('email')?.setFilterValue(event.target.value)
+                  }
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  variant="secondary"
+                  className="absolute end-0 top-0 rounded-bl-none rounded-tl-none"
+                >
+                  <BiSearch size={16} />
+                  <span className="sr-only">Search</span>
+                </Button>
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Columns <BiChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
                           )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      No results.
                     </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex-1 text-sm text-muted-foreground">
+              {table.getFilteredSelectedRowModel().rows.length} of{' '}
+              {table.getFilteredRowModel().rows.length} row(s) selected.
+            </div>
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
