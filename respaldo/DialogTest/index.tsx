@@ -1,5 +1,13 @@
-'use client'
-import { Button } from '@/components/ui/button'
+"use client"
+
+import dynamic from "next/dynamic"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -8,12 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -22,17 +25,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import dynamic from 'next/dynamic'
-import { cn } from '@/lib/utils'
-import { Checkbox } from '@/components/ui/checkbox'
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select"
 
 interface DialogDemoProps {
   open: boolean
@@ -54,9 +55,9 @@ const formSchema = z.object({
     .trim()
     .refine((value) => /^[A-Za-z]{2}\d{3}$/.test(value), {
       message:
-        'Formato no válido. Deben ser dos letras seguidas de tres dígitos.',
+        "Formato no válido. Deben ser dos letras seguidas de tres dígitos.",
     })
-    .transform((value) => (value ? value.toUpperCase() : '')),
+    .transform((value) => (value ? value.toUpperCase() : "")),
   codigoSAP: z.string().trim().min(1).max(70).nullable(),
   ambitoActuacion: z.string().trim().min(1).max(80),
   MRAsociado: z.string().trim().min(1).max(80).nullable(),
@@ -65,7 +66,7 @@ const formSchema = z.object({
   unidadesCompuestas: z
     .array(z.unknown())
     .refine((values) => values.length > 0, {
-      message: 'Debe seleccionar al menos una unidad compuesta.',
+      message: "Debe seleccionar al menos una unidad compuesta.",
     }),
 })
 
@@ -115,8 +116,8 @@ function DialogDemo({ open, onOpenChange }: DialogDemoProps) {
                         {...field}
                         className={cn(
                           errors.categoriaProyecto
-                            ? 'border-destructive text-sm font-medium'
-                            : '',
+                            ? "border-destructive text-sm font-medium"
+                            : ""
                         )}
                       />
                     </FormControl>
@@ -124,9 +125,9 @@ function DialogDemo({ open, onOpenChange }: DialogDemoProps) {
                   </FormItem>
                 )
               }}
-            />{' '}
+            />{" "}
             <div className="flex w-full items-center justify-center gap-4">
-              {' '}
+              {" "}
               <FormField
                 control={form.control}
                 name="noActuacion"
@@ -140,8 +141,8 @@ function DialogDemo({ open, onOpenChange }: DialogDemoProps) {
                           {...field}
                           className={cn(
                             errors.categoriaProyecto
-                              ? 'border-destructive text-sm font-medium'
-                              : '',
+                              ? "border-destructive text-sm font-medium"
+                              : ""
                           )}
                         />
                       </FormControl>
@@ -163,8 +164,8 @@ function DialogDemo({ open, onOpenChange }: DialogDemoProps) {
                           {...field}
                           className={cn(
                             errors.categoriaProyecto
-                              ? 'border-destructive text-sm font-medium'
-                              : '',
+                              ? "border-destructive text-sm font-medium"
+                              : ""
                           )}
                         />
                       </FormControl>
@@ -186,8 +187,8 @@ function DialogDemo({ open, onOpenChange }: DialogDemoProps) {
                           {...field}
                           className={cn(
                             errors.categoriaProyecto
-                              ? 'border-destructive text-sm font-medium'
-                              : '',
+                              ? "border-destructive text-sm font-medium"
+                              : ""
                           )}
                         />
                       </FormControl>
@@ -498,5 +499,5 @@ export const DialogDemoTest = dynamic(
   },
   {
     ssr: false,
-  },
+  }
 )

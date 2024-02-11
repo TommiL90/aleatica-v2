@@ -1,8 +1,9 @@
-import Image from 'next/image'
-import logo from '@/public/images/logo.svg'
-import Link from 'next/link'
-import { Navbar } from '../navbar'
-import { NavbarMobile } from '../navbar/navbar-mobile'
+import Image from "next/image"
+import Link from "next/link"
+import logo from "@/public/images/logo.svg"
+
+import { Navbar } from "../navbar"
+import { NavbarMobile } from "../navbar/navbar-mobile"
 
 export function Header() {
   return (
@@ -20,11 +21,11 @@ export function Header() {
         {/* <MainNav items={siteConfig.mainNav} /> */}
         <div className="flex flex-1 items-center justify-end space-x-4">
           <div className="lg:hidden">
-            {' '}
+            {" "}
             <NavbarMobile />
-          </div>{' '}
+          </div>{" "}
           <div className="hidden lg:inline-flex">
-            {' '}
+            {" "}
             <Navbar />
           </div>
         </div>

@@ -1,5 +1,11 @@
-'use client'
-import { Button } from '@/components/ui/button'
+"use client"
+
+import { ChangeEvent, useState } from "react"
+import fetcher from "@/services/fetcher"
+import useSWR from "swr"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -7,21 +13,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import fetcher from '@/services/fetcher'
-import { ProjectTaskGroupInfo, TasksAndSubCategories } from './types'
-import useSWR from 'swr'
-import { ChangeEvent, useState } from 'react'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/select"
+
+import { ProjectTaskGroupInfo, TasksAndSubCategories } from "./types"
 
 interface SubCategoryOptionsProps {
   id: string
@@ -33,14 +36,14 @@ const SubCategoryOptions = ({ id }: SubCategoryOptionsProps) => {
   >([])
   const { data, isLoading } = useSWR(
     `${process.env.API_URL}/Project/GetTasksAndSubcategories/${id}`,
-    fetcher,
+    fetcher
   )
   const tasksAndSubCategories: TasksAndSubCategories = data?.result || {}
 
   const handleChangeProjectTaskGroup = (id: number) => {
     const projectTaskGroupInfosFiltered =
       tasksAndSubCategories.projectTaskGroupInfos.filter(
-        (el: ProjectTaskGroupInfo) => el.mtSubCategoryActionId === id,
+        (el: ProjectTaskGroupInfo) => el.mtSubCategoryActionId === id
       )
 
     setProjectTaskGroupInfos(projectTaskGroupInfosFiltered)

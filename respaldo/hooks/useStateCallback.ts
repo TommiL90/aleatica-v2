@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from "react"
 
 export function useStateCallback<T>(
-  initialState: T,
+  initialState: T
 ): [T, (state: T, cb?: (state: T) => void) => void] {
   const [state, setState] = useState(initialState)
   const cbRef = useRef<((state: T) => void) | undefined>(undefined) // init mutable ref container for callbacks

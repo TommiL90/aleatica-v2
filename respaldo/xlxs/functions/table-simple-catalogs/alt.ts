@@ -12,12 +12,12 @@ export const ALt = async (
       status: number
       mtSubspecialities: number[]
     }
-  },
+  }
 ) => {
   return fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: JSON.stringify(arg),

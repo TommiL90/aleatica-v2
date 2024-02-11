@@ -1,8 +1,10 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import fetcher from '@/services/fetcher'
-import InfoProject from './info-project'
-import SubCategoryOptions from './sub-category-options'
-import { Project } from './types'
+import fetcher from "@/services/fetcher"
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+import InfoProject from "./info-project"
+import SubCategoryOptions from "./sub-category-options"
+import { Project } from "./types"
 
 export default async function TaskIdPage({
   params,

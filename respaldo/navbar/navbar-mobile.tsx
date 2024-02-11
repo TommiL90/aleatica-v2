@@ -1,3 +1,12 @@
+import Link from "next/link"
+import { BiMenu } from "react-icons/bi"
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import {
   Sheet,
   SheetClose,
@@ -6,17 +15,10 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { BiMenu } from 'react-icons/bi'
-import { Button } from '../../components/ui/button'
-import { navbarList } from './navbarList'
-import Link from 'next/link'
+} from "@/components/ui/sheet"
+
+import { Button } from "../../components/ui/button"
+import { navbarList } from "./navbarList"
 
 export function NavbarMobile() {
   return (
@@ -129,7 +131,7 @@ export function NavbarMobile() {
                                                       {secondSubItem.thirdSubItems.map(
                                                         (
                                                           thirdSubItem,
-                                                          thirdSubIndex,
+                                                          thirdSubIndex
                                                         ) => (
                                                           <li
                                                             key={thirdSubIndex}
@@ -139,13 +141,13 @@ export function NavbarMobile() {
                                                                 thirdSubItem.href
                                                               }
                                                             >
-                                                              Ir a{' '}
+                                                              Ir a{" "}
                                                               {
                                                                 thirdSubItem.title
                                                               }
                                                             </Link>
                                                           </li>
-                                                        ),
+                                                        )
                                                       )}
                                                     </ul>
                                                   )}
@@ -153,7 +155,7 @@ export function NavbarMobile() {
                                               </AccordionItem>
                                             )}
                                           </Accordion>
-                                        ),
+                                        )
                                       )}
                                     </>
                                   )}

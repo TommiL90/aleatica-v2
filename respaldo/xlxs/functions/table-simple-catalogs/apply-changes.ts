@@ -1,4 +1,4 @@
-import { SimpleUd } from '@/respaldo/contexts/types'
+import { SimpleUd } from "@/respaldo/contexts/types"
 import {
   CellChange,
   CheckboxCell,
@@ -6,7 +6,7 @@ import {
   DropdownCell,
   NumberCell,
   TextCell,
-} from '@silevis/reactgrid'
+} from "@silevis/reactgrid"
 
 export const applyChanges = (
   changes: CellChange<
@@ -14,7 +14,7 @@ export const applyChanges = (
   >[],
   prevDetails: SimpleUd[],
   especialities: any[],
-  getEmptyDataRow: () => SimpleUd,
+  getEmptyDataRow: () => SimpleUd
 ): SimpleUd[] => {
   changes.forEach((change) => {
     const dataRowId = change.rowId as number
@@ -28,38 +28,38 @@ export const applyChanges = (
 
       // return;
     }
-    if (change.type === 'text' && typeof dataRow[fieldName] === 'string') {
+    if (change.type === "text" && typeof dataRow[fieldName] === "string") {
       dataRow[fieldName] = change.newCell.text as never
     } else if (
-      change.type === 'number' &&
-      typeof dataRow[fieldName] === 'number'
+      change.type === "number" &&
+      typeof dataRow[fieldName] === "number"
     ) {
       dataRow[fieldName] = change.newCell.value as never
     } else if (
-      change.type === 'checkbox' &&
-      typeof dataRow[fieldName] === 'boolean'
+      change.type === "checkbox" &&
+      typeof dataRow[fieldName] === "boolean"
     ) {
       dataRow[fieldName] = change.newCell.checked as never
-    } else if (change.type === 'dropdown') {
+    } else if (change.type === "dropdown") {
       /**
        * Checking for an opening/closing of a dropdown list
        */
 
       if (change.previousCell.isOpen !== change.newCell.isOpen) {
         switch (fieldName) {
-          case 'subCategoria':
+          case "subCategoria":
             dataRow.subcategoriaisOpen = change.newCell.isOpen as never
             dataRow.especialidadesFilter = [
               ...especialities.filter(
-                (el: any) => dataRow?.subCategoria === el.subcategory,
+                (el: any) => dataRow?.subCategoria === el.subcategory
               ),
             ]
             break
 
-          case 'especialidad':
+          case "especialidad":
             dataRow.especialidadisOpen = change.newCell.isOpen as never
             break
-          case 'unidadObra':
+          case "unidadObra":
             dataRow.unidadObraisOpen = change.newCell.isOpen as never
             break
         }

@@ -1,3 +1,3 @@
-import { SimpleUd } from '@/respaldo/contexts/types'
+import { SimpleUd } from "@/respaldo/contexts/types"
 
 export const getSimpleUdList = (): SimpleUd[] => []

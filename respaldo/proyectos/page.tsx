@@ -1,14 +1,9 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import useSWR from 'swr'
-
-import {
-  BiSolidSortAlt,
-  BiChevronDown,
-  BiDotsHorizontalRounded,
-  BiSearch,
-} from 'react-icons/bi'
+import * as React from "react"
+import { useState } from "react"
+import Link from "next/link"
+import fetcher from "@/services/fetcher"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -20,7 +15,17 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table"
+import {
+  BiChevronDown,
+  BiDotsHorizontalRounded,
+  BiSearch,
+  BiSolidSortAlt,
+} from "react-icons/bi"
+import useSWR from "swr"
+
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -29,15 +34,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 import {
   Pagination,
   PaginationContent,
@@ -46,21 +44,22 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/components/ui/pagination'
-import { Checkbox } from '@/components/ui/checkbox'
-
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+} from "@/components/ui/pagination"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import Link from 'next/link'
-import fetcher from '@/services/fetcher'
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 interface Project {
   mtBusinessUnit: string
@@ -96,51 +95,51 @@ interface Data {
 export type Payment = {
   id: string
   amount: number
-  status: 'pending' | 'processing' | 'success' | 'failed'
+  status: "pending" | "processing" | "success" | "failed"
   email: string
 }
 
 const data: Payment[] = [
   {
-    id: 'm5gr84i9',
+    id: "m5gr84i9",
     amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    status: "success",
+    email: "ken99@yahoo.com",
   },
   {
-    id: '3u1reuv4',
+    id: "3u1reuv4",
     amount: 242,
-    status: 'success',
-    email: 'Abe45@gmail.com',
+    status: "success",
+    email: "Abe45@gmail.com",
   },
   {
-    id: 'derv1ws0',
+    id: "derv1ws0",
     amount: 837,
-    status: 'processing',
-    email: 'Monserrat44@gmail.com',
+    status: "processing",
+    email: "Monserrat44@gmail.com",
   },
   {
-    id: '5kma53ae',
+    id: "5kma53ae",
     amount: 874,
-    status: 'success',
-    email: 'Silas22@gmail.com',
+    status: "success",
+    email: "Silas22@gmail.com",
   },
   {
-    id: 'bhqecj4p',
+    id: "bhqecj4p",
     amount: 721,
-    status: 'failed',
-    email: 'carmella@hotmail.com',
+    status: "failed",
+    email: "carmella@hotmail.com",
   },
 ]
 
 export const columns: ColumnDef<Project>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -157,56 +156,56 @@ export const columns: ColumnDef<Project>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
+    accessorKey: "name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           UNIDAD
           <BiSolidSortAlt className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('name')}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: 'description',
-    header: 'DESCRIPCIÓN',
+    accessorKey: "description",
+    header: "DESCRIPCIÓN",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('description')}</div>
+      <div className="capitalize">{row.getValue("description")}</div>
     ),
   },
   {
-    accessorKey: 'mtBusinessUnit',
-    header: 'UNIDAD DE NEGOCIO',
+    accessorKey: "mtBusinessUnit",
+    header: "UNIDAD DE NEGOCIO",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('mtBusinessUnit')}</div>
+      <div className="capitalize">{row.getValue("mtBusinessUnit")}</div>
     ),
   },
   {
-    accessorKey: 'version',
-    header: 'VERSION',
+    accessorKey: "version",
+    header: "VERSION",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('version')}</div>
+      <div className="capitalize">{row.getValue("version")}</div>
     ),
   },
   {
-    accessorKey: 'status',
-    header: 'STATUS',
+    accessorKey: "status",
+    header: "STATUS",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('status')}</div>
+      <div className="capitalize">{row.getValue("status")}</div>
     ),
   },
   {
-    accessorKey: 'type',
-    header: 'TIPO',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('type')}</div>,
+    accessorKey: "type",
+    header: "TIPO",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("type")}</div>,
   },
 
   {
-    id: 'actions',
+    id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
       // const payment = row.original
@@ -249,10 +248,10 @@ export default function DataTableDemo() {
   const [pageIndex, setPageIndex] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [sort, setSort] = useState(1)
-  const [searchInput, setSearchInput] = useState('')
-  const [filtroUnidad, setFiltroUnidad] = useState('')
-  const [filtroYear, setFiltroYear] = useState('')
-  const [filtroTipo, setFiltroTipo] = useState('')
+  const [searchInput, setSearchInput] = useState("")
+  const [filtroUnidad, setFiltroUnidad] = useState("")
+  const [filtroYear, setFiltroYear] = useState("")
+  const [filtroTipo, setFiltroTipo] = useState("")
 
   const {
     data: dataRes,
@@ -263,7 +262,7 @@ export default function DataTableDemo() {
     fetcher,
     {
       keepPreviousData: true,
-    },
+    }
   )
 
   const table = useReactTable({
@@ -305,10 +304,10 @@ export default function DataTableDemo() {
                   placeholder="Filter emails..."
                   className="w-60 max-w-sm rounded-bl-none rounded-tl-none"
                   value={
-                    (table.getColumn('email')?.getFilterValue() as string) ?? ''
+                    (table.getColumn("email")?.getFilterValue() as string) ?? ""
                   }
                   onChange={(event) =>
-                    table.getColumn('email')?.setFilterValue(event.target.value)
+                    table.getColumn("email")?.setFilterValue(event.target.value)
                   }
                 />
                 <Button
@@ -362,7 +361,7 @@ export default function DataTableDemo() {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext(),
+                                header.getContext()
                               )}
                         </TableHead>
                       )
@@ -375,13 +374,13 @@ export default function DataTableDemo() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
+                      data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext(),
+                            cell.getContext()
                           )}
                         </TableCell>
                       ))}
@@ -402,11 +401,11 @@ export default function DataTableDemo() {
           </div>
           <div className="flex items-center justify-between space-x-2 py-4">
             <div className="flex text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} of{' '}
+              {table.getFilteredSelectedRowModel().rows.length} of{" "}
               {table.getFilteredRowModel().rows.length} row(s) selected.
             </div>
             <div className="flex items-center space-x-2">
-              {' '}
+              {" "}
               <p className="text-sm font-medium">Rows per page</p>
               <Select
                 // value={`${table.getState().pagination.pageSize}`}

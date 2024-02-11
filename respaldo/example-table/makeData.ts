@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker'
+import { faker } from "@faker-js/faker"
 
 export type Person = {
   firstName: string
@@ -6,7 +6,7 @@ export type Person = {
   age: number
   visits: number
   progress: number
-  status: 'relationship' | 'complicated' | 'single'
+  status: "relationship" | "complicated" | "single"
   subRows?: Person[]
 }
 
@@ -25,10 +25,10 @@ const newPerson = (): Person => {
     age: faker.number.int(40),
     visits: faker.number.int(1000),
     progress: faker.number.int(100),
-    status: faker.helpers.shuffle<Person['status']>([
-      'relationship',
-      'complicated',
-      'single',
+    status: faker.helpers.shuffle<Person["status"]>([
+      "relationship",
+      "complicated",
+      "single",
     ])[0]!,
   }
 }

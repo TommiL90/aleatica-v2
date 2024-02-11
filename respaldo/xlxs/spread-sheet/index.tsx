@@ -4,69 +4,66 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-'use client'
+"use client"
+
 import React, {
+  MouseEventHandler,
   MutableRefObject,
+  useCallback,
   useEffect,
-  useRef,
-  useState,
   useId,
   useMemo,
-  MouseEventHandler,
-  useCallback,
-} from 'react'
+  useRef,
+  useState,
+} from "react"
 import {
-  ReactGrid,
-  Column,
-  Row,
   CellChange,
+  CellLocation,
+  CellTemplates,
   CheckboxCell,
+  Column,
+  DateCell,
+  DateCellTemplate,
+  DefaultCellTypes,
   DropdownCell,
-  NumberCell,
-  TextCell,
+  Highlight,
   Id,
   MenuOption,
-  CellLocation,
+  NumberCell,
+  ReactGrid,
+  Row,
   SelectionMode,
-  Highlight,
-  CellTemplates,
-  DefaultCellTypes,
-  DateCellTemplate,
-  DateCell,
-} from '@silevis/reactgrid'
-import '@silevis/reactgrid/styles.css'
+  TextCell,
+} from "@silevis/reactgrid"
 
+import "@silevis/reactgrid/styles.css"
+import { join } from "path"
+import { cwd } from "process"
+/* load 'stream' for stream support */
+import { Readable } from "stream"
 // import { DropdownCell, DropdownCellTemplate } from "../cells/select";
-import Papa from 'papaparse'
-
+import Papa from "papaparse"
+import { useDropzone } from "react-dropzone"
 import {
   FaFileImport,
   FaPlus,
   FaRegFile,
   FaRegTrashAlt,
   FaSyncAlt,
-} from 'react-icons/fa'
-
-import Select from 'react-select'
-
-import { useDropzone } from 'react-dropzone'
-
-import * as XLSX from 'xlsx'
-
-import { readFile, utils, set_fs } from 'xlsx'
-import { join } from 'path'
-import { cwd } from 'process'
-
-/* load 'stream' for stream support */
-import { Readable } from 'stream'
-
+} from "react-icons/fa"
+import Select from "react-select"
+import * as XLSX from "xlsx"
+import { readFile, set_fs, utils } from "xlsx"
 /* load the codepage support library for extended support with older formats  */
-import * as cpexcel from 'xlsx/dist/cpexcel'
-import { FlagCell, FlagCellTemplate } from '../cells/flag'
-import { ButtonCell, ButtonCellTemplate } from '../cells/button'
-import { DateFieldCellTemplate } from '../cells/date'
-import { MaskFieldCell, MaskFieldCellTemplate } from '../cells/input_mask'
-import { cn } from '@/lib/utils'
+import * as cpexcel from "xlsx/dist/cpexcel"
+
+import { cn } from "@/lib/utils"
+
+import { ButtonCell, ButtonCellTemplate } from "../cells/button"
+import { DateFieldCellTemplate } from "../cells/date"
+import { FlagCell, FlagCellTemplate } from "../cells/flag"
+import { MaskFieldCell, MaskFieldCellTemplate } from "../cells/input_mask"
+
 // import ModalInputMask from '@/pages/mediciones/ficha_campo/modalInputMask'
 // import ModalDescriptionCell from '../modal/modalDescriptionCell'
 // XLSX.stream.set_readable(Readable)
@@ -126,7 +123,7 @@ interface Props {
 
 export default function SpreadSheet(props: Props) {
   const [columnStickyLeft, setColumsStickyLeft] = useState(0)
-  const [searchInput, setSearchInput] = useState('')
+  const [searchInput, setSearchInput] = useState("")
   const [_document, set_document] = useState<Document>()
   const [columnasMapeadas, setColumnasMapeadas] = useState<any>([])
   const [dataImported, setDataImported] = useState<any>([])
@@ -145,7 +142,7 @@ export default function SpreadSheet(props: Props) {
       console.log(files)
 
       switch (files[0].type) {
-        case 'text/csv':
+        case "text/csv":
           Papa.parse(files[0], {
             header: true,
             skipEmptyLines: true,
@@ -153,27 +150,27 @@ export default function SpreadSheet(props: Props) {
               setModalFileUpload(!modalFileUpload)
 
               const colums: string[] = Object.getOwnPropertyNames(
-                results.data[0],
+                results.data[0]
               )
 
               setColumnsImported(
-                colums.map((item) => ({ label: item, value: item })),
+                colums.map((item) => ({ label: item, value: item }))
               )
               setDataImported(results.data)
 
               if (_document) {
                 const file: HTMLInputElement = _document.getElementById(
-                  'fileUpload',
+                  "fileUpload"
                 ) as HTMLInputElement
                 if (file) {
-                  file.value = ''
+                  file.value = ""
                 }
               }
             },
           })
           break
 
-        case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
           // const filexlsx = XLSX.read( await event.target.files[0]) ;
           const workbookFile = XLSX.read(await files[0].arrayBuffer())
           setWorkbook(workbookFile)
@@ -182,10 +179,10 @@ export default function SpreadSheet(props: Props) {
 
           if (_document) {
             const file: HTMLInputElement = _document.getElementById(
-              'fileUpload',
+              "fileUpload"
             ) as HTMLInputElement
             if (file) {
-              file.value = ''
+              file.value = ""
             }
           }
           break
@@ -200,8 +197,8 @@ export default function SpreadSheet(props: Props) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'text/csv': [],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+      "text/csv": [],
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [],
     },
     maxFiles: 1,
     noDragEventsBubbling: true,
@@ -212,7 +209,7 @@ export default function SpreadSheet(props: Props) {
     set_document(document)
 
     if (_document) {
-      _document.body.style.overflow = 'hidden'
+      _document.body.style.overflow = "hidden"
     }
   }, [])
 
@@ -238,10 +235,10 @@ export default function SpreadSheet(props: Props) {
         ? (to += 1)
         : (to -= idxs.filter((idx) => idx < to).length)
     const leftSide = arr.filter(
-      (_, idx) => idx < targetIdx && !idxs.includes(idx),
+      (_, idx) => idx < targetIdx && !idxs.includes(idx)
     )
     const rightSide = arr.filter(
-      (_, idx) => idx >= targetIdx && !idxs.includes(idx),
+      (_, idx) => idx >= targetIdx && !idxs.includes(idx)
     )
     return [...leftSide, ...movedElements, ...rightSide]
   }
@@ -250,10 +247,10 @@ export default function SpreadSheet(props: Props) {
     const reorderedColumns = props.columns
 
     const to = reorderedColumns.findIndex(
-      (column) => column.columnId === targetColumnId,
+      (column) => column.columnId === targetColumnId
     )
     const columnIdxs = columnIds.map((columnId) =>
-      reorderedColumns.findIndex((c) => c.columnId === columnId),
+      reorderedColumns.findIndex((c) => c.columnId === columnId)
     )
     props.onChangeColumns(reorderArray(reorderedColumns, columnIdxs, to))
   }
@@ -263,39 +260,39 @@ export default function SpreadSheet(props: Props) {
     selectedColIds: Id[],
     selectionMode: SelectionMode,
     menuOptions: MenuOption[],
-    selectedRanges: CellLocation[][],
+    selectedRanges: CellLocation[][]
   ): MenuOption[] => {
     const updateRow = {
-      id: 'editarFila',
-      label: 'Editar elemento',
+      id: "editarFila",
+      label: "Editar elemento",
       handler: () => {
-        if (selectionMode === 'row' && selectedRowIds.length > 0)
+        if (selectionMode === "row" && selectedRowIds.length > 0)
           props.onUpdateRow(selectedRowIds)
 
-        if (selectionMode === 'range' && selectedRanges.length > 0)
+        if (selectionMode === "range" && selectedRanges.length > 0)
           props.onUpdateRow(selectedRanges[0][0].rowId)
       },
     }
 
     const showRow = {
-      id: 'mostrarFila',
-      label: 'Ver elemento',
+      id: "mostrarFila",
+      label: "Ver elemento",
       handler: () => {
-        if (selectionMode === 'row' && selectedRowIds.length > 0)
+        if (selectionMode === "row" && selectedRowIds.length > 0)
           props.onShowRow(selectedRowIds)
 
-        if (selectionMode === 'range' && selectedRanges.length > 0)
+        if (selectionMode === "range" && selectedRanges.length > 0)
           props.onShowRow(selectedRanges[0][0].rowId)
       },
     }
 
-    if (selectionMode === 'row') {
+    if (selectionMode === "row") {
       menuOptions = [
         showRow,
         updateRow,
         {
-          id: 'nuevoArriba',
-          label: 'Nueva fila arriba',
+          id: "nuevoArriba",
+          label: "Nueva fila arriba",
           handler: () => {
             if (selectedRowIds.length === 0) {
               return
@@ -308,13 +305,13 @@ export default function SpreadSheet(props: Props) {
                 props.emptyElement,
                 props.items.filter((item, idx) => item.idauto === index)[0],
                 ...props.items.slice(index),
-              ].map((item, idx) => ({ ...item, idauto: idx + 1 })),
+              ].map((item, idx) => ({ ...item, idauto: idx + 1 }))
             )
           },
         },
         {
-          id: 'nuevoAbajo',
-          label: 'Nueva fila abajo',
+          id: "nuevoAbajo",
+          label: "Nueva fila abajo",
           handler: () => {
             if (selectedRowIds.length === 0) {
               return
@@ -326,16 +323,16 @@ export default function SpreadSheet(props: Props) {
                 ...props.items.slice(0, index),
                 props.emptyElement,
                 ...props.items.slice(index),
-              ].map((item, idx) => ({ ...item, idauto: idx + 1 })),
+              ].map((item, idx) => ({ ...item, idauto: idx + 1 }))
             )
           },
         },
         {
-          id: 'clonarFilas',
-          label: 'Clonar fila',
+          id: "clonarFilas",
+          label: "Clonar fila",
           handler: () => {
             const newRows = props.items.filter((item, idx) =>
-              selectedRowIds.includes(item.idauto),
+              selectedRowIds.includes(item.idauto)
             )
             const index = Number(selectedRowIds[0])
 
@@ -344,41 +341,41 @@ export default function SpreadSheet(props: Props) {
                 ...props.items.slice(0, index),
                 ...newRows,
                 ...props.items.slice(index),
-              ].map((item, idx) => ({ ...item, idauto: idx + 1 })),
+              ].map((item, idx) => ({ ...item, idauto: idx + 1 }))
             )
           },
         },
         {
-          id: 'eliminarFila',
-          label: 'Eliminar fila',
+          id: "eliminarFila",
+          label: "Eliminar fila",
           handler: () => {
             props.onChangeRows(
               [
                 ...props.items.filter(
-                  (item, idx) => !selectedRowIds.includes(item.idauto),
+                  (item, idx) => !selectedRowIds.includes(item.idauto)
                 ),
-              ].map((item, idx) => ({ ...item, idauto: idx + 1 })),
+              ].map((item, idx) => ({ ...item, idauto: idx + 1 }))
             )
           },
         },
       ]
     }
 
-    if (selectionMode === 'column') {
+    if (selectionMode === "column") {
       menuOptions = [
         // ...menuOptions,
         {
-          id: 'fijarColumnaIzquierda',
+          id: "fijarColumnaIzquierda",
           label:
             columnStickyLeft > 0
-              ? 'Desbloquear columna a la izquierda'
-              : 'Bloquear columna a la izquierda',
+              ? "Desbloquear columna a la izquierda"
+              : "Bloquear columna a la izquierda",
           handler: () => {
             if (columnStickyLeft === 0) {
               const columnIndex =
                 props.columns.findIndex(
                   (item: Column, idx: number) =>
-                    item.columnId === selectedColIds[0],
+                    item.columnId === selectedColIds[0]
                 ) + 1
               setColumsStickyLeft(columnIndex)
             } else {
@@ -388,10 +385,10 @@ export default function SpreadSheet(props: Props) {
         },
       ]
     }
-    if (selectionMode === 'range') {
-      menuOptions[0].label = 'Copiar'
-      menuOptions[1].label = 'Cortar'
-      menuOptions[2].label = 'Pegar'
+    if (selectionMode === "range") {
+      menuOptions[0].label = "Copiar"
+      menuOptions[1].label = "Cortar"
+      menuOptions[2].label = "Pegar"
 
       menuOptions = [showRow, updateRow, ...menuOptions]
     }
@@ -400,18 +397,18 @@ export default function SpreadSheet(props: Props) {
 
   const handleFocusCell = (location: CellLocation) => {
     if (
-      typeof location.rowId === 'number' &&
+      typeof location.rowId === "number" &&
       location.rowId > 0 &&
-      location.columnId === 'descripcionUnidadSimple'
+      location.columnId === "descripcionUnidadSimple"
     ) {
       const cell = props.rows[location.rowId].cells[3]
 
       let description: string
 
-      if ('text' in cell) {
+      if ("text" in cell) {
         description = cell.text
       } else {
-        description = 'Descripción vacía'
+        description = "Descripción vacía"
       }
 
       setModalCadenamientoInicial(true)
@@ -464,10 +461,10 @@ export default function SpreadSheet(props: Props) {
                   }, 500)
                 }}
                 className={cn(
-                  'mx-1 flex items-center rounded-lg px-3 py-1 text-center text-sm font-medium text-white focus:outline-none focus:ring-4',
+                  "mx-1 flex items-center rounded-lg px-3 py-1 text-center text-sm font-medium text-white focus:outline-none focus:ring-4",
                   refreshButtonDisable
-                    ? ' bg-blue-400 hover:bg-blue-400'
-                    : ' bg-blue-700 hover:bg-blue-800',
+                    ? " bg-blue-400 hover:bg-blue-400"
+                    : " bg-blue-700 hover:bg-blue-800"
                 )}
               >
                 <FaSyncAlt className="mr-2" style={{ height: 35 }} />
@@ -475,7 +472,7 @@ export default function SpreadSheet(props: Props) {
               </button>
               <button
                 onClick={(evt: any) => {
-                  _document?.getElementById('fileUpload')?.click()
+                  _document?.getElementById("fileUpload")?.click()
                 }}
                 className="mx-1 flex items-center rounded-lg bg-green-700 px-3 py-1 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
@@ -500,7 +497,7 @@ export default function SpreadSheet(props: Props) {
         </div>
         <div
           className="flex overflow-x-scroll overflow-y-scroll"
-          style={{ height: '60vh' }}
+          style={{ height: "60vh" }}
           {...getRootProps()}
         >
           {!isDragActive ? (
@@ -532,7 +529,7 @@ export default function SpreadSheet(props: Props) {
             <div className="flex w-full items-center rounded-lg border-4 border-dashed border-gray-400 bg-white p-4 shadow-lg">
               <p
                 className="text-center text-3xl text-gray-600"
-                style={{ margin: '0 auto' }}
+                style={{ margin: "0 auto" }}
               >
                 Arrastra tu archivos csv o Excel (xlsx)
               </p>
@@ -724,7 +721,7 @@ function ModalXLSX(props: ModalXLSXProps) {
                 value={sheet}
                 styles={{
                   menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  menuList: (base) => ({ ...base, color: 'black' }),
+                  menuList: (base) => ({ ...base, color: "black" }),
                 }}
                 onChange={(newValue: any) => setSheet(newValue)}
               />
@@ -732,7 +729,7 @@ function ModalXLSX(props: ModalXLSXProps) {
                 <div
                   dangerouslySetInnerHTML={{
                     __html: XLSX.utils.sheet_to_html(
-                      props.workbook.Sheets[sheet.value],
+                      props.workbook.Sheets[sheet.value]
                     ),
                   }}
                 >
@@ -765,26 +762,26 @@ interface ImportMapProps {
 }
 
 const mapColumnOptions = [
-  { label: 'Unidad de negocio', value: 'unidadNegocio' },
-  { label: 'Codigo de actuacion', value: 'codigoActuacion' },
-  { label: 'Expediente', value: 'expediente' },
-  { label: 'Categoria de proyecto', value: 'categoriaProyecto' },
-  { label: 'Categoria de actuacion', value: 'categoriaActuacion' },
-  { label: 'Subcategoria de actuacion', value: 'subcategoriaActuacion' },
-  { label: 'Especialidad de actuacion', value: 'especialidadActuacion' },
-  { label: 'Unidad de obra', value: 'unidadObra' },
-  { label: 'Anno', value: 'anno' },
-  { label: 'Nombre de actuacion', value: 'nombreActuacion' },
-  { label: 'Diferido', value: 'diferido' },
-  { label: 'Sostenibilidad', value: 'sostenibilidad' },
-  { label: 'PRA', value: 'PRA' },
-  { label: 'Puntos negro TCA', value: 'puntosNegrosTCA' },
-  { label: 'Codigo SAP', value: 'codigoSAP' },
-  { label: 'Ambito de actuacion', value: 'ambitoActuacion' },
-  { label: 'MRAsociado', value: 'MRAsociado' },
-  { label: 'Fase/Tramo', value: 'faseTramo' },
-  { label: 'Responsable', value: 'responsable' },
-  { label: 'Aprobado', value: 'aprobado' },
+  { label: "Unidad de negocio", value: "unidadNegocio" },
+  { label: "Codigo de actuacion", value: "codigoActuacion" },
+  { label: "Expediente", value: "expediente" },
+  { label: "Categoria de proyecto", value: "categoriaProyecto" },
+  { label: "Categoria de actuacion", value: "categoriaActuacion" },
+  { label: "Subcategoria de actuacion", value: "subcategoriaActuacion" },
+  { label: "Especialidad de actuacion", value: "especialidadActuacion" },
+  { label: "Unidad de obra", value: "unidadObra" },
+  { label: "Anno", value: "anno" },
+  { label: "Nombre de actuacion", value: "nombreActuacion" },
+  { label: "Diferido", value: "diferido" },
+  { label: "Sostenibilidad", value: "sostenibilidad" },
+  { label: "PRA", value: "PRA" },
+  { label: "Puntos negro TCA", value: "puntosNegrosTCA" },
+  { label: "Codigo SAP", value: "codigoSAP" },
+  { label: "Ambito de actuacion", value: "ambitoActuacion" },
+  { label: "MRAsociado", value: "MRAsociado" },
+  { label: "Fase/Tramo", value: "faseTramo" },
+  { label: "Responsable", value: "responsable" },
+  { label: "Aprobado", value: "aprobado" },
 ]
 
 const ids: string[] = []
@@ -842,7 +839,7 @@ export function ImportMap(props: ImportMapProps) {
     setCurrentColumn(null)
     setCurrentColumFromFile(null)
 
-    if (typeof props.onChange === 'function') {
+    if (typeof props.onChange === "function") {
       props.onChange(list)
     }
   }
@@ -855,7 +852,7 @@ export function ImportMap(props: ImportMapProps) {
     const list: any = items.filter((item) => item.id !== id)
     setItems(list)
 
-    if (typeof props.onChange === 'function') {
+    if (typeof props.onChange === "function") {
       props.onChange(list)
     }
   }
@@ -880,7 +877,7 @@ export function ImportMap(props: ImportMapProps) {
           onChange={(newValue) => handleColumnChage(newValue, 0)}
           styles={{
             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            menuList: (base) => ({ ...base, color: 'black' }),
+            menuList: (base) => ({ ...base, color: "black" }),
           }}
           menuPortalTarget={_document?.body}
           menuPlacement="auto"
@@ -897,7 +894,7 @@ export function ImportMap(props: ImportMapProps) {
           onChange={(newValue) => handleColumnImportedChange(newValue, 0)}
           styles={{
             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            menuList: (base) => ({ ...base, color: 'black' }),
+            menuList: (base) => ({ ...base, color: "black" }),
           }}
           menuPortalTarget={_document?.body}
           menuPlacement="auto"
@@ -930,8 +927,8 @@ export function ImportMap(props: ImportMapProps) {
         <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
           <thead
             className={cn(
-              'text-xs uppercase text-gray-700',
-              'bg-gray-50 dark:bg-gray-700 dark:text-gray-400',
+              "text-xs uppercase text-gray-700",
+              "bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
             )}
           >
             <tr>
@@ -980,7 +977,7 @@ export function ImportMap(props: ImportMapProps) {
                           className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                           styles={{
                             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                            menuList: (base) => ({ ...base, color: 'black' }),
+                            menuList: (base) => ({ ...base, color: "black" }),
                           }}
                           options={mapColumnOptions}
                           value={item.columna}
@@ -1007,7 +1004,7 @@ export function ImportMap(props: ImportMapProps) {
                             }),
                             menuList: (base: any) => ({
                               ...base,
-                              color: 'black',
+                              color: "black",
                             }),
                           }}
                           options={props.columsImport}

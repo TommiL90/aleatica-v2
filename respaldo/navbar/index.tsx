@@ -1,3 +1,7 @@
+import React from "react"
+import Link from "next/link"
+import { BiChevronDown } from "react-icons/bi"
+
 import {
   Menubar,
   MenubarContent,
@@ -7,16 +11,13 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from '@/components/ui/menubar'
+} from "@/components/ui/menubar"
+
 import {
   NavBarFirstSubItem,
   NavBarSecondSubItem,
   navbarList,
-} from './navbarList'
-import Link from 'next/link'
-import { BiChevronDown } from 'react-icons/bi'
-
-import React from 'react'
+} from "./navbarList"
 
 const NavbarSubItem: React.FC<{ subItem: NavBarFirstSubItem }> = ({
   subItem,

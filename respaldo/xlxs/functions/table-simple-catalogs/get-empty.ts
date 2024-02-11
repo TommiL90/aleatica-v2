@@ -1,12 +1,12 @@
-import { SimpleUd } from '@/respaldo/contexts/types'
+import { SimpleUd } from "@/respaldo/contexts/types"
 
 export const getEmpty = (id = 1): SimpleUd => ({
   idauto: id,
   id: 0,
-  idUnidad: '',
+  idUnidad: "",
   nombreUnidadSimple: ``,
   descripcionUnidadSimple: ``,
-  counter: '',
+  counter: "",
   subCategoria: null,
   especialidad: null,
   unidadObra: null,

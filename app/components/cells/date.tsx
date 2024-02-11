@@ -1,31 +1,33 @@
-'use client'
-import * as React from 'react'
+"use client"
+
+import * as React from "react"
 import {
-  CellTemplate,
   Cell,
+  CellTemplate,
   Compatible,
   Uncertain,
   UncertainCompatible,
-  isNavigationKey,
   getCellProperty,
   isAlphaNumericKey,
+  isNavigationKey,
   keyCodes,
-} from '@silevis/reactgrid'
-import { cn } from '@/lib/utils'
+} from "@silevis/reactgrid"
+
+import { cn } from "@/lib/utils"
 
 // import "./flag-cell-style.css";
 
 export interface DateFieldCell extends Cell {
-  type: 'dateField'
+  type: "dateField"
   text: string
   value: number
 }
 
 export class DateFieldCellTemplate implements CellTemplate<DateFieldCell> {
   getCompatibleCell(
-    uncertainCell: Uncertain<DateFieldCell>,
+    uncertainCell: Uncertain<DateFieldCell>
   ): Compatible<DateFieldCell> {
-    const val = getCellProperty(uncertainCell, 'value', 'number')
+    const val = getCellProperty(uncertainCell, "value", "number")
     const text = String(val)
     const value = parseFloat(val)
     return { ...uncertainCell, text, value }
@@ -36,7 +38,7 @@ export class DateFieldCellTemplate implements CellTemplate<DateFieldCell> {
     keyCode: number,
     ctrl: boolean,
     shift: boolean,
-    alt: boolean,
+    alt: boolean
   ): { cell: Compatible<DateFieldCell>; enableEditMode: boolean } {
     if (!ctrl && !alt && isAlphaNumericKey(keyCode))
       return { cell, enableEditMode: true }
@@ -49,7 +51,7 @@ export class DateFieldCellTemplate implements CellTemplate<DateFieldCell> {
 
   update(
     cell: Compatible<DateFieldCell>,
-    cellToMerge: UncertainCompatible<DateFieldCell>,
+    cellToMerge: UncertainCompatible<DateFieldCell>
   ): Compatible<DateFieldCell> {
     return this.getCompatibleCell({
       ...cell,
@@ -61,7 +63,7 @@ export class DateFieldCellTemplate implements CellTemplate<DateFieldCell> {
   render(
     cell: Compatible<DateFieldCell>,
     isInEditMode: boolean,
-    onCellChanged: (cell: Compatible<DateFieldCell>, commit: boolean) => void,
+    onCellChanged: (cell: Compatible<DateFieldCell>, commit: boolean) => void
   ): React.ReactNode {
     return (
       <input
@@ -71,8 +73,8 @@ export class DateFieldCellTemplate implements CellTemplate<DateFieldCell> {
           console.log(evt)
         }}
         className={cn(
-          'block w-full rounded-lg border text-sm',
-          'border-gray-300 bg-white  text-gray-900 focus:border-gray-100 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+          "block w-full rounded-lg border text-sm",
+          "border-gray-300 bg-white  text-gray-900 focus:border-gray-100 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         )}
       />
     )

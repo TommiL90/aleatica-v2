@@ -1,15 +1,25 @@
-'use client'
-import fetcher from '@/services/fetcher'
+"use client"
+
 import React, {
-  createContext,
   Dispatch,
   ReactNode,
   SetStateAction,
+  createContext,
   useEffect,
   useState,
-} from 'react'
-import useSWR, { KeyedMutator } from 'swr'
-import useSWRMutation, { TriggerWithArgs } from 'swr/mutation'
+} from "react"
+import { useStateCallback } from "@/respaldo/hooks/useStateCallback"
+import fetcher from "@/services/fetcher"
+import { Column } from "@silevis/reactgrid"
+import useSWR, { KeyedMutator } from "swr"
+import useSWRMutation, { TriggerWithArgs } from "swr/mutation"
+
+import { ALt } from "@/app/functions/table-simple-catalogs/alt"
+import { getColumns } from "@/app/functions/table-simple-catalogs/get-columns"
+import { getEmpty } from "@/app/functions/table-simple-catalogs/get-empty"
+import { getSimpleUdList } from "@/app/functions/table-simple-catalogs/get-simple-ud"
+import { moreRows } from "@/app/functions/table-simple-catalogs/more-rows"
+
 import {
   DataResponse,
   MtSpecialtyAction,
@@ -19,14 +29,7 @@ import {
   SimpleUd,
   SubCategory,
   SubSpecialty,
-} from './types'
-import { Column } from '@silevis/reactgrid'
-import { useStateCallback } from '@/respaldo/hooks/useStateCallback'
-import { ALt } from '@/app/functions/table-simple-catalogs/alt'
-import { getColumns } from '@/app/functions/table-simple-catalogs/get-columns'
-import { getEmpty } from '@/app/functions/table-simple-catalogs/get-empty'
-import { moreRows } from '@/app/functions/table-simple-catalogs/more-rows'
-import { getSimpleUdList } from '@/app/functions/table-simple-catalogs/get-simple-ud'
+} from "./types"
 
 interface SimpleCatalogsContext {
   itemId: number
@@ -46,12 +49,12 @@ interface SimpleCatalogsContext {
   modalNewItem: boolean
   setModalNewItem: (
     state: boolean,
-    cb?: ((state: boolean) => void) | undefined,
+    cb?: ((state: boolean) => void) | undefined
   ) => void
   modalDetail: boolean
   setModalDetail: (
     state: boolean,
-    cb?: ((state: boolean) => void) | undefined,
+    cb?: ((state: boolean) => void) | undefined
   ) => void
   modalDelete: boolean
   setModalDelete: Dispatch<SetStateAction<boolean>>
@@ -104,9 +107,9 @@ export const SimpleCatalogsContext = createContext({} as SimpleCatalogsContext)
 
 export const SimpleCatalogsProvider = ({ children }: ChildrenProps) => {
   const [itemId, setItemId] = useState(0)
-  const [searchInput, setSearchInput] = useState('')
-  const [filtroSubcategoria, setFiltroSubcategoria] = useState('')
-  const [filtroEspecialidad, setFiltroEspecialidad] = useState('')
+  const [searchInput, setSearchInput] = useState("")
+  const [filtroSubcategoria, setFiltroSubcategoria] = useState("")
+  const [filtroEspecialidad, setFiltroEspecialidad] = useState("")
   const [unidades, setUnidadesSimples] = useState<SimpleUd[]>([])
   const [columns, setColumns] = useState<Column[]>(getColumns())
   const [modal, setModal] = useState(false)
@@ -117,37 +120,37 @@ export const SimpleCatalogsProvider = ({ children }: ChildrenProps) => {
   const [item, setItem] = useState<SimpleUd>(getEmpty)
   const [loading, setLoading] = useState(false)
   const [descriptionCell, setDescriptionCell] = useState({
-    descripcionUnidadSimple: '',
+    descripcionUnidadSimple: "",
     idx: 0,
   })
   const [showDescriptionModal, setShowDescriptionModal] = useState(false)
 
   const { data: subEspRes } = useSWR<DataResponse<SubSpecialty[]>>(
     `${process.env.API_URL}/MtSubspeciality/GetAll`,
-    fetcher,
+    fetcher
   )
   const { data: subcatRes } = useSWR<DataResponse<SubCategory[]>>(
     `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
-    fetcher,
+    fetcher
   )
   const { data: medtRes } = useSWR<DataResponse<MtUnitOfMeasurement[]>>(
     `${process.env.API_URL}/MtUnitOfMeasurement/GetAll`,
-    fetcher,
+    fetcher
   )
   const { data: espRes } = useSWR<DataResponse<MtSpecialtyAction[]>>(
     `${process.env.API_URL}/MtSpecialtyAction/GetAll`,
-    fetcher,
+    fetcher
   )
   const { trigger } = useSWRMutation(
     `${process.env.API_URL}/SimpleCatalog/Create`,
-    ALt /* options */,
+    ALt /* options */
   )
 
   const { data, mutate, isLoading } = useSWR<
     DataResponse<SimpleCatalogsResponse>
   >(
     `${process.env.API_URL}/SimpleCatalog/GetAllPaginated?MtSpecialtyActionId=${filtroEspecialidad}&SearchByProp=simpleUdName&SearchCriteria=${searchInput}`,
-    fetcher,
+    fetcher
   )
 
   useEffect(() => {
@@ -160,7 +163,7 @@ export const SimpleCatalogsProvider = ({ children }: ChildrenProps) => {
               id: item.id,
               idUnidad: item.simpleUdId,
               nombreUnidadSimple: item.simpleUdName,
-              descripcionUnidadSimple: item.description ? item.description : '',
+              descripcionUnidadSimple: item.description ? item.description : "",
               counter: item.accountantConcept,
               subCategoria: item.mtSubCategoryActionId,
               especialidad: String(item.mtSpecialtyActionId),
@@ -186,13 +189,13 @@ export const SimpleCatalogsProvider = ({ children }: ChildrenProps) => {
                         subcategory: String(el.mtSubCategoryActionId),
                       }))
                       .filter(
-                        (i) => i.subcategory === item.mtSubCategoryActionId,
+                        (i) => i.subcategory === item.mtSubCategoryActionId
                       )
                   : [],
               newItem: false,
             })),
-            25,
-          ),
+            25
+          )
         )
       } else {
         setUnidadesSimples(moreRows(getSimpleUdList(), 25))

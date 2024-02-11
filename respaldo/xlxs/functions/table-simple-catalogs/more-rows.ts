@@ -1,5 +1,6 @@
-import { SimpleUd } from '@/respaldo/contexts/types'
-import { getEmpty } from './get-empty'
+import { SimpleUd } from "@/respaldo/contexts/types"
+
+import { getEmpty } from "./get-empty"
 
 export const moreRows = (unidades: SimpleUd[], exceed = 100) => [
   ...unidades,

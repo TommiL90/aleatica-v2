@@ -1,17 +1,18 @@
-'use client'
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+"use client"
 
-import './index.css'
+import React from "react"
+import ReactDOM from "react-dom/client"
 
+import "./index.css"
 import {
-  useReactTable,
-  getCoreRowModel,
   ColumnDef,
-  flexRender,
   Table,
-} from '@tanstack/react-table'
-import { makeData } from '../example-table/makeData'
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
+
+import { makeData } from "../example-table/makeData"
 
 type Person = {
   firstName: string
@@ -24,17 +25,17 @@ type Person = {
 
 const defaultColumns: ColumnDef<Person>[] = [
   {
-    header: 'Name',
+    header: "Name",
     footer: (props) => props.column.id,
     columns: [
       {
-        accessorKey: 'firstName',
+        accessorKey: "firstName",
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
       },
       {
         accessorFn: (row) => row.lastName,
-        id: 'lastName',
+        id: "lastName",
         cell: (info) => info.getValue(),
         header: () => <span>Last Name</span>,
         footer: (props) => props.column.id,
@@ -42,27 +43,27 @@ const defaultColumns: ColumnDef<Person>[] = [
     ],
   },
   {
-    header: 'Info',
+    header: "Info",
     footer: (props) => props.column.id,
     columns: [
       {
-        accessorKey: 'age',
-        header: () => 'Age',
+        accessorKey: "age",
+        header: () => "Age",
         footer: (props) => props.column.id,
       },
       {
-        accessorKey: 'visits',
+        accessorKey: "visits",
         header: () => <span>Visits</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: "status",
+        header: "Status",
         footer: (props) => props.column.id,
       },
       {
-        accessorKey: 'progress',
-        header: 'Profile Progress',
+        accessorKey: "progress",
+        header: "Profile Progress",
         footer: (props) => props.column.id,
       },
     ],
@@ -84,7 +85,7 @@ export default function Data() {
       minSize: 60,
       maxSize: 800,
     },
-    columnResizeMode: 'onChange',
+    columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
     debugTable: true,
     debugHeaders: true,
@@ -119,7 +120,7 @@ export default function Data() {
       </i>
       <div className="h-4" />
       <label>
-        Memoize Table Body:{' '}
+        Memoize Table Body:{" "}
         <input
           type="checkbox"
           checked={enableMemo}
@@ -130,13 +131,13 @@ export default function Data() {
       <button onClick={() => rerender()} className="border p-2">
         Rerender
       </button>
-      <pre style={{ minHeight: '10rem' }}>
+      <pre style={{ minHeight: "10rem" }}>
         {JSON.stringify(
           {
             columnSizing: table.getState().columnSizing,
           },
           null,
-          2,
+          2
         )}
       </pre>
       <div className="h-4">{data.length} rows</div>
@@ -164,7 +165,7 @@ export default function Data() {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext(),
+                          header.getContext()
                         )}
                     <div
                       {...{
@@ -172,7 +173,7 @@ export default function Data() {
                         onMouseDown: header.getResizeHandler(),
                         onTouchStart: header.getResizeHandler(),
                         className: `resizer ${
-                          header.column.getIsResizing() ? 'isResizing' : ''
+                          header.column.getIsResizing() ? "isResizing" : ""
                         }`,
                       }}
                     />

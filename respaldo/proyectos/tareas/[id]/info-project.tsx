@@ -1,6 +1,8 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
-import { Project } from './types'
+import React from "react"
+
+import { Button } from "@/components/ui/button"
+
+import { Project } from "./types"
 
 interface InfoProjectProps {
   data: Project
@@ -44,7 +46,7 @@ const InfoProject = ({ data }: InfoProjectProps) => {
           Por asignar
         </li>
         <li className="border-b p-3 ">
-          <Button variant={'secondary'}>Clonar Proyecto</Button>
+          <Button variant={"secondary"}>Clonar Proyecto</Button>
         </li>
       </ul>
     </section>
