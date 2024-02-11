@@ -8,6 +8,8 @@ import { SiteHeader } from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 
+import "@silevis/reactgrid/styles.css"
+
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -32,7 +34,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en">
         <head />
         <body
           className={cn(
