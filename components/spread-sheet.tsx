@@ -30,14 +30,10 @@ import {
 
 import "@silevis/reactgrid/styles.css"
 /* load 'stream' for stream support */
-import { Readable } from "stream"
-
-import { cn } from "@/lib/utils"
-
-import { ButtonCell, ButtonCellTemplate } from "./cells/button"
-import { DateFieldCellTemplate } from "./cells/date"
-import { FlagCell, FlagCellTemplate } from "./cells/flag"
-import { MaskFieldCell, MaskFieldCellTemplate } from "./cells/input_mask"
+import { ButtonCell, ButtonCellTemplate } from "../app/components/cells/button"
+import { DateFieldCellTemplate } from "../app/components/cells/date"
+import { FlagCell, FlagCellTemplate } from "../app/components/cells/flag"
+import { MaskFieldCell, MaskFieldCellTemplate } from "../app/components/cells/input_mask"
 
 const myCellTemplates: CellTemplates = {
   flag: new FlagCellTemplate(),
@@ -99,7 +95,7 @@ export default function SpreadSheet({
     if (_document) {
       _document.body.style.overflow = "hidden"
     }
-  }, [])
+  }, [_document, items])
 
   const handleChanges = (changes: CellChange<any>[]) => {
     onChange(changes)
@@ -304,7 +300,7 @@ export default function SpreadSheet({
 
   return (
     <>
-      <div className="flex overflow-scroll" style={{ height: "60vh" }}>
+      <div className="flex overflow-scroll" style={{ height: "90vh" }}>
         {!refresh && !loading ? (
           <ReactGrid
             rows={rows}
