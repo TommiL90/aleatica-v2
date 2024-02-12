@@ -29,11 +29,12 @@ import {
 } from "@silevis/reactgrid"
 
 import "@silevis/reactgrid/styles.css"
+import { FlagCell, FlagCellTemplate } from "./cells/flag"
+import { ButtonCell, ButtonCellTemplate } from "./cells/button"
+import { DateFieldCellTemplate } from "./cells/date"
+import { MaskFieldCell, MaskFieldCellTemplate } from "./cells/input_mask"
 /* load 'stream' for stream support */
-import { ButtonCell, ButtonCellTemplate } from "../app/components/cells/button"
-import { DateFieldCellTemplate } from "../app/components/cells/date"
-import { FlagCell, FlagCellTemplate } from "../app/components/cells/flag"
-import { MaskFieldCell, MaskFieldCellTemplate } from "../app/components/cells/input_mask"
+
 
 const myCellTemplates: CellTemplates = {
   flag: new FlagCellTemplate(),

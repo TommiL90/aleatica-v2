@@ -22,8 +22,7 @@ import {
 import useSWR from "swr"
 import useSWRMutation from "swr/mutation"
 
-import { ButtonCell, ButtonCellTemplate } from "../components/cells/button"
-import { FlagCell, FlagCellTemplate } from "../components/cells/flag"
+
 
 import ModalEspecialidadesParaSpreadsheet from "./modalEspecialidadesParaSpreadsheet"
 import SpreadSheet from "../../components/spread-sheet"
