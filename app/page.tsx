@@ -30,6 +30,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ReactInputMask from "react-input-mask"
 import { RoadSurfaceDamages } from "@/components/road-surface-damages"
+import { Textarea } from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
 
 
 
@@ -50,10 +52,12 @@ const newRoadSurfaceMeasurementSchemaEsp = z.object({
   compuesta: z.string().min(1, 'Requerido').max(5),
   prioridad: z.string().min(1, 'Requerido').max(5),
 
+  observacion: z.string().max(1000),
+
 
   deterioros: z.array(z.string()).min(1, 'Debe seleccionar al menos un deterioro.'),
 
-  ancho: z.number()
+  ancho:  z.coerce.number()
     .min(0, { message: 'Debe ser un número positivo o cero' })
     .optional()
     .refine(value => {
@@ -62,7 +66,7 @@ const newRoadSurfaceMeasurementSchemaEsp = z.object({
       return regex.test(value.toString());
     }, { message: 'Máximo de dos decimales permitidos' }),
 
-  espesor: z.number()
+  espesor:  z.coerce.number()
     .min(0, { message: 'Debe ser un número positivo o cero' })
     .optional()
     .refine(value => {
@@ -71,7 +75,7 @@ const newRoadSurfaceMeasurementSchemaEsp = z.object({
       return regex.test(value.toString());
     }, { message: 'Máximo de dos decimales permitidos' }),
 
-  densidad: z.number()
+  densidad:  z.coerce.number()
     .min(0, { message: 'Debe ser un número positivo o cero' })
     .optional()
     .refine(value => {
@@ -81,7 +85,43 @@ const newRoadSurfaceMeasurementSchemaEsp = z.object({
     }, { message: 'Máximo de dos decimales permitidos' }),
 
 
-  porcentajeAfectacion: z.number()
+  porcentajeAfectacion:  z.coerce.number()
+    .min(0, { message: 'Debe ser un número positivo o cero' })
+    .optional()
+    .refine(value => {
+      if (value === undefined) return true;
+      const regex = /^\d+(\.\d{1,2})?$/;
+      return regex.test(value.toString());
+    }, { message: 'Máximo de dos decimales permitidos' }),
+
+  masa:  z.coerce.number()
+    .min(0, { message: 'Debe ser un número positivo o cero' })
+    .optional()
+    .refine(value => {
+      if (value === undefined) return true;
+      const regex = /^\d+(\.\d{1,2})?$/;
+      return regex.test(value.toString());
+    }, { message: 'Máximo de dos decimales permitidos' }),
+
+  longitud:  z.coerce.number()
+    .min(0, { message: 'Debe ser un número positivo o cero' })
+    .optional()
+    .refine(value => {
+      if (value === undefined) return true;
+      const regex = /^\d+(\.\d{1,2})?$/;
+      return regex.test(value.toString());
+    }, { message: 'Máximo de dos decimales permitidos' }),
+
+  area:  z.coerce.number()
+    .min(0, { message: 'Debe ser un número positivo o cero' })
+    .optional()
+    .refine(value => {
+      if (value === undefined) return true;
+      const regex = /^\d+(\.\d{1,2})?$/;
+      return regex.test(value.toString());
+    }, { message: 'Máximo de dos decimales permitidos' }),
+
+  volumen:  z.coerce.number()
     .min(0, { message: 'Debe ser un número positivo o cero' })
     .optional()
     .refine(value => {
@@ -103,9 +143,9 @@ export default function IndexPage() {
   // 1. Define your form.
   const form = useForm<NewRoadSurfaceMeasurementEsp>({
     resolver: zodResolver(newRoadSurfaceMeasurementSchemaEsp),
-    // defaultValues: {
-    //   : "",
-    // },
+    defaultValues: {
+      deterioros: []
+    }
   })
 
   const {
@@ -151,6 +191,7 @@ export default function IndexPage() {
                   <TabsTrigger value="calculos">Cálculos</TabsTrigger>
 
                 </TabsList>
+                <Separator />
                 <TabsContent value="identificacion" className="grid min-h-full grid-cols-2 gap-4">
                   <FormField
 
@@ -333,7 +374,7 @@ export default function IndexPage() {
                             mask="999+0999"
                             alwaysShowMask={true}
                             maskChar="#"
-                    
+
                             {...field}
 
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -349,21 +390,306 @@ export default function IndexPage() {
 
                 </TabsContent>
                 <TabsContent value="deterioros" className="flex-1">
-                <FormField
+                  <FormField
                     control={form.control}
                     name="deterioros"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Deterioros</FormLabel>
                         <FormControl>
-                        <RoadSurfaceDamages deteriorosSelected={field.value} onChange={field.onChange} />
+                          <RoadSurfaceDamages deteriorosSelected={field.value} onChange={field.onChange} />
                         </FormControl>
 
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                 
+
+                </TabsContent>
+                <TabsContent value="actuacion" className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="actuacion"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Actuación</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a verified email to display" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="m@example.com">m@example.com</SelectItem>
+                              <SelectItem value="m@google.com">m@google.com</SelectItem>
+                              <SelectItem value="m@support.com">m@support.com</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    /> <FormField
+                      control={form.control}
+                      name="compuesta"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Compuesta</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a verified email to display" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="m@example.com">m@example.com</SelectItem>
+                              <SelectItem value="m@google.com">m@google.com</SelectItem>
+                              <SelectItem value="m@support.com">m@support.com</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    /> <FormField
+                      control={form.control}
+                      name="prioridad"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Prioridad</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a verified email to display" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="alta">Alta</SelectItem>
+                              <SelectItem value="baja">Baja</SelectItem>
+
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="observacion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bio</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Tell us a little bit about yourself"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TabsContent>
+                <TabsContent value="calculos" className="grid min-h-full grid-cols-4 gap-4" >
+                  <FormField
+                    control={form.control}
+                    name="porcentajeAfectacion"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>% de Afectación (%)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              {...field}
+                              className={cn(
+                                errors.porcentajeAfectacion
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="longitud"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>Longitud (m)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              disabled
+                              {...field}
+                              className={cn('bg-slate-400',
+                                errors.longitud
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="ancho"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>Ancho (m)</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className={cn(
+                                errors.ancho
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="area"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>Area (m2)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              disabled
+                              {...field}
+                              className={cn('bg-slate-400',
+                                errors.area
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="espesor"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>Espesor (cm)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder=""
+                              {...field}
+                              className={cn(
+                                errors.espesor
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="volumen"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>Volúmen (m3)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              disabled
+                              {...field}
+                              className={cn('bg-slate-400',
+                                errors.volumen
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+                   <FormField
+                    control={form.control}
+                    name="densidad"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>Densidad (t/m3)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              {...field}
+                              className={cn(
+                                errors.densidad
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+                   <FormField
+                    control={form.control}
+                    name="masa"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="w-full">
+                          <FormLabel>Masa (t)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              disabled
+                              {...field}
+                              className={cn('bg-slate-400',
+                                errors.masa
+                                  ? "border-destructive text-sm font-medium"
+                                  : ""
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
                 </TabsContent>
               </Tabs>
 
