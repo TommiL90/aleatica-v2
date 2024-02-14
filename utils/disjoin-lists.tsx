@@ -1,9 +1,12 @@
 // obtiene los elementos diferentes entre 2 listas usando como criterio el argumento property
-export const  disjoinLists = (array1: any[], array2: any[], property: string) => {
-  let conjunto1 = new Set(array1);
-  let conjunto2 = new Set(array2);
+export const disjoinLists = (
+  array1: any[],
+  array2: any[],
+  property: string
+) => {
+  let diferencias = array1.filter(
+    (item: any) => !array2.map((el: any) => el).includes(item[property])
+  )
 
-  let diferencias = array1.filter((item: any) => !array2.map((el: any) => el[property]).includes(item[property]))
-
-  return diferencias;
+  return diferencias
 }

@@ -1,3 +1,4 @@
+import { Subspeciality } from "@/services/useGetRepositories"
 import {
   CellChange,
   CheckboxCell,
@@ -9,11 +10,11 @@ import {
   Row,
   TextCell,
 } from "@silevis/reactgrid"
-import { UnidadSimple } from "./simple-catalog"
-import { Subspeciality } from "@/services/useGetRepositories"
-import { FlagCell } from "@/components/cells/flag"
-import { ButtonCell } from "@/components/cells/button"
 
+import { ButtonCell } from "@/components/cells/button"
+import { FlagCell } from "@/components/cells/flag"
+
+import { UnidadSimple } from "./simple-catalog"
 
 export const getUnidadesSimples = (): UnidadSimple[] => []
 
@@ -41,7 +42,6 @@ export const getColumns = (): Column[] => [
   { columnId: "button_save", width: 120, reorderable: true },
   { columnId: "button_delete", width: 120, reorderable: true },
 ]
-
 
 export const headerRow = (columns: Column[]): Row => ({
   rowId: "header",
@@ -145,7 +145,6 @@ const filtro = (item: any, subespecialities: Subspeciality[]): boolean => {
     )
   }
 }
-
 
 export const getRows = (
   unidades: UnidadSimple[],

@@ -1,706 +1,99 @@
-"use client"
+import React from "react"
+import api from "@/services/api"
+import fetcher from "@/services/fetcher"
+import { getRepositoriesForMeasurements } from "@/services/get-repositories-for-measurements"
 
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { Calendar } from "@/components/ui/calendar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import ReactInputMask from "react-input-mask"
-import { RoadSurfaceDamages } from "@/components/road-surface-damages"
-import { Textarea } from "@/components/ui/textarea"
-import { Separator } from "@/components/ui/separator"
+import { NewRoadSurfaceMeasurementModal } from "./new-measurament-modal"
 
+const getSpecialty = async (specialtyId: number) => {
+  const specialty = await fetcher(
+    `${process.env.API_URL}/MtSpecialtyAction/FindById/${specialtyId}`
+  )
 
+  return specialty.result
+}
 
-const newRoadSurfaceMeasurementSchemaEsp = z.object({
-
-  fechaEstudioPrevio: z.date({
-    required_error: "A date of birth is required.",
-  }),
-  tramo: z.string().min(1, 'Requerido').max(5),
-  entronque: z.string().min(1, 'Requerido').max(5),
-  gaza: z.string().min(1, 'Requerido').max(5),
-  carril: z.string().min(1, 'Requerido').max(5),
-
-  cadenamientoInicial: z.string().min(7, 'Ingresar en formato correcto').max(7),
-  cadenamientoFinal: z.string().min(7, 'Ingresar en formato correcto').max(7),
-
-  actuacion: z.string().min(1, 'Requerido').max(5),
-  compuesta: z.string().min(1, 'Requerido').max(5),
-  prioridad: z.string().min(1, 'Requerido').max(5),
-
-  observacion: z.string().max(1000),
-
-
-  deterioros: z.array(z.string()).min(1, 'Debe seleccionar al menos un deterioro.'),
-
-  ancho:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-  espesor:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-  densidad:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-
-  porcentajeAfectacion:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-  masa:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-  longitud:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-  area:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-  volumen:  z.coerce.number()
-    .min(0, { message: 'Debe ser un número positivo o cero' })
-    .optional()
-    .refine(value => {
-      if (value === undefined) return true;
-      const regex = /^\d+(\.\d{1,2})?$/;
-      return regex.test(value.toString());
-    }, { message: 'Máximo de dos decimales permitidos' }),
-
-
-
-})
-
-
-export type NewRoadSurfaceMeasurementEsp = z.infer<typeof newRoadSurfaceMeasurementSchemaEsp>;
-
-
-export default function IndexPage() {
-
-  // 1. Define your form.
-  const form = useForm<NewRoadSurfaceMeasurementEsp>({
-    resolver: zodResolver(newRoadSurfaceMeasurementSchemaEsp),
-    defaultValues: {
-      deterioros: []
-    }
-  })
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-    reset,
-  } = form
-
-
-
-
-  // 2. Define a submit handler.
-  function onSubmit(values: NewRoadSurfaceMeasurementEsp) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+// tramo = roadsection
+// highwayIntersectionRes = entronqueRes
+// slipLaneRoad = cuerpoRes
+// highwayLane = carrilRes
+// priorityRes = prioridadRes
+// performanceCatalog = actuacionesRes
+const IndexPage = async () => {
+  const esp = 28
+  const projectId = 134
+  const specialtyRes = await getSpecialty(esp)
+  const especialidad = { label: specialtyRes.name, value: specialtyRes.id }
+  let projectTaskId: string
+  try {
+    const response = await api.get(
+      `${process.env.API_URL}/MeasurementTab/GetBySpecialty?specialityId=${esp}&projectId=${projectId}`
+    )
+    projectTaskId = response.data.result[0].projectTask
+  } catch (error) {
+    console.log(error)
   }
+  const {
+    subcatRes,
+    compositeCatalogByEspRes,
+    deteriorationTypeByEsp,
+    espRes,
+    highwayIntersectionRes,
+    highwayLane,
+    performanceCatalogByEspRes,
+    priorityRes,
+    roadSectionRes,
+    slipLaneRoad,
+  } = await getRepositoriesForMeasurements(28)
+
+  const tramos = roadSectionRes.result.map((item) => ({
+    label: item.name,
+    value: item.id,
+    highwayIntersections: item.mtRoadSectionMtHighwayIntersections,
+  }))
+  const gazas = slipLaneRoad.result.map((item) => ({
+    label: item.name,
+    value: item.id,
+  }))
+  const carriles = highwayLane.result.map((item) => ({
+    label: item.name,
+    value: item.id,
+  }))
+  const deterioros = deteriorationTypeByEsp.result.map((item) => ({
+    label: item.name,
+    value: item.id,
+  }))
+
+  const actuaciones = performanceCatalogByEspRes.result
+    .filter((actuacion) => actuacion.projectTask === projectTaskId)
+    .map((item) => ({
+      label: item.performanceName,
+      value: item.id,
+      compuestas: item.compositeCatalogs.map((item) => ({
+        label: item.compositeUdName,
+        value: item.id,
+        mtUnitOfMeasurementId: item.mtUnitOfMeasurementId,
+      })),
+    }))
+
+  const prioridades = priorityRes.result.map((item) => ({
+    label: item.name,
+    value: item.id,
+  }))
 
   return (
-    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
-        </DialogTrigger>
-        <DialogContent className=" sm:max-w-[820px]">
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Descripcion
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...form}>
-            <form id="newMeasurement" onSubmit={form.handleSubmit(onSubmit)} className="min-h-full space-y-8">
-              <Tabs defaultValue="account" className="min-h-full w-full">
-                <TabsList defaultValue="identificacion" className="grid w-full grid-cols-5">
-                  <TabsTrigger value="identificacion">Identificación</TabsTrigger>
-                  <TabsTrigger value="cadenamientos">Cadenamientos</TabsTrigger>
-                  <TabsTrigger value="deterioros">Deterioros</TabsTrigger>
-                  <TabsTrigger value="actuacion">Actuación</TabsTrigger>
-                  <TabsTrigger value="calculos">Cálculos</TabsTrigger>
-
-                </TabsList>
-                <Separator />
-                <TabsContent value="identificacion" className="grid min-h-full grid-cols-2 gap-4">
-                  <FormField
-
-                    name="especialidad"
-                    render={({ field }) => (
-                      <FormItem >
-                        <FormLabel>Especialidad</FormLabel>
-                        <FormControl>
-                          <Input disabled />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="fechaEstudioPrevio"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel className="pb-[6px] pt-1">Fecha estudio previo</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto size-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() || date < new Date("1900-01-01")
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="tramo"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tramo</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a verified email to display" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="m@example.com">m@example.com</SelectItem>
-                            <SelectItem value="m@google.com">m@google.com</SelectItem>
-                            <SelectItem value="m@support.com">m@support.com</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="entronque"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Entronque</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a verified email to display" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="m@example.com">m@example.com</SelectItem>
-                            <SelectItem value="m@google.com">m@google.com</SelectItem>
-                            <SelectItem value="m@support.com">m@support.com</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="gaza"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Gaza</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a verified email to display" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="m@example.com">m@example.com</SelectItem>
-                            <SelectItem value="m@google.com">m@google.com</SelectItem>
-                            <SelectItem value="m@support.com">m@support.com</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="carril"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Carril</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a verified email to display" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="m@example.com">m@example.com</SelectItem>
-                            <SelectItem value="m@google.com">m@google.com</SelectItem>
-                            <SelectItem value="m@support.com">m@support.com</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                </TabsContent>
-                <TabsContent value="cadenamientos" className="grid min-h-full grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="cadenamientoInicial"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Cadenamiento Inicial</FormLabel>
-                        <FormControl>
-                          <ReactInputMask
-                            mask="999+0999"
-                            alwaysShowMask={true}
-                            maskChar="#"
-
-                            {...field}
-
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          This is your public display name.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="cadenamientoFinal"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Cadenamiento Final</FormLabel>
-                        <FormControl>
-                          <ReactInputMask
-                            mask="999+0999"
-                            alwaysShowMask={true}
-                            maskChar="#"
-
-                            {...field}
-
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          This is your public display name.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                </TabsContent>
-                <TabsContent value="deterioros" className="flex-1">
-                  <FormField
-                    control={form.control}
-                    name="deterioros"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Deterioros</FormLabel>
-                        <FormControl>
-                          <RoadSurfaceDamages deteriorosSelected={field.value} onChange={field.onChange} />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                </TabsContent>
-                <TabsContent value="actuacion" className="grid grid-cols-2 gap-4">
-                  <div className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="actuacion"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Actuación</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a verified email to display" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="m@example.com">m@example.com</SelectItem>
-                              <SelectItem value="m@google.com">m@google.com</SelectItem>
-                              <SelectItem value="m@support.com">m@support.com</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> <FormField
-                      control={form.control}
-                      name="compuesta"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Compuesta</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a verified email to display" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="m@example.com">m@example.com</SelectItem>
-                              <SelectItem value="m@google.com">m@google.com</SelectItem>
-                              <SelectItem value="m@support.com">m@support.com</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> <FormField
-                      control={form.control}
-                      name="prioridad"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Prioridad</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a verified email to display" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="alta">Alta</SelectItem>
-                              <SelectItem value="baja">Baja</SelectItem>
-
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <FormField
-                    control={form.control}
-                    name="observacion"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bio</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Tell us a little bit about yourself"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </TabsContent>
-                <TabsContent value="calculos" className="grid min-h-full grid-cols-4 gap-4" >
-                  <FormField
-                    control={form.control}
-                    name="porcentajeAfectacion"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>% de Afectación (%)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              {...field}
-                              className={cn(
-                                errors.porcentajeAfectacion
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="longitud"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Longitud (m)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              {...field}
-                              className={cn('bg-slate-400',
-                                errors.longitud
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="ancho"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Ancho (m)</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className={cn(
-                                errors.ancho
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="area"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Area (m2)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              {...field}
-                              className={cn('bg-slate-400',
-                                errors.area
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="espesor"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Espesor (cm)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder=""
-                              {...field}
-                              className={cn(
-                                errors.espesor
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="volumen"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Volúmen (m3)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              {...field}
-                              className={cn('bg-slate-400',
-                                errors.volumen
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                   <FormField
-                    control={form.control}
-                    name="densidad"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Densidad (t/m3)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              {...field}
-                              className={cn(
-                                errors.densidad
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                   <FormField
-                    control={form.control}
-                    name="masa"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Masa (t)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              {...field}
-                              className={cn('bg-slate-400',
-                                errors.masa
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                </TabsContent>
-              </Tabs>
-
-            </form>
-          </Form>
-
-          <DialogFooter>
-            <Button type="submit" form="newMeasurement">Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </section>
+    <div>
+      <NewRoadSurfaceMeasurementModal
+        especialidad={especialidad}
+        actuaciones={actuaciones}
+        carriles={carriles}
+        deterioros={deterioros}
+        gazas={gazas}
+        prioridades={prioridades}
+        tramos={tramos}
+      />
+    </div>
   )
 }
+
+export default IndexPage

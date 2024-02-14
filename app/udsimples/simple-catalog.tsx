@@ -22,12 +22,18 @@ import {
 import useSWR from "swr"
 import useSWRMutation from "swr/mutation"
 
-
-
-import ModalEspecialidadesParaSpreadsheet from "./modalEspecialidadesParaSpreadsheet"
 import SpreadSheet from "../../components/spread-sheet"
-import { applyChanges, creator, getColumns, getEmpty, getRows, getUnidadesSimples, headerRow, moreRows } from "./functions"
-
+import {
+  applyChanges,
+  creator,
+  getColumns,
+  getEmpty,
+  getRows,
+  getUnidadesSimples,
+  headerRow,
+  moreRows,
+} from "./functions"
+import ModalEspecialidadesParaSpreadsheet from "./modalEspecialidadesParaSpreadsheet"
 
 interface DataResponse<T> {
   status: number
@@ -95,13 +101,6 @@ export interface SimpleCatalogProps {
   subCat: SubCategory[]
   unitMeasurement: UnitOfMeasurement[]
 }
-
-
-
-
-
-
-
 
 export default function SimpleCatalog({
   esp,
