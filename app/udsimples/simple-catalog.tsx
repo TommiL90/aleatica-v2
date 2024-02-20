@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import fetcher from "@/services/fetcher"
 import {
   SpecialtyAction,
@@ -207,7 +207,15 @@ export default function SimpleCatalog({
       newItem: false,
     }
   }
-  console.log(subEsp[0])
+ 
+  const handleChange = useCallback((changes: CellChange<any>[]) => {
+    setUnidadesSimples(prevUnidades => applyChanges(changes, prevUnidades, esp.map((item: any) => ({
+      label: item.name,
+      value: String(item.id),
+      subcategory: item.mtSubCategoryActionId,
+    })), getEmpty));
+  }, [esp, setUnidadesSimples])
+
   useEffect(() => {
     try {
       if (data) {
@@ -238,18 +246,7 @@ export default function SimpleCatalog({
             onChangeRows={(items: UnidadSimple[]) => setUnidadesSimples(items)}
             onChangeColumns={(columns: Column[]) => setColumns(columns)}
             onChange={(changes: CellChange<any>[]) =>
-              setUnidadesSimples(
-                applyChanges(
-                  changes,
-                  unidades,
-                  esp.map((item: any) => ({
-                    label: item.name,
-                    value: String(item.id),
-                    subcategory: item.mtSubCategoryActionId,
-                  })),
-                  getEmpty
-                )
-              )
+              handleChange(changes)
             }
             onCellClick={() => {}}
             onShowRow={() => {}}

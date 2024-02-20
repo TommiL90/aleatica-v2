@@ -16,6 +16,7 @@ import { z } from "zod"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -51,7 +52,8 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { RoadSurfaceDamages } from "@/components/road-surface-damages"
+
+import NeoprenoSubForm from "./neopreno-sub-form"
 
 interface Tramo {
   label: string
@@ -94,7 +96,7 @@ interface Especialidad {
   value: number
 }
 
-interface NewRoadSurfaceMeasurementModalProps {
+interface NewStructureMeasurementModalProps {
   tramos: Tramo[]
   gazas: Gaza[]
   carriles: Carril[]
@@ -157,7 +159,7 @@ interface CrearMedicion {
   mtDeteriorationTypeIds?: number[] | null // Puede ser nulo
 }
 
-const newRoadSurfaceMeasurementSchemaEsp = z.object({
+const newStructureMeasurementSchemaEsp = z.object({
   fechaEstudioPrevio: z.date({
     required_error: "A date of birth is required.",
   }),
@@ -282,13 +284,26 @@ const newRoadSurfaceMeasurementSchemaEsp = z.object({
       },
       { message: "Máximo de dos decimales permitidos" }
     ),
+
+  alternativeUnitMeasurementValue: z.coerce
+    .number()
+    .min(0, { message: "Debe ser un número positivo o cero" })
+    .optional()
+    .refine(
+      (value) => {
+        if (value === undefined) return true
+        const regex = /^\d+(\.\d{1,2})?$/
+        return regex.test(value.toString())
+      },
+      { message: "Máximo de dos decimales permitidos" }
+    ),
 })
 
-export type NewRoadSurfaceMeasurementEsp = z.infer<
-  typeof newRoadSurfaceMeasurementSchemaEsp
+export type NewStructureMeasurementEsp = z.infer<
+  typeof newStructureMeasurementSchemaEsp
 >
 
-export const NewRoadSurfaceMeasurementModal = ({
+export const NewStructureMeasurementModal = ({
   especialidad,
   actuaciones,
   carriles,
@@ -296,15 +311,13 @@ export const NewRoadSurfaceMeasurementModal = ({
   gazas,
   prioridades,
   tramos,
-}: NewRoadSurfaceMeasurementModalProps) => {
-  const [length, setLength] = useState(0)
-  const [area, setArea] = useState(0)
-  const [volume, setVolume] = useState(0)
-  const [masa, setMasa] = useState(0)
+}: NewStructureMeasurementModalProps) => {
+  const [disabledZincInputs, setDisabledZincInputs] = useState(true)
+  const [altInput, setAltInput] = useState(false)
 
   // 1. Define your form.
-  const form = useForm<NewRoadSurfaceMeasurementEsp>({
-    resolver: zodResolver(newRoadSurfaceMeasurementSchemaEsp),
+  const form = useForm<NewStructureMeasurementEsp>({
+    resolver: zodResolver(newStructureMeasurementSchemaEsp),
     defaultValues: {
       porcentajeAfectacion: 100,
       deterioros: [],
@@ -320,6 +333,8 @@ export const NewRoadSurfaceMeasurementModal = ({
     formState: { errors },
     reset,
   } = form
+
+  const test = errors
 
   const selectedTramo = watch("tramo")
   let filteredEntronques: { label: string; value: number }[] = []
@@ -413,7 +428,7 @@ export const NewRoadSurfaceMeasurementModal = ({
     }
   }
   // 2. Define a submit handler.
-  function onSubmit(values: NewRoadSurfaceMeasurementEsp) {
+  function onSubmit(values: NewStructureMeasurementEsp) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values)
@@ -428,13 +443,14 @@ export const NewRoadSurfaceMeasurementModal = ({
     watch("porcentajeAfectacion"),
     watch("cadenamientoInicial"),
     watch("cadenamientoFinal"),
+    watch("compuesta"),
   ])
 
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline">+ Nuevo</Button>
+          <Button variant="outline">Nueva medición Estructuras</Button>
         </DialogTrigger>
         <DialogContent className=" sm:max-w-[820px]">
           <DialogHeader>
@@ -467,12 +483,13 @@ export const NewRoadSurfaceMeasurementModal = ({
               <Tabs defaultValue="account" className="min-h-full w-full">
                 <TabsList
                   defaultValue="identificacion"
-                  className="grid w-full grid-cols-5"
+                  className="grid w-full grid-cols-6"
                 >
                   <TabsTrigger value="identificacion">
                     Identificación
                   </TabsTrigger>
                   <TabsTrigger value="cadenamientos">Cadenamientos</TabsTrigger>
+                  <TabsTrigger value="estrucutras">Estructuras</TabsTrigger>
                   <TabsTrigger value="deterioros">Deterioros</TabsTrigger>
                   <TabsTrigger value="actuacion">Actuación</TabsTrigger>
                   <TabsTrigger value="calculos">Cálculos</TabsTrigger>
@@ -740,6 +757,171 @@ export const NewRoadSurfaceMeasurementModal = ({
                     )}
                   />
                 </TabsContent>
+                <TabsContent
+                  value="estrucutras"
+                  className="grid min-h-full grid-cols-2 gap-4"
+                >
+                  <FormField
+                    name="noEstrucutura"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Número de estructuras{" "}
+                          <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={especialidad.label} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value={especialidad.value.toString()}>
+                              {especialidad.label}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="tipoEstructura"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Tipo de estructura{" "}
+                          <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={especialidad.label} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value={especialidad.value.toString()}>
+                              {especialidad.label}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="eje"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Eje <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={especialidad.label} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value={especialidad.value.toString()}>
+                              {especialidad.label}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="lado"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Lado <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={especialidad.label} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value={especialidad.value.toString()}>
+                              {especialidad.label}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="eleEstructura"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Elementos de estructuras{" "}
+                          <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={especialidad.label} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value={especialidad.value.toString()}>
+                              {especialidad.label}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="calificacion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Calificación{" "}
+                          <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={especialidad.label} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value={especialidad.value.toString()}>
+                              {especialidad.label}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TabsContent>
                 <TabsContent value="deterioros" className="flex-1">
                   <FormField
                     control={form.control}
@@ -750,11 +932,11 @@ export const NewRoadSurfaceMeasurementModal = ({
                           Deterioros <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
-                          <RoadSurfaceDamages
+                          {/* <StructureDamages
                             deterioros={deterioros}
                             deteriorosSelected={field.value}
                             onChange={field.onChange}
-                          />
+                          /> */}
                         </FormControl>
 
                         <FormMessage />
@@ -892,213 +1074,46 @@ export const NewRoadSurfaceMeasurementModal = ({
                   value="calculos"
                   className="grid min-h-full grid-cols-4 gap-4"
                 >
-                  <FormField
-                    control={form.control}
-                    name="porcentajeAfectacion"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>% de Afectación (%)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min={0}
-                              max={100}
-                              {...field}
-                              className={cn(
-                                errors.porcentajeAfectacion
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="longitud"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Longitud (m)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              {...field}
-                              className={cn(
-                                "bg-slate-400",
-                                errors.longitud
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="ancho"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Ancho (m)</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className={cn(
-                                errors.ancho
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="area"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Area (m2)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              {...field}
-                              className={cn(
-                                data && data.result.code === "m2"
-                                  ? "border-4 border-secondary"
-                                  : "",
-                                "bg-slate-400",
-                                errors.area
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="espesor"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Espesor (cm)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder=""
-                              {...field}
-                              className={cn(
-                                errors.espesor
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="volumen"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Volúmen (m3)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              {...field}
-                              className={cn(
-                                "bg-slate-400",
-                                errors.volumen
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="densidad"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Densidad (t/m3)</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              className={cn(
-                                errors.densidad
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="masa"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="w-full">
-                          <FormLabel>Masa (t)</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              disabled
-                              className={cn(
-                                "bg-slate-400",
-                                errors.masa
-                                  ? "border-destructive text-sm font-medium"
-                                  : ""
-                              )}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )
-                    }}
-                  />
+                  {watch("cadenamientoInicial") &&
+                  watch("cadenamientoFinal") &&
+                  watch("compuesta") ? (
+                    <>
+                      <div className="col-span-4 mb-6 space-y-2">
+                        <div className="flex items-center">
+                          <Checkbox
+                            id="active-zinc-inputs"
+                            checked={!disabledZincInputs}
+                            onCheckedChange={() =>
+                              setDisabledZincInputs(!disabledZincInputs)
+                            }
+                          />
+
+                          <Label className="ml-2" htmlFor="active-zinc-inputs">
+                            Liberar campos de lectura grises e introducir datos
+                            manualmente
+                          </Label>
+                        </div>
+                        <div className="flex w-[50%] items-center">
+                          <Checkbox
+                            id="active-alt"
+                            checked={altInput}
+                            onCheckedChange={() => setAltInput(!altInput)}
+                          />
+                          <Label className="ml-2" htmlFor="active-alt">
+                            Usar unidad de medida alternativa
+                          </Label>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="col-span-4">
+                      Para desbloquear cálculos precisa ingresar datos de{" "}
+                      <strong>cadenamiento inicial</strong>,{" "}
+                      <strong>cadenamiento previo</strong> y{" "}
+                      <strong>unidad compuesta</strong>
+                    </p>
+                  )}
+                  <NeoprenoSubForm form={form} errors={errors} />
                 </TabsContent>
               </Tabs>
             </form>

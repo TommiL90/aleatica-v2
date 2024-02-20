@@ -75,7 +75,7 @@ export default function IndexPage() {
   )
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <ReactGrid rows={rows} columns={columns} onCellsChanged={handleChanges} />
+      <ReactGrid rows={rows} columns={columns} onCellsChanged={handleChanges} enableFillHandle />
     </section>
   )
 }

@@ -1,3 +1,5 @@
+import { cache } from "react"
+
 import fetcher from "./fetcher"
 import { MtRoadSection, SpecialtyAction } from "./useGetRepositories"
 
@@ -172,7 +174,7 @@ interface Response<T> {
 // highwayLane = carrilRes
 // priorityRes = prioridadRes
 // performanceCatalog = actuacionesRes
-export const getRepositoriesForMeasurements = async (esp: number) => {
+export const getRepositoriesForMeasurements = cache(async (esp: number) => {
   try {
     const [
       subcatRes,
@@ -208,7 +210,7 @@ export const getRepositoriesForMeasurements = async (esp: number) => {
         Response<MtPriority>
       >,
       fetcher(
-        `${process.env.API_URL}/PerformanceCatalog/GetBySpecialty/${esp}`
+        `${process.env.API_URL}/PerformanceCatalog/GetBySpecialtyAndTask?specialityId=${esp}`
       ) as Promise<Response<PerformanceCatalogByEsp>>,
       fetcher(
         `${process.env.API_URL}/CompositeCatalog/GetBySpecialty/${esp}`
@@ -234,4 +236,4 @@ export const getRepositoriesForMeasurements = async (esp: number) => {
     console.log(error)
     throw new Error("Error")
   }
-}
+})

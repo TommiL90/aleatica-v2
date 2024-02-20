@@ -1,3 +1,5 @@
+import { cache } from "react"
+
 import fetcher from "./fetcher"
 
 export interface SimpleCatalog {
@@ -207,7 +209,7 @@ interface Response<T> {
   errorMessage?: any
 }
 
-export const getRepositories = async () => {
+export const getRepositories = cache(async () => {
   let test
   try {
     const [
@@ -275,4 +277,4 @@ export const getRepositories = async () => {
     console.log(error)
     throw new Error("Error")
   }
-}
+})

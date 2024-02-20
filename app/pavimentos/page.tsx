@@ -3,7 +3,7 @@ import api from "@/services/api"
 import fetcher from "@/services/fetcher"
 import { getRepositoriesForMeasurements } from "@/services/get-repositories-for-measurements"
 
-import { NewStructureMeasurementModal } from "./new-structure-measurament.modal"
+import { NewRoadSurfaceMeasurementModal } from "./new-road-surface-measurament-modal"
 
 const getSpecialty = async (specialtyId: number) => {
   const specialty = await fetcher(
@@ -20,7 +20,7 @@ const getSpecialty = async (specialtyId: number) => {
 // priorityRes = prioridadRes
 // performanceCatalog = actuacionesRes
 const IndexPage = async () => {
-  const esp = 32
+  const esp = 28
   const projectId = 134
   const specialtyRes = await getSpecialty(esp)
   const especialidad = { label: specialtyRes.name, value: specialtyRes.id }
@@ -81,10 +81,9 @@ const IndexPage = async () => {
     value: item.id,
   }))
 
-  /////////
   return (
     <div>
-      <NewStructureMeasurementModal
+      <NewRoadSurfaceMeasurementModal
         especialidad={especialidad}
         actuaciones={actuaciones}
         carriles={carriles}
