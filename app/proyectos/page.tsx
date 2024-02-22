@@ -132,7 +132,7 @@ const data: Payment[] = [
   },
 ]
 
-export const columns: ColumnDef<Project>[] = [
+const columns: ColumnDef<Project>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -164,7 +164,7 @@ export const columns: ColumnDef<Project>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           UNIDAD
-          <BiSolidSortAlt className="ml-2 h-4 w-4" />
+          <BiSolidSortAlt className="ml-2 size-4" />
         </Button>
       )
     },
@@ -214,9 +214,9 @@ export const columns: ColumnDef<Project>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="size-8 p-0">
               <span className="sr-only">Open menu</span>
-              <BiDotsHorizontalRounded className="h-4 w-4" />
+              <BiDotsHorizontalRounded className="size-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -286,7 +286,7 @@ export default function DataTableDemo() {
 
   return (
     <section className="max-h-screen w-full lg:m-auto lg:w-10/12">
-      <div className="mx-auto max-w-screen-xl px-4 pb-8 pt-8">
+      <div className="mx-auto max-w-screen-xl px-4 py-8">
         <div className="relative w-full overflow-x-auto p-4 shadow-md sm:rounded-lg">
           <h2>Proyectos en Desarrollo</h2>
 
@@ -295,14 +295,14 @@ export default function DataTableDemo() {
           </p>
           <div className="flex items-center py-4">
             <div className="flex">
-              <Button className="rounded-br-none rounded-tr-none" type="button">
+              <Button className="rounded-r-none" type="button">
                 Filtros
               </Button>
               <div className="relative w-full">
                 <Input
                   type="search"
                   placeholder="Filter emails..."
-                  className="w-60 max-w-sm rounded-bl-none rounded-tl-none"
+                  className="w-60 max-w-sm rounded-l-none"
                   value={
                     (table.getColumn("email")?.getFilterValue() as string) ?? ""
                   }
@@ -314,7 +314,7 @@ export default function DataTableDemo() {
                   type="submit"
                   size="icon"
                   variant="secondary"
-                  className="absolute end-0 top-0 rounded-bl-none rounded-tl-none"
+                  className="absolute end-0 top-0 rounded-l-none"
                 >
                   <BiSearch size={16} />
                   <span className="sr-only">Search</span>
@@ -324,7 +324,7 @@ export default function DataTableDemo() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
-                  Columns <BiChevronDown className="ml-2 h-4 w-4" />
+                  Columns <BiChevronDown className="ml-2 size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
