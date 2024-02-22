@@ -1,14 +1,9 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import useSWR from 'swr'
-
-import {
-  BiSolidSortAlt,
-  BiChevronDown,
-  BiDotsHorizontalRounded,
-  BiSearch,
-} from 'react-icons/bi'
+import * as React from "react"
+import { useState } from "react"
+import Link from "next/link"
+import fetcher from "@/services/fetcher"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -20,7 +15,17 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table"
+import {
+  BiChevronDown,
+  BiDotsHorizontalRounded,
+  BiSearch,
+  BiSolidSortAlt,
+} from "react-icons/bi"
+import useSWR from "swr"
+
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -29,7 +34,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -37,13 +59,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Checkbox } from '@/components/ui/checkbox'
-
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import api from '@/services/api'
-import { useState } from 'react'
+} from "@/components/ui/table"
 
 interface Project {
   mtBusinessUnit: string
@@ -79,53 +95,51 @@ interface Data {
 export type Payment = {
   id: string
   amount: number
-  status: 'pending' | 'processing' | 'success' | 'failed'
+  status: "pending" | "processing" | "success" | "failed"
   email: string
 }
 
 const data: Payment[] = [
   {
-    id: 'm5gr84i9',
+    id: "m5gr84i9",
     amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    status: "success",
+    email: "ken99@yahoo.com",
   },
   {
-    id: '3u1reuv4',
+    id: "3u1reuv4",
     amount: 242,
-    status: 'success',
-    email: 'Abe45@gmail.com',
+    status: "success",
+    email: "Abe45@gmail.com",
   },
   {
-    id: 'derv1ws0',
+    id: "derv1ws0",
     amount: 837,
-    status: 'processing',
-    email: 'Monserrat44@gmail.com',
+    status: "processing",
+    email: "Monserrat44@gmail.com",
   },
   {
-    id: '5kma53ae',
+    id: "5kma53ae",
     amount: 874,
-    status: 'success',
-    email: 'Silas22@gmail.com',
+    status: "success",
+    email: "Silas22@gmail.com",
   },
   {
-    id: 'bhqecj4p',
+    id: "bhqecj4p",
     amount: 721,
-    status: 'failed',
-    email: 'carmella@hotmail.com',
+    status: "failed",
+    email: "carmella@hotmail.com",
   },
 ]
 
-const fetcher = (url: string) => api.get(url).then((res) => res.data)
-
-export const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<Project>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -142,62 +156,78 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('status')}</div>
-    ),
-  },
-  {
-    accessorKey: 'email',
+    accessorKey: "name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
-          <BiSolidSortAlt className="ml-2 h-4 w-4" />
+          UNIDAD
+          <BiSolidSortAlt className="ml-2 size-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: 'amount',
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
+    accessorKey: "description",
+    header: "DESCRIPCIÓN",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("description")}</div>
+    ),
   },
   {
-    id: 'actions',
+    accessorKey: "mtBusinessUnit",
+    header: "UNIDAD DE NEGOCIO",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("mtBusinessUnit")}</div>
+    ),
+  },
+  {
+    accessorKey: "version",
+    header: "VERSION",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("version")}</div>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: "STATUS",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("status")}</div>
+    ),
+  },
+  {
+    accessorKey: "type",
+    header: "TIPO",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("type")}</div>,
+  },
+
+  {
+    id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      // const payment = row.original
+      const id = row.original.id
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="size-8 p-0">
               <span className="sr-only">Open menu</span>
-              <BiDotsHorizontalRounded className="h-4 w-4" />
+              <BiDotsHorizontalRounded className="size-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+            {/* <DropdownMenuItem
+            // onClick={() => navigator.clipboard.writeText(payment.id)}
             >
               Copy payment ID
+            </DropdownMenuItem> */}
+            <DropdownMenuItem>
+              <Link href={`/proyectos/tareas/${id}`}>Tareas</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
@@ -218,10 +248,10 @@ export default function DataTableDemo() {
   const [pageIndex, setPageIndex] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [sort, setSort] = useState(1)
-  const [searchInput, setSearchInput] = useState('')
-  const [filtroUnidad, setFiltroUnidad] = useState('')
-  const [filtroYear, setFiltroYear] = useState('')
-  const [filtroTipo, setFiltroTipo] = useState('')
+  const [searchInput, setSearchInput] = useState("")
+  const [filtroUnidad, setFiltroUnidad] = useState("")
+  const [filtroYear, setFiltroYear] = useState("")
+  const [filtroTipo, setFiltroTipo] = useState("")
 
   const {
     data: dataRes,
@@ -230,10 +260,13 @@ export default function DataTableDemo() {
   } = useSWR<Data>(
     `${process.env.API_URL}/Project/GetAllPaginated?Page=${pageIndex}&PageSize=${pageSize}&SearchByProp=Code&SearchCriteria=${searchInput}&MtBusinessUnitId=${filtroUnidad}&MtYearId=${filtroYear}&Type=${filtroTipo}`,
     fetcher,
+    {
+      keepPreviousData: true,
+    }
   )
-  console.log(dataRes)
+
   const table = useReactTable({
-    data,
+    data: dataRes?.result.results || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -253,7 +286,7 @@ export default function DataTableDemo() {
 
   return (
     <section className="max-h-screen w-full lg:m-auto lg:w-10/12">
-      <div className="mx-auto max-w-screen-xl px-4 pb-8 pt-8">
+      <div className="mx-auto max-w-screen-xl px-4 py-8">
         <div className="relative w-full overflow-x-auto p-4 shadow-md sm:rounded-lg">
           <h2>Proyectos en Desarrollo</h2>
 
@@ -262,26 +295,26 @@ export default function DataTableDemo() {
           </p>
           <div className="flex items-center py-4">
             <div className="flex">
-              <Button className="rounded-br-none rounded-tr-none" type="button">
+              <Button className="rounded-r-none" type="button">
                 Filtros
               </Button>
               <div className="relative w-full">
                 <Input
                   type="search"
                   placeholder="Filter emails..."
-                  className="w-60 max-w-sm rounded-bl-none rounded-tl-none"
+                  className="w-60 max-w-sm rounded-l-none"
                   value={
-                    (table.getColumn('email')?.getFilterValue() as string) ?? ''
+                    (table.getColumn("email")?.getFilterValue() as string) ?? ""
                   }
                   onChange={(event) =>
-                    table.getColumn('email')?.setFilterValue(event.target.value)
+                    table.getColumn("email")?.setFilterValue(event.target.value)
                   }
                 />
                 <Button
                   type="submit"
                   size="icon"
                   variant="secondary"
-                  className="absolute end-0 top-0 rounded-bl-none rounded-tl-none"
+                  className="absolute end-0 top-0 rounded-l-none"
                 >
                   <BiSearch size={16} />
                   <span className="sr-only">Search</span>
@@ -291,7 +324,7 @@ export default function DataTableDemo() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
-                  Columns <BiChevronDown className="ml-2 h-4 w-4" />
+                  Columns <BiChevronDown className="ml-2 size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -316,6 +349,7 @@ export default function DataTableDemo() {
             </DropdownMenu>
           </div>
           <div className="rounded-md border">
+            {isLoading ? <p>Cargando ...</p> : null}
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -327,7 +361,7 @@ export default function DataTableDemo() {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext(),
+                                header.getContext()
                               )}
                         </TableHead>
                       )
@@ -340,13 +374,13 @@ export default function DataTableDemo() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
+                      data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext(),
+                            cell.getContext()
                           )}
                         </TableCell>
                       ))}
@@ -365,28 +399,49 @@ export default function DataTableDemo() {
               </TableBody>
             </Table>
           </div>
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          <div className="flex items-center justify-between space-x-2 py-4">
+            <div className="flex text-sm text-muted-foreground">
+              {table.getFilteredSelectedRowModel().rows.length} of{" "}
               {table.getFilteredRowModel().rows.length} row(s) selected.
             </div>
+            <div className="flex items-center space-x-2">
+              {" "}
+              <p className="text-sm font-medium">Rows per page</p>
+              <Select
+                // value={`${table.getState().pagination.pageSize}`}
+                onValueChange={(value: string | number) => {
+                  setPageSize(Number(value))
+                }}
+              >
+                <SelectTrigger className="h-8 w-[70px]">
+                  <SelectValue
+                    placeholder={table.getState().pagination.pageSize}
+                  />
+                </SelectTrigger>
+                <SelectContent side="top">
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {pageSize}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                Next
-              </Button>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink>{pageIndex}</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         </div>

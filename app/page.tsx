@@ -1,12 +1,31 @@
-'use client'
-import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import React from "react"
+import api from "@/services/api"
+import fetcher from "@/services/fetcher"
 
-export default function Home() {
-  const pathName = usePathname()
 
-  console.log(pathName)
+const getSpecialty = async (specialtyId: number) => {
+  const specialty = await fetcher(
+    `${process.env.API_URL}/MtSpecialtyAction/FindById/${specialtyId}`
+  )
+
+  return specialty.result
+}
+
+// tramo = roadsection
+// highwayIntersectionRes = entronqueRes
+// slipLaneRoad = cuerpoRes
+// highwayLane = carrilRes
+// priorityRes = prioridadRes
+// performanceCatalog = actuacionesRes
+const IndexPage = async () => {
+
+
+  /////////
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+    <div>
+      Dashboard
+    </div>
   )
 }
+
+export default IndexPage
