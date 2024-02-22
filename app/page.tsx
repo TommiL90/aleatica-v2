@@ -2,7 +2,6 @@ import React from "react"
 import api from "@/services/api"
 import fetcher from "@/services/fetcher"
 
-
 const getSpecialty = async (specialtyId: number) => {
   const specialty = await fetcher(
     `${process.env.API_URL}/MtSpecialtyAction/FindById/${specialtyId}`
@@ -18,14 +17,8 @@ const getSpecialty = async (specialtyId: number) => {
 // priorityRes = prioridadRes
 // performanceCatalog = actuacionesRes
 const IndexPage = async () => {
-
-
   /////////
-  return (
-    <div>
-      Dashboard
-    </div>
-  )
+  return <div>Dashboard</div>
 }
 
 export default IndexPage

@@ -1,12 +1,15 @@
-'use client'
-import React from 'react'
+"use client"
+
+import React from "react"
 
 interface Props {
   children: React.ReactNode
 }
-const SpreadSheetRoot = ({ children }:Props) => {
+const SpreadSheetRoot = ({ children }: Props) => {
   return (
-    <section className='lg:w-12/12 max-h-screen w-full lg:m-auto'>{children}</section>
+    <section className="lg:w-12/12 max-h-screen w-full lg:m-auto">
+      {children}
+    </section>
   )
 }
 
