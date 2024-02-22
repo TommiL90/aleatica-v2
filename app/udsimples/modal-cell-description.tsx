@@ -13,13 +13,6 @@ interface Props {
 
 export default function ModalDescriptionCell(props: Props) {
   const [newValue, setNewValue] = useState(props.defaultValue)
-  const handleClick = (event) => {
-    // Verifica si el clic fue con el botón izquierdo del mouse (botón 0)
-    if (event.button === 0) {
-      // Realiza la lógica que deseas ejecutar cuando se hace clic con el botón izquierdo
-      console.log('Clic izquierdo del mouse');
-    }
-  };
   return (
       <>
           <div id="staticModal" tabIndex={-1} aria-hidden="true" className="fixed inset-x-0 top-0 z-50 mx-auto flex w-[450px] items-center overflow-y-auto overflow-x-hidden p-4 md:inset-0">
