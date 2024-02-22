@@ -50,6 +50,7 @@ import {
 } from "./functions"
 import ModalDescriptionCell from "./modal-cell-description"
 import { ModalDeleteUdSimple } from "./modal-delete"
+import ModalDetail from "./modal-details"
 import ModalEspecialidadesParaSpreadsheet from "./modalEspecialidadesParaSpreadsheet"
 
 interface DataResponse<T> {
@@ -141,7 +142,6 @@ export default function SimpleCatalog({
     fetcher
   )
 
-  console.log(data && data.result.results[0])
   // const { data, mutate, isLoading } = useSWR<DataResponse<ResponseSimpleUN>>(`${process.env.API_URL}/SimpleCatalog/GetAll`, fetcher)
 
   const [unidades, setUnidadesSimples] = useState<UnidadSimple[]>([])
@@ -152,6 +152,7 @@ export default function SimpleCatalog({
   const [showModaldelete, setShowModalDelete] = useState(false)
   const [indexOfDescription, setIndexOfDescription] = useState(0)
   const [item, setItem] = useState<UnidadSimple>(getEmpty)
+  const [modalDetail, setModalDetail] = useState(false)
   //const rows = useMemo(() => getRows(people), [people])
 
   const handleLocationClick = useCallback(
@@ -434,7 +435,11 @@ export default function SimpleCatalog({
             onChangeColumns={(columns: Column[]) => setColumns(columns)}
             onChange={(changes: CellChange<any>[]) => handleChange(changes)}
             onCellClick={handleLocationClick}
-            onShowRow={() => {}}
+            onShowRow={(idx: any) => {
+              const item = unidades.at(idx - 1);
+              setItemId(item ? item.id : 0)
+              setModalDetail(true)
+            }}
             onUpdateRow={() => {}}
           />
         </SpreadSheet.Root>
@@ -486,6 +491,30 @@ export default function SimpleCatalog({
         id={item.id}
         mutate={mutate}
       />
+
+      {modalDetail ? (
+        <ModalDetail
+          isModalOpen={modalDetail}
+          title="Detalles de unidad"
+          itemSelected={unidades.find(
+            (item: UnidadSimple) => item.id === itemId
+          )}
+          unidadesObra={unitMeasurement.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          subcategorias={subCat.map((item: any) => ({
+            label: item.text,
+            value: item.value,
+          }))}
+          especialidades={esp.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+            subcategory: item.mtSubCategoryActionId,
+          }))}
+          onClose={() => setModalDetail(false)}
+        />
+      ) : null}
     </section>
   )
 }
