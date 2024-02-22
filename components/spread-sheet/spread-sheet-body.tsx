@@ -280,23 +280,23 @@ export default function SpreadSheetBody({
   }
 
   const handleFocusCell = (location: CellLocation) => {
-    if (
-      typeof location.rowId === "number" &&
-      location.rowId > 0 &&
-      location.columnId === "descripcionUnidadSimple"
-    ) {
-      const cell = rows[location.rowId].cells[3]
+    // if (
+    //   typeof location.rowId === "number" &&
+    //   location.rowId > 0 &&
+    //   location.columnId === "descripcionUnidadSimple"
+    // ) {
+    //   const cell = rows[location.rowId].cells[3]
 
-      let description: string
+    //   let description: string
 
-      if ("text" in cell) {
-        description = cell.text
-      } else {
-        description = "Descripción vacía"
-      }
+    //   if ("text" in cell) {
+    //     description = cell.text
+    //   } else {
+    //     description = "Descripción vacía"
+    //   }
 
-      setModalCadenamientoInicial(true)
-    }
+    //   setModalCadenamientoInicial(true)
+    // }
     onCellClick(location)
   }
 

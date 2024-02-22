@@ -37,7 +37,6 @@ export const getColumns = (): Column[] => [
   { columnId: "especialidad", width: 200, reorderable: true, resizable: true },
   { columnId: "unidadObra", width: 200, reorderable: true, resizable: true },
   { columnId: "sap", width: 200, reorderable: true, resizable: true },
-  { columnId: "global", width: 70, reorderable: true, resizable: true },
   { columnId: "modal", width: 150, reorderable: true },
   { columnId: "button_save", width: 120, reorderable: true },
   { columnId: "button_delete", width: 120, reorderable: true },
@@ -86,20 +85,17 @@ export const headerRow = (columns: Column[]): Row => ({
       case "unidadObra":
         elem = {
           type: "header",
-          text: "Unidad de obra *",
+          text: "Unidad de medida *",
           style: { color: "#666179" },
         }
         break
       case "sap":
         elem = { type: "header", text: "SAP", style: { color: "#666179" } }
         break
-      case "global":
-        elem = { type: "header", text: "Global", style: { color: "#666179" } }
-        break
       case "idUnidad":
         elem = {
           type: "header",
-          text: "ID Unidad (autogenerado)",
+          text: "ID Unidad",
           style: { color: "#666179" },
         }
         break
@@ -286,14 +282,14 @@ export const getRows = (
             className: "text-sm  block w-full bg-gray-100 text-gray-800",
           }
           break
-        case "global":
-          elem = {
-            type: "checkbox",
-            checked: item.global,
-            className:
-              "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600",
-          }
-          break
+        // case "global":
+        //   elem = {
+        //     type: "checkbox",
+        //     checked: item.global,
+        //     className:
+        //       "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600",
+        //   }
+        //   break
       }
 
       return elem
@@ -312,7 +308,7 @@ export const getEmpty = (id: number = 1): UnidadSimple => ({
   especialidad: null,
   unidadObra: null,
   sap: ``,
-  global: false,
+  // global: false,
   subEspecialidad: null,
   unidadObraisOpen: false,
   subcategoriaisOpen: false,
@@ -421,3 +417,4 @@ export const creator = async (
     body: JSON.stringify(arg),
   }).then((res) => res.json())
 }
+
