@@ -3,6 +3,8 @@ import { getRepositories } from "@/services/useGetRepositories"
 
 import TableUdSimple from "./simple-catalog"
 
+
+
 const SimpleCatalogPage = async () => {
   const { subEspRes, espRes, subCat, unitMeasurementRes } =
     await getRepositories()

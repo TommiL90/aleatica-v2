@@ -21,8 +21,6 @@ import {
 } from "@silevis/reactgrid"
 import useSWR from "swr"
 import useSWRMutation from "swr/mutation"
-
-import SpreadSheet from "../../components/spread-sheet"
 import {
   applyChanges,
   creator,
@@ -34,6 +32,12 @@ import {
   moreRows,
 } from "./functions"
 import ModalEspecialidadesParaSpreadsheet from "./modalEspecialidadesParaSpreadsheet"
+import SpreadSheetAlt from "@/components/spread-sheet-alt"
+import { SpreadSheet } from "@/components/spread-sheet"
+import { Button } from "@/components/ui/button"
+import { BiSearch } from "react-icons/bi"
+import { Input } from "@/components/ui/input"
+
 
 interface DataResponse<T> {
   status: number
@@ -86,7 +90,7 @@ export interface UnidadSimple {
   subcategoriaisOpen: boolean
   especialidadisOpen: boolean
   especialidadesFilter: any[]
-  newItem: boolean // indica si es elemento nuevo: true, o cagado desde bd: false
+  newItem: boolean 
   [key: string]: any
 }
 interface Option {
@@ -207,7 +211,7 @@ export default function SimpleCatalog({
       newItem: false,
     }
   }
- 
+
   const handleChange = useCallback((changes: CellChange<any>[]) => {
     setUnidadesSimples(prevUnidades => applyChanges(changes, prevUnidades, esp.map((item: any) => ({
       label: item.name,
@@ -234,10 +238,36 @@ export default function SimpleCatalog({
   if (isLoading) return <p>Loading ...</p>
   if (error) return <p>Error: {error}</p>
   return (
-    <main>
-      <section className="lg:w-12/12 max-h-screen w-full bg-white dark:bg-gray-900 lg:m-auto">
-        <div style={{ margin: "0 20px" }}>
-          <SpreadSheet
+    <section >
+      <div style={{ margin: "0 20px" }}>
+        <SpreadSheet.Root>
+          <SpreadSheet.Header title="Catalogo de unidades simples" description="Repositorio de unidades de obra simples">
+            <div className="flex items-center py-4">
+              <div className="flex">
+                <Button className="rounded-r-none" type="button">
+                  Filtros
+                </Button>
+                <div className="relative w-full">
+                  <Input
+                    type="search"
+                    placeholder="Buscar..."
+                    className="w-60 max-w-sm rounded-l-none"
+
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    variant="secondary"
+                    className="absolute end-0 top-0 rounded-l-none"
+                  >
+                    <BiSearch size={16} />
+                    <span className="sr-only">Search</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </SpreadSheet.Header>
+          <SpreadSheet.Body
             loading={isLoading}
             items={unidades}
             rows={rows}
@@ -248,43 +278,46 @@ export default function SimpleCatalog({
             onChange={(changes: CellChange<any>[]) =>
               handleChange(changes)
             }
-            onCellClick={() => {}}
-            onShowRow={() => {}}
-            onUpdateRow={() => {}}
+            onCellClick={() => { }}
+            onShowRow={() => { }}
+            onUpdateRow={() => { }}
           />
-        </div>
 
-        {modal ? (
-          <ModalEspecialidadesParaSpreadsheet
-            title="Subespecialidades"
-            especialidad={parseInt(item.especialidad)}
-            options={subEsp.map((item: any) => ({
-              label: item.name,
-              value: item.id,
-              subcategoryId: item.mtSubCategoryActionId,
-              especialityId: item.mtSpecialtyActionId,
-              especialityName: item.mtSpecialtyAction,
-              code: item.code,
-              route: item.route,
-            }))}
-            // subespecialidaddes={item.subEspecialidades}
-            onChange={(value: any) => {
-              console.log(value)
-              setUnidadesSimples([
-                ...unidades.map((unidad: UnidadSimple) => ({
-                  ...unidad,
-                  subEspecialidad:
-                    unidad.idauto === item.idauto
-                      ? value
-                      : unidad.subEspecialidad,
-                })),
-              ])
-            }}
-            onClose={() => setModal(!modal)}
-            isModalOpen={modal}
-          />
-        ) : null}
-      </section>
-    </main>
+        </SpreadSheet.Root>
+
+      </div>
+
+      {modal ? (
+        <ModalEspecialidadesParaSpreadsheet
+          title="Subespecialidades"
+          especialidad={parseInt(item.especialidad)}
+          options={subEsp.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+            subcategoryId: item.mtSubCategoryActionId,
+            especialityId: item.mtSpecialtyActionId,
+            especialityName: item.mtSpecialtyAction,
+            code: item.code,
+            route: item.route,
+          }))}
+          // subespecialidaddes={item.subEspecialidades}
+          onChange={(value: any) => {
+            console.log(value)
+            setUnidadesSimples([
+              ...unidades.map((unidad: UnidadSimple) => ({
+                ...unidad,
+                subEspecialidad:
+                  unidad.idauto === item.idauto
+                    ? value
+                    : unidad.subEspecialidad,
+              })),
+            ])
+          }}
+          onClose={() => setModal(!modal)}
+          isModalOpen={modal}
+        />
+      ) : null}
+
+    </section>
   )
 }
