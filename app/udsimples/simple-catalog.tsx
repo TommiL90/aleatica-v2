@@ -20,8 +20,24 @@ import {
   Row,
   TextCell,
 } from "@silevis/reactgrid"
+import { BiSearch } from "react-icons/bi"
+import { toast } from "sonner"
 import useSWR from "swr"
 import useSWRMutation from "swr/mutation"
+
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { SpreadSheet } from "@/components/spread-sheet"
+import SpreadSheetAlt from "@/components/spread-sheet-alt"
+
 import {
   applyChanges,
   creator,
@@ -32,24 +48,9 @@ import {
   headerRow,
   moreRows,
 } from "./functions"
-
-import SpreadSheetAlt from "@/components/spread-sheet-alt"
-import { SpreadSheet } from "@/components/spread-sheet"
-import { Button } from "@/components/ui/button"
-import { BiSearch } from "react-icons/bi"
-import { Input } from "@/components/ui/input"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import ModalDescriptionCell from "./modal-cell-description"
 import { ModalDeleteUdSimple } from "./modal-delete"
 import ModalEspecialidadesParaSpreadsheet from "./modalEspecialidadesParaSpreadsheet"
-import ModalDescriptionCell from "./modal-cell-description"
-
 
 interface DataResponse<T> {
   status: number
@@ -136,9 +137,11 @@ export default function SimpleCatalog({
   const { data, mutate, isLoading, error } = useSWR<
     DataResponse<SimpleUnitPaginated>
   >(
-    `${process.env.API_URL}/SimpleCatalog/GetAllPaginated?${filtroEspecialidad.length ? ` MtSpecialtyActionId=${filtroEspecialidad}&` : ''}${searchInput.length ? `SearchCriteria=${searchInput}&` : ''}PageSize=2147483647`,
+    `${process.env.API_URL}/SimpleCatalog/GetAllPaginated?${filtroEspecialidad.length ? ` MtSpecialtyActionId=${filtroEspecialidad}&` : ""}${searchInput.length ? `SearchCriteria=${searchInput}&` : ""}PageSize=2147483647`,
     fetcher
   )
+
+  console.log(data && data.result.results[0])
   // const { data, mutate, isLoading } = useSWR<DataResponse<ResponseSimpleUN>>(`${process.env.API_URL}/SimpleCatalog/GetAll`, fetcher)
 
   const [unidades, setUnidadesSimples] = useState<UnidadSimple[]>([])
@@ -151,110 +154,112 @@ export default function SimpleCatalog({
   const [item, setItem] = useState<UnidadSimple>(getEmpty)
   //const rows = useMemo(() => getRows(people), [people])
 
-  const handleLocationClick = useCallback(async (location: CellLocation) => {
+  const handleLocationClick = useCallback(
+    async (location: CellLocation) => {
+      if (location.columnId.toString() === "descripcionUnidadSimple") {
+        const idx = location.rowId as number
+        const item = unidades.at(idx - 1)
 
-    if (location.columnId.toString() === "descripcionUnidadSimple") {
-      const idx = location.rowId as number;
-      const item = unidades.at(idx - 1);
- 
-      if (item) {
-        setIndexOfDescription(idx - 1)
-        setItem(item)
-        setShowDescriptionModal(true)
+        if (item) {
+          setIndexOfDescription(idx - 1)
+          setItem(item)
+          setShowDescriptionModal(true)
+        }
       }
 
-    }
+      if (location.columnId.toString() === "modal") {
+        mutate()
+        const idx = location.rowId as number
+        const item = unidades.at(idx - 1)
 
-
-    if (location.columnId.toString() === "modal") {
-      mutate()
-      const idx = location.rowId as number;
-      const item = unidades.at(idx - 1);
-
-      if (item) {
-        setItem(item)
-        setShowModalSpecialty(true)
+        if (item) {
+          setItem(item)
+          setShowModalSpecialty(true)
+        }
       }
 
-    }
+      if (location.columnId.toString() === "button_delete") {
+        const idx = location.rowId as number
+        const item = unidades.at(idx - 1)
 
-    if (location.columnId.toString() === "button_delete") {
-      const idx = location.rowId as number;
-      const item = unidades.at(idx - 1);
-
-      if (item != undefined) {
-        setItem(item)
-        setShowModalDelete(true)
+        if (item != undefined) {
+          setItem(item)
+          setShowModalDelete(true)
+        }
       }
 
-    }
+      if (location.columnId.toString() === "button_save") {
+        const idx = location.rowId as number
+        const item = unidades.at(idx - 1)
 
-    // if (location.columnId.toString() === "button_save") {
+        let toastId
+        try {
+          if (item != undefined) {
+            if (
+              item.nombreUnidadSimple.length > 0 &&
+              item.descripcionUnidadSimple.length > 0 &&
+              item.subCategoria != "" &&
+              item.especialidad != "" &&
+              item.unidadObra != "" &&
+              item.subEspecialidad !== null
+            ) {
+              toastId = toast.loading("Enviando... 🚀")
+              let value: any = {
+                simpleUdName: item.nombreUnidadSimple,
+                description: item.descripcionUnidadSimple,
+                mtUnitOfMeasurementId: parseInt(item.unidadObra),
+                mtSpecialtyActionId: parseInt(item.especialidad),
+                accountantConcept: item.counter,
+                sapId: item.sap,
+                global: item.global,
+                status: 0,
+                mtSubspecialityId:
+                  item.subEspecialidad !== null
+                    ? item.subEspecialidad.value
+                    : null,
+              }
 
-    //   const idx = location.rowId as number;
-    //   const item = unidades.at(idx - 1);
+              let result: any = null
 
-    //   let toastId;
-    //   try {
-    //     if (item != undefined) {
-    //       if (item.nombreUnidadSimple.length > 0 &&
-    //         item.descripcionUnidadSimple.length > 0 &&
-    //         // item.counter.length > 0 && 
-    //         // item.sap.length > 0 &&
-    //         item.subCategoria != "" &&
-    //         item.especialidad != "" &&
-    //         item.unidadObra != "" &&
-    //         item.subEspecialidad !== null) {
+              if (item.newItem) {
+                result = await trigger(value)
+              } else {
+                ;(value["id"] = item.id),
+                  (result = await fetch(
+                    `${process.env.API_URL}/SimpleCatalog/Update/${item.id}`,
+                    {
+                      method: "PUT",
+                      headers: {
+                        "Content-Type": "application/json",
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                      },
+                      body: JSON.stringify(value),
+                    }
+                  ))
+              }
 
-    //         toastId = toast.loading('Enviando... 🚀');
-    //         // Submit data
-    //         let value: any = {
+              if (
+                result != undefined &&
+                (result.status === 200 || result.status === 201)
+              ) {
+                mutate()
+                toast.success("Enviado con éxito 🙌", { id: toastId })
+              }
+              if (result != undefined && result.status >= 400) {
+                mutate()
+                toast.error("No se puede enviar 😱", { id: toastId })
+              }
+            }
+          }
+        } catch (e) {
+          toast.error("No se puede enviar 😱", { id: toastId })
+        }
+      }
 
-    //           simpleUdName: item.nombreUnidadSimple,
-    //           description: item.descripcionUnidadSimple,
-    //           mtUnitOfMeasurementId: parseInt(item.unidadObra),
-    //           mtSpecialtyActionId: parseInt(item.especialidad),
-    //           accountantConcept: item.counter,
-    //           sapId: item.sap,
-    //           global: item.global,
-    //           status: 0,
-    //           mtSubspecialityId: item.subEspecialidad !== null ? item.subEspecialidad.value : null//.map((item: any) => item.value)
-    //         }
-
-    //         let result: any = null;
-
-    //         if (item.newItem)
-    //           result = await trigger(value);
-    //         else {
-    //           value["id"] = item.id,
-    //             result = await fetch(`${process.env.API_URL}/SimpleCatalog/Update/${item.id}`, {
-    //               method: 'PUT',
-    //               headers: {
-    //                 "Content-Type": "application/json",
-    //                 // 'Content-Type': 'application/x-www-form-urlencoded',
-    //               },
-    //               body: JSON.stringify(value)
-    //             })
-    //         }
-
-
-    //         if (result != undefined && (result.status === 200 || result.status === 201)) {
-    //           toast.success('Enviado con éxito 🙌', { id: toastId });
-    //         }
-    //         if (result != undefined && result.status >= 400) {
-    //           toast.error('No se puede enviar 😱', { id: toastId });
-    //         }
-    //       }
-    //     }
-    //   } catch (e) {
-    //     toast.error('No se puede enviar 😱', { id: toastId });
-    //   }
-    // }
-
-
-    console.log(location)
-
-  }, [modal, mutate, unidades])
+      console.log(location)
+    },
+    [mutate, trigger, unidades]
+  )
 
   const rows = useMemo(
     () =>
@@ -332,30 +337,42 @@ export default function SimpleCatalog({
     }
   }
 
-  const handleChange = useCallback((changes: CellChange<any>[]) => {
-    setUnidadesSimples(prevUnidades => applyChanges(changes, prevUnidades, esp.map((item: any) => ({
-      label: item.name,
-      value: String(item.id),
-      subcategory: item.mtSubCategoryActionId,
-    })), getEmpty));
-  }, [esp, setUnidadesSimples])
+  const handleChange = useCallback(
+    (changes: CellChange<any>[]) => {
+      setUnidadesSimples((prevUnidades) =>
+        applyChanges(
+          changes,
+          prevUnidades,
+          esp.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+            subcategory: item.mtSubCategoryActionId,
+          })),
+          getEmpty
+        )
+      )
+    },
+    [esp, setUnidadesSimples]
+  )
 
   // pasar dentro de modal para optimizar componente
-  const handleSetDescription = useCallback((value: string) => {
-    const updatedItem: UnidadSimple = {
-      ...item,
-      descripcionUnidadSimple: value
-    };
+  const handleSetDescription = useCallback(
+    (value: string) => {
+      const updatedItem: UnidadSimple = {
+        ...item,
+        descripcionUnidadSimple: value,
+      }
 
-    setUnidadesSimples((prev) => {
+      setUnidadesSimples((prev) => {
+        prev[indexOfDescription] = updatedItem
 
-      prev[indexOfDescription] = updatedItem
+        return [...prev]
+      })
 
-      return [...prev]
-    })
-
-    setShowDescriptionModal(false)
-  }, [item, indexOfDescription, setUnidadesSimples]);
+      setShowDescriptionModal(false)
+    },
+    [item, indexOfDescription, setUnidadesSimples]
+  )
 
   useEffect(() => {
     try {
@@ -375,11 +392,14 @@ export default function SimpleCatalog({
   if (isLoading) return <p>Loading ...</p>
   if (error) return <p>Error: {error}</p>
   return (
-    <section >
-      <div>{`${process.env.API_URL}/SimpleCatalog/GetAllPaginated?${filtroEspecialidad.length ? ` MtSpecialtyActionId=${filtroEspecialidad}&` : ''}${searchInput.length ? `SearchCriteria=${searchInput}&` : ''}PagesSize=2147483647`}</div>
+    <section>
+      <div>{`${process.env.API_URL}/SimpleCatalog/GetAllPaginated?${filtroEspecialidad.length ? ` MtSpecialtyActionId=${filtroEspecialidad}&` : ""}${searchInput.length ? `SearchCriteria=${searchInput}&` : ""}PagesSize=2147483647`}</div>
       <div style={{ margin: "0 20px" }}>
         <SpreadSheet.Root>
-          <SpreadSheet.Header title="Catalogo de unidades simples" description="Repositorio de unidades de obra simples">
+          <SpreadSheet.Header
+            title="Catalogo de unidades simples"
+            description="Repositorio de unidades de obra simples"
+          >
             <div className="flex items-center py-4">
               <div className="flex">
                 <Button className="rounded-r-none" type="button">
@@ -390,7 +410,6 @@ export default function SimpleCatalog({
                     type="search"
                     placeholder="Buscar..."
                     className="w-60 max-w-sm rounded-l-none"
-
                   />
                   <Button
                     type="submit"
@@ -413,26 +432,23 @@ export default function SimpleCatalog({
             emptyElement={getEmpty(unidades.length + 1)}
             onChangeRows={(items: UnidadSimple[]) => setUnidadesSimples(items)}
             onChangeColumns={(columns: Column[]) => setColumns(columns)}
-            onChange={(changes: CellChange<any>[]) =>
-              handleChange(changes)
-            }
+            onChange={(changes: CellChange<any>[]) => handleChange(changes)}
             onCellClick={handleLocationClick}
-            onShowRow={() => { }}
-            onUpdateRow={() => { }}
+            onShowRow={() => {}}
+            onUpdateRow={() => {}}
           />
-
         </SpreadSheet.Root>
-
       </div>
 
-      {showDescriptionModal &&
-          <ModalDescriptionCell
-            title={'Descripción'}
-            buttonText='Adicionar a Celda'
-            defaultValue={item.descripcionUnidadSimple}
-            onClose={() => setShowDescriptionModal(false)}
-            onSave={(value: string) => handleSetDescription(value)}
-          />}
+      {showDescriptionModal && (
+        <ModalDescriptionCell
+          title={"Descripción"}
+          buttonText="Adicionar a Celda"
+          defaultValue={item.descripcionUnidadSimple}
+          onClose={() => setShowDescriptionModal(false)}
+          onSave={(value: string) => handleSetDescription(value)}
+        />
+      )}
       {showModalSpecialty ? (
         <ModalEspecialidadesParaSpreadsheet
           title="Subespecialidades"
@@ -464,7 +480,12 @@ export default function SimpleCatalog({
         />
       ) : null}
 
-      <ModalDeleteUdSimple open={showModaldelete} onOpenChange={setShowModalDelete} id={item.id} mutate={mutate} />
+      <ModalDeleteUdSimple
+        open={showModaldelete}
+        onOpenChange={setShowModalDelete}
+        id={item.id}
+        mutate={mutate}
+      />
     </section>
   )
 }

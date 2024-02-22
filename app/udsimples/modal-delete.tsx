@@ -1,10 +1,12 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import fetcher from "@/services/fetcher"
+import { getErrorMessage } from "@/utils/handleErrors"
 import { toast } from "sonner"
+import { KeyedMutator, mutate } from "swr"
 
-
-
+import { DataResponse } from "@/types/data-response"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -18,11 +20,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { textVariants } from "@/components/typography"
+
 import { SimpleUnitPaginated } from "./simple-catalog"
-import { KeyedMutator, mutate } from "swr"
-import { DataResponse } from "@/types/data-response"
-import fetcher from "@/services/fetcher"
-import { getErrorMessage } from "@/utils/handleErrors"
 
 interface DialogDeleteProps {
   open: boolean
@@ -31,21 +30,20 @@ interface DialogDeleteProps {
   mutate: KeyedMutator<DataResponse<SimpleUnitPaginated>>
 }
 
-
-
 function DialogDelete({ open, onOpenChange, id, mutate }: DialogDeleteProps) {
-
   const handleDelete = async () => {
     // SimpleCatalog/ChangeDisabledStatus/3
     let toastId = toast.loading("Eliminando...")
     try {
-      await fetcher(`${process.env.API_URL}/SimpleCatalog/ChangeDisabledStatus/${id}`)
+      await fetcher(
+        `${process.env.API_URL}/SimpleCatalog/ChangeDisabledStatus/${id}`
+      )
       mutate()
       onOpenChange(false)
       toast.success("Eliminado con éxito 👍🏻", { id: toastId })
     } catch (error) {
       console.log(getErrorMessage(error))
-      toast.error('No se puede eliminar 😱', { id: toastId });
+      toast.error("No se puede eliminar 😱", { id: toastId })
     }
   }
 
@@ -55,10 +53,21 @@ function DialogDelete({ open, onOpenChange, id, mutate }: DialogDeleteProps) {
         <DialogHeader>
           <DialogTitle>Eliminar Unidad Simple</DialogTitle>
         </DialogHeader>
-        <DialogDescription className={cn(textVariants({variant:'large'}), 'text-center text-destructive')}>¿Está seguro que desea eliminar esta unidad?</DialogDescription>
+        <DialogDescription
+          className={cn(
+            textVariants({ variant: "large" }),
+            "text-center text-destructive"
+          )}
+        >
+          ¿Está seguro que desea eliminar esta unidad?
+        </DialogDescription>
         <DialogFooter>
-          <Button variant={'destructive'} onClick={handleDelete}>Eliminar</Button>
-          <Button variant={'outline'} onClick={()=>onOpenChange(false)} >Cancelar</Button>
+          <Button variant={"destructive"} onClick={handleDelete}>
+            Eliminar
+          </Button>
+          <Button variant={"outline"} onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

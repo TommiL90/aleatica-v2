@@ -8,11 +8,10 @@ import { SiteHeader } from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 
-
 import "@silevis/reactgrid/styles.css"
-import Providers from "./Provider"
 import { Toaster } from "@/components/ui/sonner"
 
+import Providers from "./Provider"
 
 // export const metadata: Metadata = {
 //   title: {

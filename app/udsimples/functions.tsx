@@ -417,4 +417,3 @@ export const creator = async (
     body: JSON.stringify(arg),
   }).then((res) => res.json())
 }
-
