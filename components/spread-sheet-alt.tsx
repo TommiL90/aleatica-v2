@@ -71,7 +71,7 @@ interface Props {
   onShowRow: Function
 }
 
-export default function SpreadSheet({
+export default function SpreadSheetAlt({
   columns,
   emptyElement,
   items,
