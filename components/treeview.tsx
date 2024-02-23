@@ -1,44 +1,44 @@
-"use client"
+'use client'
 
-import React from "react"
-import Tree from "react-d3-tree"
+import React from 'react'
+import Tree from 'react-d3-tree'
 
-import { useCenteredTree } from "@/hooks/useCenteredTree"
+import { useCenteredTree } from '@/hooks/useCenteredTree'
 
 interface Props {
   data: any
   height: number
-  orientation: "horizontal" | "vertical"
+  orientation: 'horizontal' | 'vertical'
 }
 
 const orgChart = {
-  name: "CEO",
+  name: 'CEO',
   children: [
     {
-      name: "Manager",
+      name: 'Manager',
       attributes: {
-        department: "Production",
+        department: 'Production',
       },
       children: [
         {
-          name: "Foreman",
+          name: 'Foreman',
           attributes: {
-            department: "Fabrication",
+            department: 'Fabrication',
           },
           children: [
             {
-              name: "Worker",
+              name: 'Worker',
             },
           ],
         },
         {
-          name: "Foreman",
+          name: 'Foreman',
           attributes: {
-            department: "Assembly",
+            department: 'Assembly',
           },
           children: [
             {
-              name: "Worker",
+              name: 'Worker',
             },
           ],
         },
@@ -55,9 +55,9 @@ export default function Treeview(props: Props) {
       <div
         id="treeWrapper"
         style={{
-          width: "100%",
+          width: '100%',
           height: `${props.height}px`,
-          backgroundColor: "#f7f7f7",
+          backgroundColor: '#f7f7f7',
         }}
         ref={containerRef}
       >
@@ -67,7 +67,7 @@ export default function Treeview(props: Props) {
           dimensions={dimensions}
           nodeSize={{
             x: 200,
-            y: props.orientation === "horizontal" ? 50 : 100,
+            y: props.orientation === 'horizontal' ? 50 : 100,
           }}
           translate={translate}
           separation={{ siblings: 3, nonSiblings: 3 }}
@@ -79,7 +79,7 @@ export default function Treeview(props: Props) {
                 strokeWidth="0"
                 x="-5"
                 y="35"
-                style={{ fontSize: "14px", fontWeight: "bold" }}
+                style={{ fontSize: '14px', fontWeight: 'bold' }}
               >
                 {rd3tProps.nodeDatum.name}
               </text>
@@ -89,7 +89,7 @@ export default function Treeview(props: Props) {
                   x="-5"
                   y="50"
                   strokeWidth="0"
-                  style={{ fontSize: "12px" }}
+                  style={{ fontSize: '12px' }}
                 >
                   Department: {rd3tProps.nodeDatum.attributes?.department}
                 </text>

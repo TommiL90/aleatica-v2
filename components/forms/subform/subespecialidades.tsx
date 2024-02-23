@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { ChangeEvent, useEffect, useId, useState } from "react"
-import Select from "react-select"
+import { ChangeEvent, useEffect, useId, useState } from 'react'
+import Select from 'react-select'
 
-import SubespecialidadesNiveles from "@/components/subespecialidadesNiveles"
+import SubespecialidadesNiveles from '@/components/subespecialidadesNiveles'
 
 interface Option {
   label: string
@@ -18,11 +18,11 @@ interface SubEspecialidadesProps {
   onChange: Function
 }
 
-let ids: string[] = new Array()
+const ids: string[] = []
 
 export function SubEspecialidades(props: SubEspecialidadesProps) {
   const [currentSelectValue, setCurrentSelectValue] = useState<Option>(
-    props.nodeSelected || { label: "", value: 0 }
+    props.nodeSelected || { label: '', value: 0 },
   )
 
   const [_document, set_document] = useState<Document>()
@@ -39,7 +39,7 @@ export function SubEspecialidades(props: SubEspecialidadesProps) {
             nodoSelected={
               props.nodeSelected !== null
                 ? String(props.nodeSelected.value)
-                : ""
+                : ''
             }
             onChange={(value: any) => {
               setCurrentSelectValue(value)
@@ -54,7 +54,7 @@ export function SubEspecialidades(props: SubEspecialidadesProps) {
               {currentSelectValue.value > 0 &&
               props.subEspecialidadesList.length > 0
                 ? props.subEspecialidadesList.filter(
-                    (item: any) => item.value === currentSelectValue.value
+                    (item: any) => item.value === currentSelectValue.value,
                   )[0].code
                 : `-`}
             </p>
@@ -62,21 +62,21 @@ export function SubEspecialidades(props: SubEspecialidadesProps) {
 
           <div>
             <label className="mb-4 font-semibold  text-gray-800">
-              {" "}
+              {' '}
               Subcategoria / Especialidad
             </label>
             <p className="m-4 text-sm  text-gray-600">
               {currentSelectValue.value > 0 &&
               props.subEspecialidadesList.length > 0
                 ? props.subEspecialidadesList.filter(
-                    (item: any) => item.value === currentSelectValue.value
+                    (item: any) => item.value === currentSelectValue.value,
                   )[0].especialityName
                 : `-`}
               /
               {currentSelectValue.value > 0 &&
               props.subEspecialidadesList.length > 0
                 ? props.subEspecialidadesList.filter(
-                    (item: any) => item.value === currentSelectValue.value
+                    (item: any) => item.value === currentSelectValue.value,
                   )[0].especialityName
                 : `-`}
             </p>
@@ -84,14 +84,14 @@ export function SubEspecialidades(props: SubEspecialidadesProps) {
 
           <div>
             <label className="mb-4 font-semibold  text-gray-800">
-              {" "}
+              {' '}
               Jerarquia
             </label>
             <p className="m-4 text-sm  text-gray-600">
               {currentSelectValue.value > 0 &&
               props.subEspecialidadesList.length > 0
                 ? props.subEspecialidadesList.filter(
-                    (item: any) => item.value === currentSelectValue.value
+                    (item: any) => item.value === currentSelectValue.value,
                   )[0].route
                 : `-`}
             </p>

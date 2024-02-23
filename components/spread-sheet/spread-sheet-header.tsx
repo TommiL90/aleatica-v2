@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import React from "react"
+import React from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-import { textVariants, titleVariants } from "../typography"
+import { textVariants, titleVariants } from '../typography'
 
 interface Props {
   children: React.ReactNode
@@ -15,8 +15,8 @@ const SpreadSheetHeader = ({ title, description, children }: Props) => {
   return (
     <div className="justify-between pt-4 text-left">
       <div>
-        <h2 className={cn(titleVariants({ variant: "h3" }))}>{title}</h2>
-        <p className={cn(textVariants({ variant: "muted" }))}>{description}</p>
+        <h2 className={cn(titleVariants({ variant: 'h3' }))}>{title}</h2>
+        <p className={cn(textVariants({ variant: 'muted' }))}>{description}</p>
       </div>
       <div className="flex items-center justify-between">{children}</div>
     </div>

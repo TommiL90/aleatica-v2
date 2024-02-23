@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from "react"
+} from 'react'
 import {
   CellChange,
   CellLocation,
@@ -26,13 +26,13 @@ import {
   Row,
   SelectionMode,
   TextCell,
-} from "@silevis/reactgrid"
+} from '@silevis/reactgrid'
 
-import "@silevis/reactgrid/styles.css"
-import { ButtonCell, ButtonCellTemplate } from "../cells/button"
-import { DateFieldCellTemplate } from "../cells/date"
-import { FlagCell, FlagCellTemplate } from "../cells/flag"
-import { MaskFieldCell, MaskFieldCellTemplate } from "../cells/input_mask"
+import '@silevis/reactgrid/styles.css'
+import { ButtonCell, ButtonCellTemplate } from '../cells/button'
+import { DateFieldCellTemplate } from '../cells/date'
+import { FlagCell, FlagCellTemplate } from '../cells/flag'
+import { MaskFieldCell, MaskFieldCellTemplate } from '../cells/input_mask'
 
 /* load 'stream' for stream support */
 
@@ -94,7 +94,7 @@ export default function SpreadSheetBody({
     set_document(document)
 
     if (_document) {
-      _document.body.style.overflow = "hidden"
+      _document.body.style.overflow = 'hidden'
     }
   }, [_document, items])
 
@@ -103,7 +103,7 @@ export default function SpreadSheetBody({
   }
 
   const handleColumnResize = (ci: Id, width: number) => {
-    let resizedColumns = columns
+    const resizedColumns = columns
 
     const columnIndex = resizedColumns.findIndex((el) => el.columnId === ci)
     const resizedColumn = resizedColumns[columnIndex]
@@ -120,22 +120,22 @@ export default function SpreadSheetBody({
         ? (to += 1)
         : (to -= idxs.filter((idx) => idx < to).length)
     const leftSide = arr.filter(
-      (_, idx) => idx < targetIdx && !idxs.includes(idx)
+      (_, idx) => idx < targetIdx && !idxs.includes(idx),
     )
     const rightSide = arr.filter(
-      (_, idx) => idx >= targetIdx && !idxs.includes(idx)
+      (_, idx) => idx >= targetIdx && !idxs.includes(idx),
     )
     return [...leftSide, ...movedElements, ...rightSide]
   }
 
   const handleColumnsReorder = (targetColumnId: Id, columnIds: Id[]) => {
-    let reorderedColumns = columns
+    const reorderedColumns = columns
 
     const to = reorderedColumns.findIndex(
-      (column) => column.columnId === targetColumnId
+      (column) => column.columnId === targetColumnId,
     )
     const columnIdxs = columnIds.map((columnId) =>
-      reorderedColumns.findIndex((c) => c.columnId === columnId)
+      reorderedColumns.findIndex((c) => c.columnId === columnId),
     )
     onChangeColumns(reorderArray(reorderedColumns, columnIdxs, to))
   }
@@ -145,39 +145,39 @@ export default function SpreadSheetBody({
     selectedColIds: Id[],
     selectionMode: SelectionMode,
     menuOptions: MenuOption[],
-    selectedRanges: CellLocation[][]
+    selectedRanges: CellLocation[][],
   ): MenuOption[] => {
     const updateRow = {
-      id: "editarFila",
-      label: "Editar elemento",
+      id: 'editarFila',
+      label: 'Editar elemento',
       handler: () => {
-        if (selectionMode === "row" && selectedRowIds.length > 0)
+        if (selectionMode === 'row' && selectedRowIds.length > 0)
           onUpdateRow(selectedRowIds)
 
-        if (selectionMode === "range" && selectedRanges.length > 0)
+        if (selectionMode === 'range' && selectedRanges.length > 0)
           onUpdateRow(selectedRanges[0][0].rowId)
       },
     }
 
     const showRow = {
-      id: "mostrarFila",
-      label: "Ver elemento",
+      id: 'mostrarFila',
+      label: 'Ver elemento',
       handler: () => {
-        if (selectionMode === "row" && selectedRowIds.length > 0)
+        if (selectionMode === 'row' && selectedRowIds.length > 0)
           onShowRow(selectedRowIds)
 
-        if (selectionMode === "range" && selectedRanges.length > 0)
+        if (selectionMode === 'range' && selectedRanges.length > 0)
           onShowRow(selectedRanges[0][0].rowId)
       },
     }
 
-    if (selectionMode === "row") {
+    if (selectionMode === 'row') {
       menuOptions = [
         showRow,
         updateRow,
         {
-          id: "nuevoArriba",
-          label: "Nueva fila arriba",
+          id: 'nuevoArriba',
+          label: 'Nueva fila arriba',
           handler: () => {
             if (selectedRowIds.length == 0) {
               return
@@ -190,13 +190,13 @@ export default function SpreadSheetBody({
                 emptyElement,
                 items.filter((item, idx) => item.idauto == index)[0],
                 ...items.slice(index),
-              ].map((item, idx) => ({ ...item, idauto: idx + 1 }))
+              ].map((item, idx) => ({ ...item, idauto: idx + 1 })),
             )
           },
         },
         {
-          id: "nuevoAbajo",
-          label: "Nueva fila abajo",
+          id: 'nuevoAbajo',
+          label: 'Nueva fila abajo',
           handler: () => {
             if (selectedRowIds.length == 0) {
               return
@@ -208,57 +208,57 @@ export default function SpreadSheetBody({
                 ...items.slice(0, index),
                 emptyElement,
                 ...items.slice(index),
-              ].map((item, idx) => ({ ...item, idauto: idx + 1 }))
+              ].map((item, idx) => ({ ...item, idauto: idx + 1 })),
             )
           },
         },
         {
-          id: "clonarFilas",
-          label: "Clonar fila",
+          id: 'clonarFilas',
+          label: 'Clonar fila',
           handler: () => {
             const newRows = items.filter((item, idx) =>
-              selectedRowIds.includes(item.idauto)
+              selectedRowIds.includes(item.idauto),
             )
             const index = Number(selectedRowIds[0])
 
             onChangeRows(
               [...items.slice(0, index), ...newRows, ...items.slice(index)].map(
-                (item, idx) => ({ ...item, idauto: idx + 1 })
-              )
+                (item, idx) => ({ ...item, idauto: idx + 1 }),
+              ),
             )
           },
         },
         {
-          id: "eliminarFila",
-          label: "Eliminar fila",
+          id: 'eliminarFila',
+          label: 'Eliminar fila',
           handler: () => {
             onChangeRows(
               [
                 ...items.filter(
-                  (item, idx) => !selectedRowIds.includes(item.idauto)
+                  (item, idx) => !selectedRowIds.includes(item.idauto),
                 ),
-              ].map((item, idx) => ({ ...item, idauto: idx + 1 }))
+              ].map((item, idx) => ({ ...item, idauto: idx + 1 })),
             )
           },
         },
       ]
     }
 
-    if (selectionMode === "column") {
+    if (selectionMode === 'column') {
       menuOptions = [
-        //...menuOptions,
+        // ...menuOptions,
         {
-          id: "fijarColumnaIzquierda",
+          id: 'fijarColumnaIzquierda',
           label:
             columnStickyLeft > 0
-              ? "Desbloquear columna a la izquierda"
-              : "Bloquear columna a la izquierda",
+              ? 'Desbloquear columna a la izquierda'
+              : 'Bloquear columna a la izquierda',
           handler: () => {
             if (columnStickyLeft == 0) {
               const columnIndex =
                 columns.findIndex(
                   (item: Column, idx: number) =>
-                    item.columnId == selectedColIds[0]
+                    item.columnId == selectedColIds[0],
                 ) + 1
               setColumsStickyLeft(columnIndex)
             } else {
@@ -268,10 +268,10 @@ export default function SpreadSheetBody({
         },
       ]
     }
-    if (selectionMode === "range") {
-      menuOptions[0].label = "Copiar"
-      menuOptions[1].label = "Cortar"
-      menuOptions[2].label = "Pegar"
+    if (selectionMode === 'range') {
+      menuOptions[0].label = 'Copiar'
+      menuOptions[1].label = 'Cortar'
+      menuOptions[2].label = 'Pegar'
 
       menuOptions = [showRow, updateRow, ...menuOptions]
     }
@@ -301,7 +301,7 @@ export default function SpreadSheetBody({
 
   return (
     <>
-      <div className="flex overflow-scroll" style={{ height: "75vh" }}>
+      <div className="flex overflow-scroll" style={{ height: '75vh' }}>
         {!refresh && !loading ? (
           <ReactGrid
             rows={rows}
@@ -318,7 +318,7 @@ export default function SpreadSheetBody({
             stickyTopRows={1}
             // stickyRightColumns={3}
             stickyLeftColumns={columnStickyLeft}
-            //stickyRightColumns={columnStickyRigth}
+            // stickyRightColumns={columnStickyRigth}
             onContextMenu={handleContextMenu}
             onFocusLocationChanged={handleFocusCell}
             customCellTemplates={myCellTemplates}

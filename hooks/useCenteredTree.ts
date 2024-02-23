@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useState } from "react"
+import { MutableRefObject, useCallback, useState } from 'react'
 
 interface Dimensions {
   width: number
@@ -11,7 +11,7 @@ interface Translate {
 }
 
 export const useCenteredTree = (
-  defaultTranslate: Translate = { x: 0, y: 0 }
+  defaultTranslate: Translate = { x: 0, y: 0 },
 ): [
   Dimensions | undefined,
   Translate,

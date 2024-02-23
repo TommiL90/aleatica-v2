@@ -2,10 +2,10 @@
 export const disjoinLists = (
   array1: any[],
   array2: any[],
-  property: string
+  property: string,
 ) => {
-  let diferencias = array1.filter(
-    (item: any) => !array2.map((el: any) => el).includes(item[property])
+  const diferencias = array1.filter(
+    (item: any) => !array2.map((el: any) => el).includes(item[property]),
   )
 
   return diferencias
