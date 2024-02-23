@@ -1,5 +1,5 @@
-import * as React from "react"
-import { FC } from "react"
+import * as React from 'react'
+import { FC } from 'react'
 import {
   Cell,
   CellTemplate,
@@ -10,10 +10,10 @@ import {
   getCharFromKey,
   isAlphaNumericKey,
   keyCodes,
-} from "@silevis/reactgrid"
+} from '@silevis/reactgrid'
 // NOTE: all modules imported below may be imported from '@silevis/reactgrid'
 
-import Select, { MenuProps, OptionProps } from "react-select"
+import Select, { MenuProps, OptionProps } from 'react-select'
 
 export type OptionType = {
   label: string
@@ -22,7 +22,7 @@ export type OptionType = {
 }
 
 export interface DropdownCell extends Cell {
-  type: "dropdown"
+  type: 'dropdown'
   selectedValue?: string
   values: OptionType[]
   isDisabled?: boolean
@@ -32,41 +32,41 @@ export interface DropdownCell extends Cell {
 
 export class DropdownCellTemplate implements CellTemplate<DropdownCell> {
   getCompatibleCell(
-    uncertainCell: Uncertain<DropdownCell>
+    uncertainCell: Uncertain<DropdownCell>,
   ): Compatible<DropdownCell> {
     let selectedValue: string | undefined
 
     try {
-      selectedValue = getCellProperty(uncertainCell, "selectedValue", "string")
+      selectedValue = getCellProperty(uncertainCell, 'selectedValue', 'string')
     } catch {
       selectedValue = undefined
     }
 
-    const values = getCellProperty(uncertainCell, "values", "object")
+    const values = getCellProperty(uncertainCell, 'values', 'object')
     const value = selectedValue ? parseFloat(selectedValue) : NaN
 
     let isDisabled = true
     try {
-      isDisabled = getCellProperty(uncertainCell, "isDisabled", "boolean")
+      isDisabled = getCellProperty(uncertainCell, 'isDisabled', 'boolean')
     } catch {
       isDisabled = false
     }
 
     let inputValue: string | undefined
     try {
-      inputValue = getCellProperty(uncertainCell, "inputValue", "string")
+      inputValue = getCellProperty(uncertainCell, 'inputValue', 'string')
     } catch {
       inputValue = undefined
     }
 
     let isOpen: boolean
     try {
-      isOpen = getCellProperty(uncertainCell, "isOpen", "boolean")
+      isOpen = getCellProperty(uncertainCell, 'isOpen', 'boolean')
     } catch {
       isOpen = false
     }
 
-    const text = selectedValue || ""
+    const text = selectedValue || ''
 
     return {
       ...uncertainCell,
@@ -82,13 +82,13 @@ export class DropdownCellTemplate implements CellTemplate<DropdownCell> {
 
   update(
     cell: Compatible<DropdownCell>,
-    cellToMerge: UncertainCompatible<DropdownCell>
+    cellToMerge: UncertainCompatible<DropdownCell>,
   ): Compatible<DropdownCell> {
     // I use the text property as a selectedValue property because behaviors don't know about the selectedValue property
     // and instead throw an error when we try to access it.
     // Before merging, we also need to check if the incoming value is in the target values array, otherwise we set it to undefined.
     const selectedValueFromText = cell.values.some(
-      (val: any) => val.value === cellToMerge.text
+      (val: any) => val.value === cellToMerge.text,
     )
       ? cellToMerge.text
       : undefined
@@ -102,8 +102,8 @@ export class DropdownCellTemplate implements CellTemplate<DropdownCell> {
   }
 
   getClassName(cell: Compatible<DropdownCell>, isInEditMode: boolean): string {
-    const isOpen = cell.isOpen ? "open" : "closed"
-    return `${cell.className ? cell.className : ""}${isOpen}`
+    const isOpen = cell.isOpen ? 'open' : 'closed'
+    return `${cell.className ? cell.className : ''}${isOpen}`
   }
 
   handleKeyDown(
@@ -112,7 +112,7 @@ export class DropdownCellTemplate implements CellTemplate<DropdownCell> {
     ctrl: boolean,
     shift: boolean,
     alt: boolean,
-    key: string
+    key: string,
   ): { cell: Compatible<DropdownCell>; enableEditMode: boolean } {
     if ((keyCode === keyCodes.SPACE || keyCode === keyCodes.ENTER) && !shift) {
       return {
@@ -143,7 +143,7 @@ export class DropdownCellTemplate implements CellTemplate<DropdownCell> {
 
   handleCompositionEnd(
     cell: Compatible<DropdownCell>,
-    eventData: any
+    eventData: any,
   ): { cell: Compatible<DropdownCell>; enableEditMode: boolean } {
     return {
       cell: { ...cell, inputValue: eventData, isOpen: !cell.isOpen },
@@ -154,7 +154,7 @@ export class DropdownCellTemplate implements CellTemplate<DropdownCell> {
   render(
     cell: Compatible<DropdownCell>,
     isInEditMode: boolean,
-    onCellChanged: (cell: Compatible<DropdownCell>, commit: boolean) => void
+    onCellChanged: (cell: Compatible<DropdownCell>, commit: boolean) => void,
   ): React.ReactNode {
     return (
       <DropdownInput
@@ -176,11 +176,11 @@ const DropdownInput: FC<DIProps> = ({ onCellChanged, cell }) => {
   const selectRef = React.useRef<any>(null)
 
   const [inputValue, setInputValue] = React.useState<string | undefined>(
-    cell.inputValue
+    cell.inputValue,
   )
   const selectedValue = React.useMemo<OptionType | undefined>(
     () => cell.values.find((val: any) => val.value === cell.text),
-    [cell.text, cell.values]
+    [cell.text, cell.values],
   )
 
   React.useEffect(() => {
@@ -192,7 +192,7 @@ const DropdownInput: FC<DIProps> = ({ onCellChanged, cell }) => {
 
   return (
     <div
-      style={{ width: "100%" }}
+      style={{ width: '100%' }}
       onPointerDown={(e) => onCellChanged({ ...cell, isOpen: true })}
     >
       <Select
@@ -228,7 +228,7 @@ const DropdownInput: FC<DIProps> = ({ onCellChanged, cell }) => {
         onKeyDown={(e) => {
           e.stopPropagation()
 
-          if (e.key === "Escape") {
+          if (e.key === 'Escape') {
             selectRef.current.blur()
             return onCellChanged({
               ...cell,
@@ -244,33 +244,33 @@ const DropdownInput: FC<DIProps> = ({ onCellChanged, cell }) => {
         styles={{
           container: (provided) => ({
             ...provided,
-            width: "100%",
-            height: "100%",
+            width: '100%',
+            height: '100%',
           }),
           control: (provided) => ({
             ...provided,
-            border: "none",
-            borderColor: "transparent",
-            minHeight: "25px",
-            background: "transparent",
-            boxShadow: "none",
+            border: 'none',
+            borderColor: 'transparent',
+            minHeight: '25px',
+            background: 'transparent',
+            boxShadow: 'none',
           }),
           indicatorsContainer: (provided) => ({
             ...provided,
-            paddingTop: "0px",
+            paddingTop: '0px',
           }),
           dropdownIndicator: (provided) => ({
             ...provided,
-            padding: "0px 4px",
+            padding: '0px 4px',
           }),
           singleValue: (provided) => ({
             ...provided,
-            color: "inherit",
+            color: 'inherit',
           }),
           indicatorSeparator: (provided) => ({
             ...provided,
-            marginTop: "4px",
-            marginBottom: "4px",
+            marginTop: '4px',
+            marginBottom: '4px',
           }),
           input: (provided) => ({
             ...provided,
@@ -278,7 +278,7 @@ const DropdownInput: FC<DIProps> = ({ onCellChanged, cell }) => {
           }),
           valueContainer: (provided) => ({
             ...provided,
-            padding: "0 8px",
+            padding: '0 8px',
           }),
         }}
       />
@@ -296,7 +296,7 @@ const CustomOption: React.FC<OptionProps<OptionType, false>> = ({
   <div
     {...innerProps}
     onPointerDown={(e) => e.stopPropagation()}
-    className={`rg-dropdown-option${isSelected ? " selected" : ""}${isFocused ? " focused" : ""}${isDisabled ? " disabled" : ""}`}
+    className={`rg-dropdown-option${isSelected ? ' selected' : ''}${isFocused ? ' focused' : ''}${isDisabled ? ' disabled' : ''}`}
   >
     {label}
   </div>

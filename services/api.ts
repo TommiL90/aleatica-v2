@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios'
 
 // Crea una instancia de Axios con una baseUrl
 const api = axios.create({

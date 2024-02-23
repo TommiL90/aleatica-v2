@@ -77,6 +77,29 @@
   }
 }
 
+.reactgrid-content .rg-pane .rg-cell.rg-checkbox-cell label span{
+  border-radius: 4px !important;
+}
+
+.reactgrid-content .rg-pane .rg-cell.rg-checkbox-cell label span:after {
+  left: 7px !important;
+  top: 2px !important;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity)) !important;
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235) !important;
+}
+
+.reactgrid-content .rg-context-menu {
+  color: #000 !important;
+  background-color: #fff;
+  font-size: 1em;
+  box-shadow: 0 0 8px 2px rgba(0,0,0,.06);
+}
+
+.css-smtpzp-control, .css-1xqm9c7-singleValue, .rg-dropdown-menu{
+  color: #000 !important;
+}
+
 
 
 help {

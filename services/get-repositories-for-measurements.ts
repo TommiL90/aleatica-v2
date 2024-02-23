@@ -1,7 +1,7 @@
-import { cache } from "react"
+import { cache } from 'react'
 
-import fetcher from "./fetcher"
-import { MtRoadSection, SpecialtyAction } from "./useGetRepositories"
+import fetcher from './fetcher'
+import { MtRoadSection, SpecialtyAction } from './useGetRepositories'
 
 interface SubcategoryActionsGetDropdownItems {
   disabled: boolean
@@ -189,7 +189,7 @@ export const getRepositoriesForMeasurements = cache(async (esp: number) => {
       deteriorationTypeByEsp,
     ] = await Promise.all([
       fetcher(
-        `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`
+        `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
       ) as Promise<Response<SubcategoryActionsGetDropdownItems>>,
       fetcher(`${process.env.API_URL}/MtRoadSection/GetAll`) as Promise<
         Response<MtRoadSection>
@@ -210,13 +210,13 @@ export const getRepositoriesForMeasurements = cache(async (esp: number) => {
         Response<MtPriority>
       >,
       fetcher(
-        `${process.env.API_URL}/PerformanceCatalog/GetBySpecialtyAndTask?specialityId=${esp}`
+        `${process.env.API_URL}/PerformanceCatalog/GetBySpecialtyAndTask?specialityId=${esp}`,
       ) as Promise<Response<PerformanceCatalogByEsp>>,
       fetcher(
-        `${process.env.API_URL}/CompositeCatalog/GetBySpecialty/${esp}`
+        `${process.env.API_URL}/CompositeCatalog/GetBySpecialty/${esp}`,
       ) as Promise<Response<CompositeCatalogByEsp>>,
       fetcher(
-        `${process.env.API_URL}/MtDeteriorationType/GetBySpecialty/${esp}`
+        `${process.env.API_URL}/MtDeteriorationType/GetBySpecialty/${esp}`,
       ) as Promise<Response<MtDeteriorationTypeByEsp>>,
     ])
 
@@ -234,6 +234,6 @@ export const getRepositoriesForMeasurements = cache(async (esp: number) => {
     }
   } catch (error) {
     console.log(error)
-    throw new Error("Error")
+    throw new Error('Error')
   }
 })

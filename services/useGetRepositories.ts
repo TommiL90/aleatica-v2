@@ -1,6 +1,7 @@
-import { cache } from "react"
+import { cache } from 'react'
 
-import fetcher from "./fetcher"
+import fetcher from './fetcher'
+import { getErrorMessage } from '@/utils/handleErrors'
 
 export interface SimpleCatalog {
   simpleUdId: string
@@ -232,7 +233,7 @@ export const getRepositories = cache(async () => {
         Response<Tca>
       >,
       fetcher(
-        `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`
+        `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
       ) as Promise<Response<SubCategory>>,
       fetcher(`${process.env.API_URL}/MtSpecialtyAction/GetAll`) as Promise<
         Response<SpecialtyAction>
@@ -253,7 +254,7 @@ export const getRepositories = cache(async () => {
         Response<ScopeOfAction>
       >,
       fetcher(
-        `${process.env.API_URL}/MRPerformanceIndicator/GetAll`
+        `${process.env.API_URL}/MRPerformanceIndicator/GetAll`,
       ) as Promise<Response<PerformanceIndicator>>,
       fetcher(`${process.env.API_URL}/MtSubspeciality/GetAll`) as Promise<
         Response<Subspeciality>
@@ -274,7 +275,7 @@ export const getRepositories = cache(async () => {
       subEspRes,
     }
   } catch (error) {
-    console.log(error)
-    throw new Error("Error")
+    console.log(getErrorMessage(error))
+    throw new Error('Error')
   }
 })

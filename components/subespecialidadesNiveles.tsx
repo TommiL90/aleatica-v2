@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import React from "react"
-import fetcher from "@/services/fetcher"
-import TreeView, { flattenTree } from "react-accessible-treeview"
-import { IoMdArrowDropright } from "react-icons/io"
-import useSWR from "swr"
+import React from 'react'
+import fetcher from '@/services/fetcher'
+import TreeView, { flattenTree } from 'react-accessible-treeview'
+import { IoMdArrowDropright } from 'react-icons/io'
+import useSWR from 'swr'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 const ArrowIcon = ({ isOpen, className }: any) => {
-  const baseClass = "arrow"
+  const baseClass = 'arrow'
   const classes = cn(
     baseClass,
     { [`${baseClass}--closed`]: !isOpen },
     { [`${baseClass}--open`]: isOpen },
-    className
+    className,
   )
   return <IoMdArrowDropright className={classes} />
 }
@@ -29,7 +29,7 @@ export default function SubespecialidadesNiveles(props: Props) {
     props.especialidad !== null
       ? `${process.env.API_URL}/MtSubspeciality/GetHierarchy/${props.especialidad}`
       : null,
-    fetcher
+    fetcher,
   )
 
   // console.log(data.result.mtSubspecialities)
@@ -53,7 +53,7 @@ export default function SubespecialidadesNiveles(props: Props) {
       ) : (
         <TreeView
           data={flattenTree({
-            name: "",
+            name: '',
             children:
               data !== undefined
                 ? generateTree(data.result.mtSubspecialities)
@@ -84,22 +84,22 @@ export default function SubespecialidadesNiveles(props: Props) {
 
                 <span
                   className={cn(
-                    "cursor-pointer",
-                    isBranch ? "text-gray-800" : "text-gray-600"
+                    'cursor-pointer',
+                    isBranch ? 'text-gray-800' : 'text-gray-600',
                   )}
                   style={{
-                    position: "relative",
+                    position: 'relative',
                     top: -3,
                     marginLeft: 4,
                   }}
                   onClick={() =>
                     props.onChange(
-                      "metadata" in element && element !== undefined
+                      'metadata' in element && element !== undefined
                         ? {
                             label: element.metadata?.name,
                             value: element.metadata?.id,
                           }
-                        : { label: element.name, value: element.id }
+                        : { label: element.name, value: element.id },
                     )
                   }
                 >
