@@ -196,7 +196,7 @@ export default function ModalDetail(props: PropsModalDetailItem) {
                             </div>
                             <div className="mb-2 w-full border-gray-300  p-2 ">
                               <h2 className="mb-2 text-sm font-semibold text-gray-800">
-                                Unidad de obra
+                                Unidad de medida
                               </h2>
                               <p className="text-sm text-gray-700">
                                 {props.unidadesObra.filter(
