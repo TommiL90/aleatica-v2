@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
 import '@silevis/reactgrid/styles.css'
+import '@szhsin/react-menu/dist/index.css'
+import '@szhsin/react-menu/dist/transitions/slide.css'
 import { cn } from '@/lib/utils'
 import { fontSans } from '@/lib/fonts'
 import { Toaster } from '@/components/ui/sonner'
