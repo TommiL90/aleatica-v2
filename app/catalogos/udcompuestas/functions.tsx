@@ -157,7 +157,7 @@ export const composHeaderRow = (columns: Column[]): Row => ({
       case 'unidadObra':
         elem = {
           type: 'header',
-          text: 'Unidad de Obra *',
+          text: 'Unidad de medida *',
           style: { color: '#666179' },
         }
         break

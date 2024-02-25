@@ -151,7 +151,7 @@ export const navbarList: NavbarItem[] = [
             href: '#AmbitoDeActuacion',
           },
           {
-            title: 'Unidad de obra',
+            title: 'Unidad de medida',
             description: 'Repositorio de unidades de obra',
             href: '#UnidadDeObra',
           },
