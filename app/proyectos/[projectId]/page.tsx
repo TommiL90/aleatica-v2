@@ -65,7 +65,7 @@ export default function Selectors() {
       case 2:
         return `/proyectos/${projectId}/tareas/${taskId}/udsimples?esp=${espId}`
       case 3:
-        return `/proyectos/${projectId}/tareas/${taskId}/udcompuestas?esp=${espId}`
+        return `/proyectos/${projectId}/tareas/${taskId}/udcompuestas/esp/${espId}`
       case 4:
         return `/proyectos/${projectId}/tareas/${taskId}/actuaciones?esp=${espId}`
       case 6:
