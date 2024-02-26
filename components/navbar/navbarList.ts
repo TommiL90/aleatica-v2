@@ -116,7 +116,7 @@ export const navbarList: NavbarItem[] = [
         description: 'Principales indicadores del sistema',
         secondSubItems: [
           {
-            title: 'Anno',
+            title: 'Año',
             description: 'Configuración de años de los proyectos',
             href: '#Anno',
           },
@@ -220,12 +220,12 @@ export const navbarList: NavbarItem[] = [
       {
         title: 'Nuevo Proyecto',
         description: 'Crea nuevo proyecto',
-        href: '#NuevoProyecto',
+        href: '#',
       },
       {
         title: 'Proyectos en desarrollo',
         description: 'Listado de proyectos en desarrollo',
-        href: '#ProyectosEnDesarrollo',
+        href: '/proyectos',
       },
       {
         title: 'Proyectos cerrados',

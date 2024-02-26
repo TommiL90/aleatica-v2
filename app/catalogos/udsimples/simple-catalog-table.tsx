@@ -48,10 +48,10 @@ import {
   headerRow,
   moreRows,
 } from './functions'
-import ModalDescriptionCell from '@/components/common-modals/modal-cell-description'
+import ModalDescriptionCell from '@/components/common-modals/cell-description-modal'
 import ModalDetail from './modal-details'
 import ModalEspecialidadesParaSpreadsheet from './modalEspecialidadesParaSpreadsheet'
-import { ModalDelete } from '@/components/common-modals/modal-delete'
+import { ModalDelete } from '@/components/common-modals/delete-modal'
 
 interface DataResponse<T> {
   status: number
