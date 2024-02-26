@@ -8,11 +8,11 @@ import Select from 'react-select'
 import useSWR from 'swr'
 
 import { toast } from 'sonner'
-import Loading from '@/app/loading'
+import Loading from '@/components/loading'
 import Breadcrumbs from '@/components/breadcrumbs'
 import { cn } from '@/lib/utils'
 import fetcher from '@/services/fetcher'
-import ModalDuplicateProject from '@/components/common-modals/duplicate-proyect-modal'
+import ModalDuplicateProject from '@/components/common-modals/modal-duplicate-proyect'
 
 // import ModalDuplicateProject from '@/components/modal/duplicateProyect'
 

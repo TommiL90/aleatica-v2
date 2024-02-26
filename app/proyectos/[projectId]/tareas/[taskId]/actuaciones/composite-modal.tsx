@@ -1,20 +1,19 @@
+import { UnidadesCompuestas } from '@/components/forms/subform/unidades-compuestas'
 import { AnimatePresence, motion } from 'framer-motion'
-
-import { UnidadesSimples } from '@/components/forms/subform/unidades-simples'
 
 interface Props {
   title: string
   isModalOpen: boolean
   especialidad: number
-  options: any[]
+  compositeList: any[]
+  compositeSelected: any[]
 
-  simples: any[]
   onClose: Function
   onChange: Function
 }
 
-export default function ModalSimplesParaSpreadsheet(props: Props) {
-  console.log(props.simples)
+export default function CompositeModalForSpreadsheet(props: Props) {
+  console.log(props.compositeSelected)
 
   return (
     <AnimatePresence>
@@ -28,7 +27,7 @@ export default function ModalSimplesParaSpreadsheet(props: Props) {
             id="staticModal"
             tabIndex={-1}
             aria-hidden="true"
-            className="fixed inset-x-0 top-0 z-50 mx-auto flex w-[700px] items-center overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+            className="fixed left-0 right-0 top-0 z-50 mx-auto flex w-[700px] items-center overflow-y-auto overflow-x-hidden p-4 md:inset-0"
           >
             <div className="max-w-7xlxl relative mx-auto max-h-full w-[700px]">
               <div className="relative bg-white  shadow dark:bg-gray-700">
@@ -39,10 +38,10 @@ export default function ModalSimplesParaSpreadsheet(props: Props) {
                   <button
                     type="button"
                     onClick={() => props.onClose()}
-                    className="ml-auto inline-flex size-8 items-center  justify-center bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="ml-auto inline-flex h-8 w-8  items-center justify-center bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
                     <svg
-                      className="size-3"
+                      className="h-3 w-3"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -61,12 +60,12 @@ export default function ModalSimplesParaSpreadsheet(props: Props) {
                 </div>
 
                 <div className="space-y-6 p-6">
-                  <UnidadesSimples
+                  <UnidadesCompuestas
+                    compositeList={props.compositeList.filter(
+                      (item: any) => item.especialityId === props.especialidad,
+                    )}
+                    compositeSelected={props.compositeSelected}
                     onChange={(value: any) => props.onChange(value)}
-                    // simplesList={ props.options.filter((item: any) => (Number(item.especialityId) === props.especialidad || item.global === true) && !props.simples.map((i : any) => parseInt(i.value)).includes(parseInt(item.value)))}
-
-                    especialidad={props.especialidad}
-                    simplesSelected={props.simples}
                   />
                 </div>
               </div>

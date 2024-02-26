@@ -223,7 +223,7 @@ export const getRepositories = cache(async () => {
       roadSectionRes,
       unitMeasurementRes,
       scopeActionRes,
-      MRPerformanceRes,
+      mRPerformanceRes,
       subEspRes,
     ] = await Promise.all([
       fetcher(`${process.env.API_URL}/CompositeCatalog/GetAll`) as Promise<
@@ -271,7 +271,7 @@ export const getRepositories = cache(async () => {
       roadSectionRes,
       unitMeasurementRes,
       scopeActionRes,
-      MRPerformanceRes,
+      mRPerformanceRes,
       subEspRes,
     }
   } catch (error) {

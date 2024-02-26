@@ -8,7 +8,7 @@ import Breadcrumbs from '@/components/breadcrumbs'
 import fetcher from '@/services/fetcher'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import Loading from '@/app/loading'
+import Loading from '@/components/loading'
 
 const creator = async (
   url: string,

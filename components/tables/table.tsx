@@ -19,8 +19,8 @@ import React, {
 import { Menu, MenuItem, MenuButton, SubMenu } from '@szhsin/react-menu'
 import Select from 'react-select'
 import Link from 'next/link'
-import Loading from '@/app/Loading'
-import ErrorComponent from '@/app/Error'
+import Loading from '@/components/loading'
+import ErrorComponent from '@/components/error'
 import { cn } from '@/lib/utils'
 
 const udsimples: any[] = new Array(20)

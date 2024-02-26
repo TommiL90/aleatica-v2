@@ -9,7 +9,7 @@ import { FaEdit, FaRegTrashAlt, FaRegClone } from 'react-icons/fa'
 import fetcher from '@/services/fetcher'
 import { toast } from 'sonner'
 import Table from '@/components/tables/table'
-import ModalDeleteRow from '@/components/common-modals/delete-row-modal'
+import ModalDeleteRow from '@/components/common-modals/modal-delete-row'
 
 interface Option {
   label: string

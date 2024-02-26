@@ -19,8 +19,8 @@ import useSWRMutation from 'swr/mutation'
 import { DataResponse } from '@/types/data-response'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import ModalDescriptionCell from '@/components/common-modals/cell-description-modal'
-import { ModalDelete } from '@/components/common-modals/delete-modal'
+import ModalDescriptionCell from '@/components/common-modals/modal-cell-description'
+import { ModalDelete } from '@/components/common-modals/modal-delete'
 import { SpreadSheet } from '@/components/spread-sheet'
 
 import {
