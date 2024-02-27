@@ -46,6 +46,8 @@ import {
   moreSafetyDefenseRows,
 } from './functions'
 import { spec } from 'node:test/reporters'
+import ModalNewItem from './modalEdit'
+import ModalDetail from './modalDetail'
 
 interface Props {
   specialty: Specialty
@@ -613,6 +615,198 @@ const SafetyDefenseMeasurement = ({
           />
         </SpreadSheet.Root>
       </div>
+      {modalNewItem ? (
+        <ModalNewItem
+          isModalOpen={modalNewItem}
+          title={itemId === 0 ? 'Nueva medicion' : 'Actualizar medicion'}
+          itemSelected={mediciones.find((item: Medicion) => item.id === itemId)}
+          especialidad={specialty}
+          tramos={tramo.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          entronques={entronque.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          gazas={cuerpo.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          carriles={carril.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          deterioros={deterioros.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          actuaciones={actuaciones.map((item) => ({
+            label: item.performanceName,
+            value: String(item.id),
+            compuestas: item.compositeCatalogs.map((i) => ({
+              label: i.compositeUdName,
+              value: String(i.id),
+              mtUnitOfMeasurementId: i.mtUnitOfMeasurementId,
+            })),
+          }))}
+          // compuestas={
+          //   compuestasRes !== undefined && compuestasRes.status === 200 ?
+          //     compuestasRes.result.map((item: any) => ({ label: item.compositeUdName, value: String(item.id) }))
+          //       : []
+          // }
+          prioridades={prioridad.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          tipologias={tipoEstructura.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          posiciones={position.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          disposiciones={disposition.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          onMutate={async (values: any) => {
+            console.log(values)
+            // await mutate();
+            // if(itemId !== 0){
+            //     setModalNewItem(false)
+            // }
+            let toastId
+            try {
+              const cadInicial = values.cadenamientoInicial.split('+')
+              const cadFinal = values.cadenamientoFinal.split('+')
+
+              toastId = toast.loading('Enviando... 🚀')
+              console.log('cadenamientoInicial', cadInicial)
+              // Submit data
+              const value: any = {
+                id: itemId,
+                previousStudiesDate: values.fechaEstudioPrevio,
+                mtRoadSectionId: values.tramo,
+                mtHigwayIntersectionId: values.entronque,
+                mtSlipLaneRoadId: values.gaza,
+                mtHighwayLaneId: values.carril,
+                performanceCatalogId: values.actuacion,
+
+                compositeCatalogId: values.compuesta,
+                mtPriorityId: values.prioridad,
+
+                mtSpecialtyActionId: specialty.value,
+                observation: values.observacion,
+                initialNumber: values.cadenamientoInicial.replace('+', ''),
+                finalNumber: values.cadenamientoFinal.replace('+', ''),
+
+                thickness: values.espesor,
+                width: values.ancho,
+                t: values.tonelada,
+                l: values.litro,
+
+                mtDeteriorationTypeIds: values.deterioros.map(
+                  (item: any) => item.value,
+                ),
+                // no deja actualizar medicion si mtTypologyId
+                mtTypologyId: values.tipologia,
+                mtPositionId: values.posicion,
+                mtDispositionId: values.disposicion,
+
+                length: values.longitud,
+                ud: values.unidad,
+                affectePercentage: values.porcentajeAfectacion,
+
+                alternativeUnitMeasurementValue:
+                  values.alternativeUnitMeasurementValue,
+              }
+
+              let result: any = null
+
+              if (itemId === 0) result = await trigger(value)
+              else {
+                result = await fetch(
+                  `${process.env.API_URL}/MeasurementTab/Update/${itemId}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify(value),
+                  },
+                )
+              }
+
+              if (
+                result != undefined &&
+                (result.status === 200 || result.status === 201)
+              ) {
+                toast.success('Enviado con éxito 🙌', { id: toastId })
+              }
+              if (result != undefined && result.status >= 400) {
+                toast.error(`No se puede enviar. ${result.errorMessage}😱`, {
+                  id: toastId,
+                })
+              }
+
+              await mutate()
+              if (itemId !== 0) {
+                setModalNewItem(false)
+              }
+            } catch (e) {
+              toast.error(
+                `No se puede enviar. Error en el servidor. Consulte a servicios 😱`,
+                { id: toastId },
+              )
+            }
+          }}
+          onClose={() => setModalNewItem(false)}
+        />
+      ) : null}
+      {modalDetail ? (
+        <ModalDetail
+          isModalOpen={modalDetail}
+          title="Detalles de medicion"
+          itemSelected={mediciones.find((item: Medicion) => item.id === itemId)}
+          especialidad={specialty}
+          tramos={tramo.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          entronques={entronque.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          gazas={cuerpo.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          carriles={carril.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          deterioros={deterioros.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          actuaciones={actuaciones.map((item) => ({
+            label: item.performanceName,
+            value: String(item.id),
+          }))}
+          compuestas={compuestas.map((item) => ({
+            label: item.compositeUdName,
+            value: String(item.id),
+          }))}
+          prioridades={prioridad.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          onClose={() => setModalDetail(false)}
+        />
+      ) : null}
     </section>
   )
 }
