@@ -487,20 +487,21 @@ const StructuresMeasurements = ({
 
               let result: any = null
 
-              if (item.newItem) result = await trigger(value)
-              else {
-                ;(value['id'] = item.id),
-                  (result = await fetch(
-                    `${process.env.API_URL}/MeasurementTab/Update/${item.id}`,
-                    {
-                      method: 'PUT',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        // 'Content-Type': 'application/x-www-form-urlencoded',
-                      },
-                      body: JSON.stringify(value),
+              if (item.newItem) {
+                result = await trigger(value)
+              } else {
+                value['id'] = item.id
+                result = await fetch(
+                  `${process.env.API_URL}/MeasurementTab/Update/${item.id}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      // 'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                  ))
+                    body: JSON.stringify(value),
+                  },
+                )
               }
 
               if (

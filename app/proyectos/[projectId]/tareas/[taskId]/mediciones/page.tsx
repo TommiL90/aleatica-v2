@@ -100,6 +100,10 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
           typology={typologyRes.result}
         />
       )}
+      {result.mtSubCategoryActionId === 5 && result.id === 38 && (
+        <p>Safety defense</p>
+      )}
+      {result.mtSubCategoryActionId === 5 && result.id !== 38 && <p>Safety </p>}
     </Suspense>
   )
 }
