@@ -1,9 +1,14 @@
 import { cache } from 'react'
 
 import fetcher from './fetcher'
-import { MtRoadSection, SpecialtyAction } from './useGetRepositories'
+import {
+  CompositeCatalog,
+  MtRoadSection,
+  SimpleCatalog,
+  SpecialtyAction,
+} from './useGetRepositories'
 
-interface SubcategoryActionsGetDropdownItems {
+export interface SubcategoryActionsGetDropdownItems {
   disabled: boolean
   group?: any
   selected: boolean
@@ -26,7 +31,7 @@ interface MtHighwayIntersectionMtSlipLaneRoad {
   disabled: boolean
 }
 
-interface MtHighwayIntersection {
+export interface MtHighwayIntersection {
   mtHighwayIntersectionMtHighwayRoads: any[]
   mtHighwayIntersectionMtSlipLaneRoads: MtHighwayIntersectionMtSlipLaneRoad[]
   code: string
@@ -35,44 +40,26 @@ interface MtHighwayIntersection {
   disabled: boolean
 }
 
-interface MtSlipLaneRoad {
+export interface MtSlipLaneRoad {
   code: string
   name: string
   id: number
   disabled: boolean
 }
 
-interface MtHighwayLane {
+export interface MtHighwayLane {
   name: string
   id: number
   disabled: boolean
 }
 
-interface MtPriority {
+export interface MtPriority {
   name: string
   id: number
   disabled: boolean
 }
 
-interface CompositeCatalog {
-  mtUnitOfMeasurement?: any
-  mtSpecialtyAction?: any
-  mtSubCategoryAction?: any
-  mtSubCategoryActionId: string
-  simpleCatalogs: any[]
-  compositeUdId: string
-  count: string
-  compositeUdName: string
-  description: string
-  mtUnitOfMeasurementId: number
-  mtSpecialtyActionId: number
-  sapId: string
-  code: string
-  id: number
-  disabled: boolean
-}
-
-interface PerformanceCatalogByEsp {
+export interface PerformanceCatalogByEsp {
   fileNumberId: string
   performanceId: string
   projectTask: string
@@ -108,29 +95,7 @@ interface PerformanceCatalogByEsp {
   disabled: boolean
 }
 
-interface SimpleCatalog {
-  simpleUdId: string
-  count: number
-  mtUnitOfMeasurement?: any
-  mtSpecialtyAction: string
-  mtSubCategoryAction?: any
-  mtSubspecialityName?: any
-  mtSubspecialityRoute?: any
-  mtSubCategoryActionId: string
-  code: string
-  simpleUdName: string
-  description: string
-  mtUnitOfMeasurementId: number
-  mtSpecialtyActionId: number
-  mtSubspecialityId: number
-  accountantConcept: string
-  sapId: string
-  global: boolean
-  id: number
-  disabled: boolean
-}
-
-interface CompositeCatalogByEsp {
+export interface CompositeCatalogByEsp {
   mtUnitOfMeasurement: string
   mtSpecialtyAction: string
   mtSubCategoryAction: string
@@ -148,7 +113,7 @@ interface CompositeCatalogByEsp {
   disabled: boolean
 }
 
-interface MtDeteriorationTypeByEsp {
+export interface MtDeteriorationTypeByEsp {
   mtSpecialtyAction: string
   mtActionSubCategory: string
   mtActionSubCategoryId: number
@@ -174,66 +139,68 @@ interface Response<T> {
 // highwayLane = carrilRes
 // priorityRes = prioridadRes
 // performanceCatalog = actuacionesRes
-export const getRepositoriesForMeasurements = cache(async (esp: number) => {
-  try {
-    const [
-      subcatRes,
-      roadSectionRes,
-      espRes,
-      highwayIntersectionRes,
-      slipLaneRoad,
-      highwayLane,
-      priorityRes,
-      performanceCatalogByEspRes,
-      compositeCatalogByEspRes,
-      deteriorationTypeByEsp,
-    ] = await Promise.all([
-      fetcher(
-        `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
-      ) as Promise<Response<SubcategoryActionsGetDropdownItems>>,
-      fetcher(`${process.env.API_URL}/MtRoadSection/GetAll`) as Promise<
-        Response<MtRoadSection>
-      >,
-      fetcher(`${process.env.API_URL}/MtSpecialtyAction/GetAll`) as Promise<
-        Response<SpecialtyAction>
-      >,
-      fetcher(`${process.env.API_URL}/MtHighwayIntersection/GetAll`) as Promise<
-        Response<MtHighwayIntersection>
-      >,
-      fetcher(`${process.env.API_URL}/MtSlipLaneRoad/GetAll`) as Promise<
-        Response<MtSlipLaneRoad>
-      >,
-      fetcher(`${process.env.API_URL}/MtHighwayLane/GetAll`) as Promise<
-        Response<MtHighwayLane>
-      >,
-      fetcher(`${process.env.API_URL}/MtPriority/GetAll`) as Promise<
-        Response<MtPriority>
-      >,
-      fetcher(
-        `${process.env.API_URL}/PerformanceCatalog/GetBySpecialtyAndTask?specialityId=${esp}`,
-      ) as Promise<Response<PerformanceCatalogByEsp>>,
-      fetcher(
-        `${process.env.API_URL}/CompositeCatalog/GetBySpecialty/${esp}`,
-      ) as Promise<Response<CompositeCatalogByEsp>>,
-      fetcher(
-        `${process.env.API_URL}/MtDeteriorationType/GetBySpecialty/${esp}`,
-      ) as Promise<Response<MtDeteriorationTypeByEsp>>,
-    ])
+export const getRepositoriesForMeasurements = cache(
+  async (esp: number, action: number) => {
+    try {
+      const [
+        subcatRes,
+        roadSectionRes,
+        espRes,
+        highwayIntersectionRes,
+        slipLaneRoadRes,
+        highwayLaneRes,
+        priorityRes,
+        performanceCatalogByEspRes,
+        compositeCatalogByEspRes,
+        deteriorationTypeByEspRes,
+      ] = await Promise.all([
+        fetcher(
+          `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
+        ) as Promise<Response<SubcategoryActionsGetDropdownItems>>,
+        fetcher(`${process.env.API_URL}/MtRoadSection/GetAll`) as Promise<
+          Response<MtRoadSection>
+        >,
+        fetcher(`${process.env.API_URL}/MtSpecialtyAction/GetAll`) as Promise<
+          Response<SpecialtyAction>
+        >,
+        fetcher(
+          `${process.env.API_URL}/MtHighwayIntersection/GetAll`,
+        ) as Promise<Response<MtHighwayIntersection>>,
+        fetcher(`${process.env.API_URL}/MtSlipLaneRoad/GetAll`) as Promise<
+          Response<MtSlipLaneRoad>
+        >,
+        fetcher(`${process.env.API_URL}/MtHighwayLane/GetAll`) as Promise<
+          Response<MtHighwayLane>
+        >,
+        fetcher(`${process.env.API_URL}/MtPriority/GetAll`) as Promise<
+          Response<MtPriority>
+        >,
+        fetcher(
+          `${process.env.API_URL}/PerformanceCatalog/GetBySpecialtyAndTask?specialityId=${esp}&projectTaskId=${action}`,
+        ) as Promise<Response<PerformanceCatalogByEsp>>,
+        fetcher(
+          `${process.env.API_URL}/CompositeCatalog/GetBySpecialty/${esp}`,
+        ) as Promise<Response<CompositeCatalogByEsp>>,
+        fetcher(
+          `${process.env.API_URL}/MtDeteriorationType/GetBySpecialty/${esp}`,
+        ) as Promise<Response<MtDeteriorationTypeByEsp>>,
+      ])
 
-    return {
-      subcatRes,
-      roadSectionRes,
-      espRes,
-      highwayIntersectionRes,
-      slipLaneRoad,
-      highwayLane,
-      priorityRes,
-      performanceCatalogByEspRes,
-      compositeCatalogByEspRes,
-      deteriorationTypeByEsp,
+      return {
+        subcatRes,
+        roadSectionRes,
+        espRes,
+        highwayIntersectionRes,
+        slipLaneRoadRes,
+        highwayLaneRes,
+        priorityRes,
+        performanceCatalogByEspRes,
+        compositeCatalogByEspRes,
+        deteriorationTypeByEspRes,
+      }
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error')
     }
-  } catch (error) {
-    console.log(error)
-    throw new Error('Error')
-  }
-})
+  },
+)
