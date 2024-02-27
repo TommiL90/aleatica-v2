@@ -1,4 +1,5 @@
 import RoadSurfacesMeasurements from '@/components/measuraments/road-surfaces-measurements'
+import StructuresMeasurements from '@/components/measuraments/structures'
 import fetcher from '@/services/fetcher'
 import {
   CompositeCatalogByEsp,
@@ -44,13 +45,21 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
     performanceCatalogByEspRes,
     compositeCatalogByEspRes,
     deteriorationTypeByEspRes,
+    structureNumberRes,
+    axisRes,
+    calificationRes,
+    dispositionRes,
+    elementRes,
+    positionRes,
+    sideRes,
+    typologyRes,
   } = await getRepositoriesForMeasurements(Number(esp), Number(actuacion))
   const data: DataResponse<SpecialtyAction> = await fetcher(
     `${process.env.API_URL}/MtSpecialtyAction/FindById/${esp}`,
   )
   const { result } = data
   const specialty = { label: result.name, value: result.id }
-
+  console.log(result)
   return (
     <Suspense fallback={<div>Loading ...</div>}>
       {result.mtSubCategoryActionId === 2 && (
@@ -66,6 +75,29 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
           performanceCatalogByEsp={performanceCatalogByEspRes.result}
           compositeCatalogByEsp={compositeCatalogByEspRes.result}
           deteriorationTypeByEsp={deteriorationTypeByEspRes.result}
+        />
+      )}
+      {result.mtSubCategoryActionId === 3 && (
+        <StructuresMeasurements
+          specialty={specialty}
+          subcat={subcatRes.result}
+          esp={espRes.result}
+          roadSection={roadSectionRes.result}
+          highwayIntersection={highwayIntersectionRes.result}
+          slipLaneRoad={slipLaneRoadRes.result}
+          highwayLane={highwayLaneRes.result}
+          priority={priorityRes.result}
+          performanceCatalogByEsp={performanceCatalogByEspRes.result}
+          compositeCatalogByEsp={compositeCatalogByEspRes.result}
+          deteriorationTypeByEsp={deteriorationTypeByEspRes.result}
+          structureNumber={structureNumberRes.result}
+          axis={axisRes.result}
+          calification={calificationRes.result}
+          disposition={dispositionRes.result}
+          element={elementRes.result}
+          position={positionRes.result}
+          side={sideRes.result}
+          typology={typologyRes.result}
         />
       )}
     </Suspense>
@@ -84,3 +116,4 @@ export default MeasurementsPage
 // performanceCatalogByEspRes: PerformanceCatalogByEsp[],
 // compositeCatalogByEspRes: CompositeCatalogByEsp[],
 // deteriorationTypeByEsp: MtDeteriorationTypeByEsp[],
+// StructuresMeasurements

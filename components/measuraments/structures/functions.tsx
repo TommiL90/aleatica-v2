@@ -9,15 +9,14 @@ import {
   Row,
   TextCell,
 } from '@silevis/reactgrid'
-
-import { FlagCell } from '../../cells/flag'
-import { ButtonCell } from '../../cells/button'
-import { MaskFieldCell } from '../../cells/input_mask'
 import { Medicion } from '.'
+import { FlagCell } from '@/components/cells/flag'
+import { ButtonCell } from '@/components/cells/button'
+import { MaskFieldCell } from '@/components/cells/input_mask'
 
-export const getMediciones = (): Medicion[] => []
+export const getStructuresMediciones = (): Medicion[] => []
 
-export const getRoadSurfaceColumns = (): Column[] => [
+export const getStructuresColumns = (): Column[] => [
   { columnId: 'id', width: 30, reorderable: true, resizable: true },
   { columnId: 'fechaPrevia', width: 200, reorderable: true, resizable: true },
   { columnId: 'tramo', width: 350, reorderable: true, resizable: true },
@@ -55,12 +54,26 @@ export const getRoadSurfaceColumns = (): Column[] => [
   { columnId: 'unidad', width: 150, reorderable: true },
   { columnId: 'tonelada', width: 150, reorderable: true },
 
+  { columnId: 'numeroEstructuras', width: 150, reorderable: true },
+  { columnId: 'tipoEstructura', width: 150, reorderable: true },
+  { columnId: 'idGeneral', width: 150, reorderable: true },
+  { columnId: 'eje', width: 150, reorderable: true },
+  { columnId: 'lado', width: 150, reorderable: true },
+  { columnId: 'elementoEstructura', width: 150, reorderable: true },
+  // { columnId: "posicion", width: 150, reorderable: true},
+  // { columnId: "disposicion", width: 150, reorderable: true},
+  { columnId: 'calificacion', width: 150, reorderable: true },
+  { columnId: 'anchoPromedioCalzada', width: 150, reorderable: true },
+  { columnId: 'esviaje', width: 150, reorderable: true },
+  { columnId: 'anchoJunta', width: 150, reorderable: true },
+  { columnId: 'numeroElementos', width: 150, reorderable: true },
+
   { columnId: 'modal', width: 150, reorderable: true },
   { columnId: 'button_save', width: 150, reorderable: true },
   { columnId: 'button_delete', width: 150, reorderable: true },
 ]
 
-export const headerRow = (columns: Column[]): Row => ({
+const headerRow = (columns: Column[]): Row => ({
   rowId: 'header',
   height: 35,
   cells: columns.map((col) => {
@@ -204,6 +217,75 @@ export const headerRow = (columns: Column[]): Row => ({
         elem = { type: 'header', text: 'Tonelada', style: { color: '#666179' } }
         break
 
+      case 'numeroEstructuras':
+        elem = {
+          type: 'header',
+          text: 'Numero de estructuras',
+          style: { color: '#666179' },
+        }
+        break
+      case 'tipoEstructura':
+        elem = {
+          type: 'header',
+          text: 'Tipo de estructura',
+          style: { color: '#666179' },
+        }
+        break
+      case 'idGeneral':
+        elem = {
+          type: 'header',
+          text: 'idGeneral',
+          style: { color: '#666179' },
+        }
+        break
+      case 'eje':
+        elem = { type: 'header', text: 'Eje', style: { color: '#666179' } }
+        break
+      case 'lado':
+        elem = { type: 'header', text: 'Lado', style: { color: '#666179' } }
+        break
+      case 'elementoEstructura':
+        elem = {
+          type: 'header',
+          text: 'Elemento de Estructura',
+          style: { color: '#666179' },
+        }
+        break
+
+      case 'calificacion':
+        elem = {
+          type: 'header',
+          text: 'Calificacion',
+          style: { color: '#666179' },
+        }
+        break
+      // case "posicion": elem = { type: "header", text: "Posicion *", style: {color: '#666179'}}; break;
+      // case "disposicion": elem = { type: "header", text: "Disposicion *", style: {color: '#666179'}}; break;
+      case 'anchoPromedioCalzada':
+        elem = {
+          type: 'header',
+          text: 'Ancho Promedio de Calzada',
+          style: { color: '#666179' },
+        }
+        break
+      case 'esviaje':
+        elem = { type: 'header', text: 'Esviaje', style: { color: '#666179' } }
+        break
+      case 'anchoJunta':
+        elem = {
+          type: 'header',
+          text: 'Ancho de Junta',
+          style: { color: '#666179' },
+        }
+        break
+      case 'numeroElementos':
+        elem = {
+          type: 'header',
+          text: 'Numero de Elementos',
+          style: { color: '#666179' },
+        }
+        break
+
       case 'modal':
         elem = {
           type: 'header',
@@ -223,7 +305,7 @@ export const headerRow = (columns: Column[]): Row => ({
   }),
 })
 
-export const getRoadSurfaceRows = (
+export const getStructuresRows = (
   mediciones: Medicion[],
   columns: Column[],
   tramos: any[],
@@ -233,6 +315,14 @@ export const getRoadSurfaceRows = (
   prioridades: any[],
   actuaciones: any[],
   compuestas: any[],
+  numeroEstructuras: any[],
+  tipoEstructuras: any[],
+  ejes: any[],
+  lados: any[],
+  elementoEstructuras: any[],
+  posiciones: any[],
+  disposiciones: any[],
+  calificaciones: any[],
 ): Row<
   | DefaultCellTypes
   | FlagCell
@@ -463,7 +553,7 @@ export const getRoadSurfaceRows = (
         case 'observacion':
           elem = {
             type: 'text',
-            text: item.observacion ? item.observacion : '',
+            text: item.observacion,
             className: 'text-sm block w-full text-gray-800',
           }
           break
@@ -545,6 +635,127 @@ export const getRoadSurfaceRows = (
             style: { color: '#666179' },
           }
           break
+
+        case 'numeroEstructuras':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.numeroEstructuras,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.numeroEstructurasisOpen,
+            values: numeroEstructuras,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+
+        case 'tipoEstructura':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.tipoEstructura,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.tipoEstructuraisOpen,
+            values: tipoEstructuras,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+        case 'eje':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.eje,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.ejeisOpen,
+            values: ejes,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+
+        case 'lado':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.lado,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.ladoisOpen,
+            values: lados,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+        case 'elementoEstructura':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.elementoEstructura,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.elementoEstructuraisOpen,
+            values: elementoEstructuras,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+
+        case 'posicion':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.posicion,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.posicionisOpen,
+            values: posiciones,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+
+        case 'disposicion':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.disposicion,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.disposicionisOpen,
+            values: disposiciones,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+
+        case 'calificacion':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.calificacion,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.calificacionisOpen,
+            values: calificaciones,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+        case 'idGeneral':
+          elem = {
+            type: 'text',
+            text: item.idGeneral,
+            style: { color: '#666179' },
+          }
+          break
+        case 'anchoPromedioCalzada':
+          elem = {
+            type: 'number',
+            value: item.anchoPromedioCalzada,
+            style: { color: '#666179' },
+          }
+          break
+        case 'esviaje':
+          elem = {
+            type: 'number',
+            value: item.esviaje,
+            style: { color: '#666179' },
+          }
+          break
+        case 'anchoJunta':
+          elem = {
+            type: 'number',
+            value: item.anchoJunta,
+            style: { color: '#666179' },
+          }
+          break
+        case 'numeroElementos':
+          elem = {
+            type: 'number',
+            value: item.numeroElementos,
+            style: { color: '#666179' },
+          }
+          break
       }
 
       return elem
@@ -552,7 +763,7 @@ export const getRoadSurfaceRows = (
   })),
 ]
 
-export const getRoadSurfaceEmpty = (id: number = 1): Medicion => ({
+export const getStructuresEmpty = (id: number = 1): Medicion => ({
   idauto: id,
   id: 0,
   idUnidad: '',
@@ -586,8 +797,40 @@ export const getRoadSurfaceEmpty = (id: number = 1): Medicion => ({
   unidad: 0,
   tonelada: 0,
   estudio: 0,
-  densidad: 0, // Add the missing property "densidad"
-  porcentajeAfectacion: 0, // Add the missing property "porcentajeAfectacion"
+
+  numeroEstructuras: null,
+  tipoEstructura: null,
+  idGeneral: '',
+  eje: null,
+  lado: null,
+  elementoEstructura: null,
+  posicion: null,
+  disposicion: null,
+  calificacion: null,
+  anchoPromedioCalzada: 0,
+  esviaje: 0,
+  anchoJunta: 0,
+  numeroElementos: 0,
+
+  anchoCalzada: 0,
+  coseno: false,
+  longitudCadaJunta: 0,
+  longitudJuntasAfectadas: 0,
+  longitudTotalJuntas: 0,
+  noApoyos: 0,
+  noEjes: 0,
+  noElementos: 0,
+  porcentajeAfectacion: 0,
+
+  numeroEstructurasisOpen: false,
+  tipoEstructuraisOpen: false,
+  ejeisOpen: false,
+  ladoisOpen: false,
+  elementoEstructuraisOpen: false,
+  posicionisOpen: false,
+  disposicionisOpen: false,
+  calificacionisOpen: false,
+
   tramoisOpen: false,
   prioridadisOpen: false,
   entronqueisOpen: false,
@@ -596,23 +839,11 @@ export const getRoadSurfaceEmpty = (id: number = 1): Medicion => ({
   actuacionisOpen: false,
   compuestaisOpen: false,
 
-  // compuestaFilter: [],
+  compuestaFilter: [],
   newItem: true,
 })
 
-export const moreRoadSurfaceRows = (
-  mediciones: Medicion[],
-  exceed: number = 100,
-) => [
-  ...mediciones,
-  ...Array.from({ length: exceed }, (item, idx) => ({
-    ...getRoadSurfaceEmpty(mediciones.length + 1),
-    idauto: mediciones.length + idx + 1,
-    // counter: getCounter(mediciones.length + idx + 1)
-  })),
-]
-
-export const applyRoadSurfaceChanges = (
+export const applyStructuresChanges = (
   changes: CellChange<
     | TextCell
     | NumberCell
@@ -685,10 +916,33 @@ export const applyRoadSurfaceChanges = (
           case 'compuesta':
             dataRow['compuestaisOpen'] = change.newCell.isOpen as never
             break
+
+          case 'numeroEstructuras':
+            dataRow['numeroEstructurasisOpen'] = change.newCell.isOpen as never
+            break
+          case 'tipoEstructura':
+            dataRow['tipoEstructuraisOpen'] = change.newCell.isOpen as never
+            break
+          case 'eje':
+            dataRow['ejeisOpen'] = change.newCell.isOpen as never
+            break
+          case 'lado':
+            dataRow['ladoisOpen'] = change.newCell.isOpen as never
+            break
+          case 'elementoEstructura':
+            dataRow['elementoEstructuraisOpen'] = change.newCell.isOpen as never
+            break
+          case 'calificacion':
+            dataRow['calificacionisOpen'] = change.newCell.isOpen as never
+            break
+          case 'posicion':
+            dataRow['posicionisOpen'] = change.newCell.isOpen as never
+            break
+          case 'disposicion':
+            dataRow['disposicionisOpen'] = change.newCell.isOpen as never
+            break
         }
       }
-
-      console.log(change.newCell.selectedValue)
 
       if (change.previousCell.selectedValue !== change.newCell.selectedValue) {
         dataRow[fieldName] = change.newCell.selectedValue as never
@@ -698,3 +952,15 @@ export const applyRoadSurfaceChanges = (
 
   return [...prevDetails]
 }
+
+export const moreStructuresRows = (
+  mediciones: Medicion[],
+  exceed: number = 100,
+) => [
+  ...mediciones,
+  ...Array.from({ length: exceed }, (item, idx) => ({
+    ...getStructuresEmpty(mediciones.length + 1),
+    idauto: mediciones.length + idx + 1,
+    // counter: getCounter(mediciones.length + idx + 1)
+  })),
+]

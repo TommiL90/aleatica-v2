@@ -124,6 +124,59 @@ export interface MtDeteriorationTypeByEsp {
   disabled: boolean
 }
 
+export interface MtStructureNumber {
+  code: any
+  name: string
+  id: number
+  disabled: boolean
+}
+
+export interface MtTypology {
+  code: string
+  name: string
+  id: number
+  disabled: boolean
+}
+
+export interface MtAxis {
+  name: string
+  id: number
+  disabled: boolean
+}
+
+export interface MtSide {
+  code: string
+  name: string
+  id: number
+  disabled: boolean
+}
+
+export interface MtElement {
+  name: string
+  id: number
+  disabled: boolean
+}
+
+export interface MtCalification {
+  name: string
+  id: number
+  disabled: boolean
+}
+
+export interface MtPosition {
+  code: string
+  name: string
+  id: number
+  disabled: boolean
+}
+
+export interface MtDisposition {
+  code: string
+  name: string
+  id: number
+  disabled: boolean
+}
+
 interface Response<T> {
   status: number
   result: T[]
@@ -139,6 +192,15 @@ interface Response<T> {
 // highwayLane = carrilRes
 // priorityRes = prioridadRes
 // performanceCatalog = actuacionesRes
+
+// const { data: numeroEstructuraRes } = useSWR(`${process.env.API_URL}/MtStructureNumber/GetAll`, fetcher) ok
+// const { data: tipoEstructuraRes } = useSWR(`${process.env.API_URL}/MtTypology/GetAll`, fetcher) ok
+// const { data: ejeRes } = useSWR(`${process.env.API_URL}/MtAxis/GetAll`, fetcher) ok
+// const { data: ladoRes } = useSWR(`${process.env.API_URL}/MtSide/GetAll`, fetcher) ok
+// const { data: elementoRes } = useSWR(`${process.env.API_URL}/MtElement/GetAll`, fetcher) ok
+// const { data: calificacionRes } = useSWR(`${process.env.API_URL}/MtCalification/GetAll`, fetcher)
+// const { data: positionRes } = useSWR(`${process.env.API_URL}/MtPosition/GetAll`, fetcher)
+// const { data: dispositionRes } = useSWR(`${process.env.API_URL}/MtDisposition/GetAll`, fetcher)
 export const getRepositoriesForMeasurements = cache(
   async (esp: number, action: number) => {
     try {
@@ -153,6 +215,14 @@ export const getRepositoriesForMeasurements = cache(
         performanceCatalogByEspRes,
         compositeCatalogByEspRes,
         deteriorationTypeByEspRes,
+        structureNumberRes,
+        typologyRes,
+        axisRes,
+        sideRes,
+        elementRes,
+        calificationRes,
+        positionRes,
+        dispositionRes,
       ] = await Promise.all([
         fetcher(
           `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
@@ -184,6 +254,30 @@ export const getRepositoriesForMeasurements = cache(
         fetcher(
           `${process.env.API_URL}/MtDeteriorationType/GetBySpecialty/${esp}`,
         ) as Promise<Response<MtDeteriorationTypeByEsp>>,
+        fetcher(`${process.env.API_URL}/MtStructureNumber/GetAll`) as Promise<
+          Response<MtStructureNumber>
+        >,
+        fetcher(`${process.env.API_URL}/MtTypology/GetAll`) as Promise<
+          Response<MtTypology>
+        >,
+        fetcher(`${process.env.API_URL}/MtAxis/GetAll`) as Promise<
+          Response<MtAxis>
+        >,
+        fetcher(`${process.env.API_URL}/MtSide/GetAll`) as Promise<
+          Response<MtSide>
+        >,
+        fetcher(`${process.env.API_URL}/MtElement/GetAll`) as Promise<
+          Response<MtElement>
+        >,
+        fetcher(`${process.env.API_URL}/MtCalification/GetAll`) as Promise<
+          Response<MtCalification>
+        >,
+        fetcher(`${process.env.API_URL}/MtPosition/GetAll`) as Promise<
+          Response<MtPosition>
+        >,
+        fetcher(`${process.env.API_URL}/MtDisposition/GetAll`) as Promise<
+          Response<MtDisposition>
+        >,
       ])
 
       return {
@@ -197,6 +291,14 @@ export const getRepositoriesForMeasurements = cache(
         performanceCatalogByEspRes,
         compositeCatalogByEspRes,
         deteriorationTypeByEspRes,
+        structureNumberRes,
+        typologyRes,
+        axisRes,
+        sideRes,
+        elementRes,
+        calificationRes,
+        positionRes,
+        dispositionRes,
       }
     } catch (error) {
       console.log(error)
