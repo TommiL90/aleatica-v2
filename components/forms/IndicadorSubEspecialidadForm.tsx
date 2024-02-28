@@ -27,7 +27,7 @@ import Select from 'react-select'
 import TreeView, { flattenTree } from 'react-accessible-treeview'
 import { IoMdArrowDropright } from 'react-icons/io'
 import { FaCheckSquare, FaMinusSquare, FaSquare } from 'react-icons/fa'
-import SubespecialidadesNiveles from '../subespecialidadesNiveles'
+import SubespecialidadesNiveles from '../subespecialidades-niveles'
 import { cn } from '@/lib/utils'
 // import { v4 as uuidv4 } from 'uuid';
 

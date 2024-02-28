@@ -3,7 +3,7 @@
 import { ChangeEvent, useEffect, useId, useState } from 'react'
 import Select from 'react-select'
 
-import SubespecialidadesNiveles from '@/components/subespecialidadesNiveles'
+import SubespecialidadesNiveles from '@/components/subespecialidades-niveles'
 
 interface Option {
   label: string
