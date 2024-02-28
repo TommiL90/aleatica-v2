@@ -897,7 +897,7 @@ const StructuresMeasurements = ({
               )
             }
           }}
-          onClose={() => setModalNewItem(false)}
+          onClose={() => {}}
         />
       ) : null}
       {modalDetail ? (
