@@ -1,4 +1,4 @@
-import classNames from 'classnames'
+import { cn } from '@/lib/utils'
 import { ErrorMessage, Field } from 'formik'
 import React, { Dispatch } from 'react'
 
@@ -41,7 +41,7 @@ const NeoprenosSubForm = ({
                   setFieldValue(field.name, evt.target.valueAsNumber)
                   setNoEjes(evt.target.valueAsNumber)
                 }}
-                className={classNames(
+                className={cn(
                   'block w-full rounded-lg border text-sm',
                   errors.noEjes && touched.noEjes
                     ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -80,7 +80,7 @@ const NeoprenosSubForm = ({
                   setFieldValue(field.name, evt.target.valueAsNumber)
                   setNoApoyos(evt.target.valueAsNumber)
                 }}
-                className={classNames(
+                className={cn(
                   'block w-full rounded-lg border text-sm',
                   errors.noApoyos && touched.noApoyos
                     ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'

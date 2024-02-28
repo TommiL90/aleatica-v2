@@ -8,7 +8,7 @@ import React, {
   useMemo,
 } from 'react'
 import * as Yup from 'yup'
-import classNames from 'classnames'
+
 import {
   withFormik,
   FormikProps,
@@ -31,6 +31,7 @@ import useSWR from 'swr'
 import { FaLessThan } from 'react-icons/fa'
 import fetcher from '@/services/fetcher'
 import { Deterioros } from '../subform/deterioros'
+import { cn } from '@/lib/utils'
 // import { v4 as uuidv4 } from 'uuid';
 
 interface CrearMedicion {
@@ -614,7 +615,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <button
                     type="button"
                     onClick={() => setTabIndex(0)}
-                    className={classNames(
+                    className={cn(
                       tabIndex === 0
                         ? 'active inline-block rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600 dark:border-blue-500 dark:text-blue-500'
                         : 'inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300',
@@ -628,7 +629,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <button
                     type="button"
                     onClick={() => setTabIndex(1)}
-                    className={classNames(
+                    className={cn(
                       tabIndex === 1
                         ? 'active inline-block rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600 dark:border-blue-500 dark:text-blue-500'
                         : 'inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300',
@@ -642,7 +643,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <button
                     type="button"
                     onClick={() => setTabIndex(2)}
-                    className={classNames(
+                    className={cn(
                       tabIndex === 2
                         ? 'active inline-block rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600 dark:border-blue-500 dark:text-blue-500'
                         : 'inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300',
@@ -656,7 +657,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <button
                     type="button"
                     onClick={() => setTabIndex(3)}
-                    className={classNames(
+                    className={cn(
                       tabIndex === 3
                         ? 'active inline-block rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600 dark:border-blue-500 dark:text-blue-500'
                         : 'inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300',
@@ -670,7 +671,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <button
                     type="button"
                     onClick={() => setTabIndex(4)}
-                    className={classNames(
+                    className={cn(
                       tabIndex === 4
                         ? 'active inline-block rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600 dark:border-blue-500 dark:text-blue-500'
                         : 'inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300',
@@ -744,7 +745,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setFieldValue(field.name, evt.target.value)
                             setFechaSeleccionada(evt.target.value)
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.fechaEstudioPrevio &&
                               touched.fechaEstudioPrevio
@@ -803,7 +804,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           styles={customStyleSelect(
                             errors.tramo && touched.tramo,
                           )}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.tramo && touched.tramo
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -868,7 +869,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           styles={customStyleSelect(
                             errors.entronque && touched.entronque,
                           )}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.entronque && touched.entronque
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -920,7 +921,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             }}
                             styles={customStyleSelect(errors.gaza && touched.gaza)}
 
-                            className={classNames(
+                            className={cn(
                               'border text-sm rounded-lg block w-full',
                               errors.gaza && touched.gaza
                                 ? 'bg-red-100 border-red-400 text-red-800 focus:border-red-400 focus:ring-red-400 dark:bg-red-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-400 dark:focus:ring-red-500 dark:focus:border-red-500'
@@ -952,7 +953,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           styles={customStyleSelect(
                             errors.gaza && touched.gaza,
                           )}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.gaza && touched.gaza
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1010,7 +1011,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           styles={customStyleSelect(
                             errors.carril && touched.carril,
                           )}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.carril && touched.carril
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1065,7 +1066,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setCadenamientoInicialSeleccionada(evt.target.value)
                           }}
                           value={cadenamientoInicialSeleccionada}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border p-2.5 text-sm',
                             errors.cadenamientoInicial &&
                               touched.cadenamientoInicial
@@ -1125,7 +1126,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setCadenamientoFinalSeleccionada(evt.target.value)
                           }}
                           value={cadenamientoFinalSeleccionada}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border p-2.5 text-sm',
                             errors.cadenamientoFinal &&
                               touched.cadenamientoFinal
@@ -1222,7 +1223,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             styles={customStyleSelect(
                               errors.actuacion && touched.actuacion,
                             )}
-                            className={classNames(
+                            className={cn(
                               'block w-full rounded-lg border text-sm',
                               errors.actuacion && touched.actuacion
                                 ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1282,7 +1283,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             styles={customStyleSelect(
                               errors.compuesta && touched.compuesta,
                             )}
-                            className={classNames(
+                            className={cn(
                               'block w-full rounded-lg border text-sm',
                               errors.compuesta && touched.compuesta
                                 ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1341,7 +1342,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             styles={customStyleSelect(
                               errors.prioridad && touched.prioridad,
                             )}
-                            className={classNames(
+                            className={cn(
                               'block w-full rounded-lg border text-sm',
                               errors.prioridad && touched.prioridad
                                 ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1373,7 +1374,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                         setObservacionesSeleccionada(e.target.value)
                       }
                       as="textarea"
-                      className={classNames(
+                      className={cn(
                         'block h-[200px] w-full rounded-lg border p-2.5 text-sm',
                         errors.observacion && touched.observacion
                           ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1457,7 +1458,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setPorcentajeAfectacion(evt.target.valueAsNumber)
                             // handleGetInfo()
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.porcentajeAfectacion &&
                               touched.porcentajeAfectacion
@@ -1498,7 +1499,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setLength(evt.target.valueAsNumber)
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.longitud && touched.longitud
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1534,7 +1535,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setAnchoSeleccionada(evt.target.valueAsNumber)
                             // handleGetInfo()
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.ancho && touched.ancho
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1574,7 +1575,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setArea(evt.target.valueAsNumber)
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.area && touched.area
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1615,7 +1616,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setEspesorSeleccionada(evt.target.valueAsNumber)
                             // handleGetInfo()
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.espesor && touched.espesor
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1658,7 +1659,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setVolume(evt.target.valueAsNumber)
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.volumen && touched.volumen
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1699,7 +1700,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setDensidad(evt.target.valueAsNumber)
                             // handleGetInfo()
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.densidad && touched.densidad
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1740,7 +1741,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setMasa(evt.target.valueAsNumber)
                           }}
-                          className={classNames(
+                          className={cn(
                             'block w-full rounded-lg border text-sm',
                             errors.masa && touched.masa
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
@@ -1784,7 +1785,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                                     evt.target.valueAsNumber,
                                   )
                                 }}
-                                className={classNames(
+                                className={cn(
                                   'block w-full rounded-lg border text-sm ',
                                   errors.alternativeUnitMeasurementValue &&
                                     touched.alternativeUnitMeasurementValue
@@ -1815,7 +1816,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
               <button
                 disabled={disabled || !isValid}
                 type="submit"
-                className={classNames(
+                className={cn(
                   'w-full rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto',
                   isValid
                     ? 'bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'

@@ -161,9 +161,11 @@ const ActionsTable = ({
   scopeAction,
   mRPerformance,
 }: ActionsTableProps) => {
-  const { taskId } = useParams()
+  const params = useParams<{ taskId: string }>()
+  const taskId = params && params.taskId ? params.taskId : '0'
+
   const searchParams = useSearchParams()
-  const espId = searchParams.get('esp')
+  const espId = searchParams ? searchParams.get('esp') : '0'
 
   const [itemId, setItemId] = useState(0)
   const [filtroSubcategoria, setFiltroSubcategoria] = useState('')

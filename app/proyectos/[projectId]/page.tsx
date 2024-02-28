@@ -17,8 +17,10 @@ import ModalDuplicateProject from '@/components/common-modals/modal-duplicate-pr
 // import ModalDuplicateProject from '@/components/modal/duplicateProyect'
 
 export default function Selectors() {
-  const params = useParams()
-  const { projectId } = params
+  const params = useParams<{ projectId: string }>()
+  const projectId = parseInt(
+    params && params.projectId ? params.projectId : '0',
+  )
   const [modalClone, setModalClone] = useState(false)
   const [subcategoria, setSubcategoria] = useState(null)
   const [tab, setTab] = useState('tareas')

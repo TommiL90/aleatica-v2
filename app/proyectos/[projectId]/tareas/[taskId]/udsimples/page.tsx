@@ -52,7 +52,8 @@ async function setSimpleCatalogsPost(
 }
 
 export default function MaestroAnno() {
-  const { taskId } = useParams()
+  const params = useParams<{ taskId: string }>()
+  const taskId = params && params.taskId ? params.taskId : '0'
 
   const [itemId, setItemId] = useStateCallback(0)
   const [pageIndex, setPageIndex] = useState(1)

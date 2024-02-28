@@ -50,8 +50,10 @@ async function setCompCatalogsPost(
 }
 
 const MaestroAnno = () => {
-  const { taskId, slugs } = useParams()
-  const espId = slugs[1]
+  const params = useParams<{ taskId: string; slugs: string[] }>()
+  const taskId = params && params.taskId ? params.taskId : '0'
+
+  const espId = params ? params.slugs[1] : '0'
 
   const [itemId, setItemId] = useStateCallback(0)
   const [pageIndex, setPageIndex] = useState(1)

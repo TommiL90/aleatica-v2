@@ -211,11 +211,14 @@ const StructuresMeasurements = ({
   position,
   disposition,
 }: Props) => {
-  const params = useParams()
+  const params = useParams<{ projectId: string }>()
+  const projectId = params && params.projectId ? params.projectId : '0'
+
   const searchParams = useSearchParams()
-  const { projectId } = params
-  const espId = searchParams.get('esp')
-  const actionId = searchParams.get('actuacion')
+  const espId = searchParams ? searchParams.get('esp') : '0'
+
+  const actionId = searchParams ? searchParams.get('actuacion') : '0'
+
   const router = useRouter()
 
   const [itemId, setItemId] = useState(0)
