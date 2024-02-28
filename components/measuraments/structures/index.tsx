@@ -795,18 +795,15 @@ const StructuresMeasurements = ({
           }))}
           onMutate={async (values: any) => {
             console.log(values)
-            await mutate()
+
             if (itemId !== 0) {
               setModalNewItem(false)
             }
 
             let toastId
             try {
-              const cadInicial = values.cadenamientoInicial.split('+')
-              const cadFinal = values.cadenamientoFinal.split('+')
-
               toastId = toast.loading('Enviando... 🚀')
-              console.log('cadenamientoInicial', cadInicial)
+
               // Submit data
               const value: any = {
                 id: itemId,
