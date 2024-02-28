@@ -69,7 +69,7 @@ interface FormValues {
   anchoPromedioCalzada: number
   esviaje: number
   anchoJunta: number
-  numeroElementos: number
+  noElementos: number
 }
 
 interface FormProps {
@@ -179,7 +179,7 @@ const initialValues: FormValues = {
   anchoPromedioCalzada: 0,
   esviaje: 0,
   anchoJunta: 0,
-  numeroElementos: 0,
+  noElementos: 0,
 }
 
 function MedicionFichaCampoEstructurasForm(props: FormProps) {
@@ -353,7 +353,7 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     props.initValue ? props.initValue.longitudCadaJunta : null,
   )
 
-  const [numeroElementos, setNumeroElementos] = useState(
+  const [noElementos, setNoElementos] = useState(
     props.initValue ? props.initValue.noElementos : null,
   )
 
@@ -477,7 +477,7 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
         return regex.test(value.toString())
       }),
     // nª juntas
-    numeroElementos: Yup.number()
+    noElementos: Yup.number()
       .moreThan(-1, 'Debe ser un número positivo o cero')
       .optional(),
     // calculada en backend
@@ -538,7 +538,16 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>,
   ) => {
-    submitEnquiryForm({ ...values })
+    let data: any = values
+
+    data = {
+      ...values,
+      longitudJunta,
+      longitudTotalJuntas,
+      longitudJuntasAfectadas,
+    }
+
+    submitEnquiryForm({ ...data })
 
     formikHelpers.resetForm()
   }
@@ -579,7 +588,7 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     roadAverage: anchoCalzada || 0,
     esviaje: esviaje || 0,
     cosForCalculate: coseno ? coseno.value : false,
-    elementsCount: numeroElementos || 0,
+    elementsCount: noElementos || 0,
     affectePercentage: porcentajeAfectacion || 100,
 
     // NumberAxies: noEjes ? noEjes : 0,
@@ -594,7 +603,7 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
       body: JSON.stringify(value),
     })
     const data = await res.json()
-    console.log(data)
+
     if (data.result) {
       const { length, affectedJointsLength, totalJointsLength } = data.result
       // longitudTotalJuntas, longitudJuntasAfectadas, longitudJunta
@@ -614,7 +623,7 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     anchoCalzada,
     esviaje,
     coseno,
-    numeroElementos,
+    noElementos,
     porcentajeAfectacion,
     noApoyos,
     noEjes,
@@ -1816,8 +1825,8 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                     setCoseno={setCoseno}
                     longitudJunta={longitudJunta}
                     setLongitudJunta={setLongitudJunta}
-                    numeroElementos={numeroElementos}
-                    setNumeroElementos={setNumeroElementos}
+                    noElementos={noElementos}
+                    setNoElementos={setNoElementos}
                     longitudTotalJuntas={longitudTotalJuntas}
                     setLongitudTotalJuntas={setLongitudTotalJuntas}
                     porcentajeAfectacion={porcentajeAfectacion}

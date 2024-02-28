@@ -12,8 +12,8 @@ interface JuntasSubFormProps {
   setCoseno: Dispatch<boolean>
   longitudJunta: number
   setLongitudJunta: Dispatch<number>
-  numeroElementos: number
-  setNumeroElementos: Dispatch<number>
+  noElementos: number
+  setNoElementos: Dispatch<number>
   longitudTotalJuntas: number
   setLongitudTotalJuntas: Dispatch<number>
   porcentajeAfectacion: number
@@ -41,8 +41,8 @@ const JuntasSubForm = ({
   setCoseno,
   longitudJunta,
   setLongitudJunta,
-  numeroElementos,
-  setNumeroElementos,
+  noElementos,
+  setNoElementos,
   longitudTotalJuntas,
   setLongitudTotalJuntas,
   porcentajeAfectacion,
@@ -195,8 +195,9 @@ const JuntasSubForm = ({
               <input
                 {...field}
                 type="number"
-                value={longitudJunta}
+                step="0.01"
                 min={0}
+                value={longitudJunta}
                 disabled={activeZincInputs}
                 onChange={(evt: any) => {
                   setFieldValue(field.name, evt.target.valueAsNumber)
@@ -220,12 +221,12 @@ const JuntasSubForm = ({
 
         <div>
           <label
-            htmlFor="numeroElementos"
+            htmlFor="noElementos"
             className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
           >
             Nº de juntas
           </label>
-          <Field name="numeroElementos">
+          <Field name="noElementos">
             {({
               field, // { name, value, onChange, onBlur }
               value,
@@ -236,14 +237,14 @@ const JuntasSubForm = ({
                 {...field}
                 type="number"
                 min="0"
-                value={numeroElementos}
+                value={noElementos}
                 onChange={(evt: any) => {
                   setFieldValue(field.name, evt.target.valueAsNumber)
-                  setNumeroElementos(evt.target.valueAsNumber)
+                  setNoElementos(evt.target.valueAsNumber)
                 }}
                 className={classNames(
                   'block w-full rounded-lg border text-sm',
-                  errors.numeroElementos && touched.numeroElementos
+                  errors.noElementos && touched.noElementos
                     ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
                     : 'border-gray-300 bg-white text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                 )}
@@ -251,7 +252,7 @@ const JuntasSubForm = ({
             )}
           </Field>
           <ErrorMessage
-            name="numeroElementos"
+            name="noElementos"
             component="div"
             className="mt-1 text-sm text-red-600 dark:text-red-500"
           />
