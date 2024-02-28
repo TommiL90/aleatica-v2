@@ -6,7 +6,6 @@ import useSWRMutation from 'swr/mutation'
 import { useState } from 'react'
 import Select from 'react-select'
 import useSWR from 'swr'
-
 import { toast } from 'sonner'
 import Loading from '@/components/loading'
 import Breadcrumbs from '@/components/breadcrumbs'
@@ -340,61 +339,59 @@ export default function Selectors() {
                             el.mtSubCategoryActionId === subcategoria['value'],
                         )
                         .map((item: any, idx: number) => (
-                          <>
+                          <div
+                            key={idx}
+                            className="m-2 w-full rounded-lg border border-gray-200 bg-white text-base font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                          >
                             <div
-                              key={crypto.randomUUID()}
-                              className="m-2 w-full rounded-lg border border-gray-200 bg-white text-base font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              aria-current="true"
+                              className="block w-full cursor-pointer rounded-t-lg border-b border-gray-200 bg-blue-700 px-4 py-2 text-white dark:border-gray-600 dark:bg-gray-800"
                             >
-                              <div
-                                aria-current="true"
-                                className="block w-full cursor-pointer rounded-t-lg border-b border-gray-200 bg-blue-700 px-4 py-2 text-white dark:border-gray-600 dark:bg-gray-800"
-                              >
-                                {
-                                  espRes.result.filter(
-                                    (esp: any) =>
-                                      esp.id === item.mtSpecialtyActionId,
-                                  )[0].name
-                                }
-                              </div>
-                              {item.projectTaskInfos.map(
-                                (task: any, taskIdx: number) => {
-                                  let generateLink: string | undefined
-
-                                  if (task.processFormId !== 6) {
-                                    generateLink = generateTaskLink(
-                                      task.id,
-                                      task.processFormId,
-                                      item.mtSpecialtyActionId,
-                                    )
-                                  } else {
-                                    const actionId = item.projectTaskInfos.find(
-                                      (task: any) => task.processFormId === 4,
-                                    )?.id
-
-                                    generateLink = generateTaskLink(
-                                      task.id,
-                                      task.processFormId,
-                                      item.mtSpecialtyActionId,
-                                      actionId,
-                                    )
-                                  }
-                                  return (
-                                    <Link
-                                      key={crypto.randomUUID()}
-                                      href={`${generateLink}`}
-                                      className="block w-full cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-gray-100 hover:text-blue-700 focus:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:text-white dark:focus:ring-gray-500"
-                                    >
-                                      {task.taskName} {task.id}
-                                    </Link>
-                                  )
-                                },
-                              )}
+                              {
+                                espRes.result.filter(
+                                  (esp: any) =>
+                                    esp.id === item.mtSpecialtyActionId,
+                                )[0].name
+                              }
                             </div>
-                          </>
+                            {item.projectTaskInfos.map(
+                              (task: any, taskIdx: number) => {
+                                let generateLink: string | undefined
+
+                                if (task.processFormId !== 6) {
+                                  generateLink = generateTaskLink(
+                                    task.id,
+                                    task.processFormId,
+                                    item.mtSpecialtyActionId,
+                                  )
+                                } else {
+                                  const actionId = item.projectTaskInfos.find(
+                                    (task: any) => task.processFormId === 4,
+                                  )?.id
+
+                                  generateLink = generateTaskLink(
+                                    task.id,
+                                    task.processFormId,
+                                    item.mtSpecialtyActionId,
+                                    actionId,
+                                  )
+                                }
+                                return (
+                                  <Link
+                                    key={crypto.randomUUID()}
+                                    href={`${generateLink}`}
+                                    className="block w-full cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-gray-100 hover:text-blue-700 focus:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:text-white dark:focus:ring-gray-500"
+                                  >
+                                    {task.taskName} {task.id}
+                                  </Link>
+                                )
+                              },
+                            )}
+                          </div>
                         ))
                     ) : (
                       <p className="mt-6 text-black">
-                        Al seleccionar una subcategoria se mostrara las
+                        Al seleccionar una subcategoría se mostrarán las
                         especialidades con sus respectivos formularios de
                         procesos
                       </p>
@@ -403,6 +400,7 @@ export default function Selectors() {
                 </div>
               </>
             ) : null}
+
             {tab === 'consultas' ? (
               <div className="mb-6 grid gap-6 md:grid-cols-3">
                 <div className="w-full">
