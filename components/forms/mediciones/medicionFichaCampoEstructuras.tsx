@@ -32,6 +32,7 @@ import NeoprenosSubForm from './sub-form/neoprenos'
 import useSWR from 'swr'
 import fetcher from '@/services/fetcher'
 import { cn } from '@/lib/utils'
+import { isValid } from 'date-fns'
 
 // import { v4 as uuidv4 } from 'uuid';
 
@@ -423,7 +424,6 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     entronque: Yup.string().required('Requerido'),
     gaza: Yup.string().required('Requerido'),
     carril: Yup.string().required('Requerido'),
-
     cadenamientoInicial: Yup.string()
       .trim()
       .min(2, 'Demasiado corto!')
@@ -434,24 +434,20 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
       .min(2, 'Demasiado corto!')
       .max(80, 'Demasiado largo!')
       .required('Requerido'),
-
     // noEstructura: Yup.string().required('Requerido'),
     // tipoEstructura: Yup.string().required('Requerido'),
     // eje: Yup.string().required('Requerido'),
     // lado: Yup.string().required('Requerido'),
     // calificacion: Yup.string().required('Requerido'),
-
-    deterioros: Yup.array().min(1, 'Debe seleccionar al menos un deterioro.'),
-
-    actuacion: Yup.string().required('Requerido'),
-    compuesta: Yup.string().required('Requerido'),
-    prioridad: Yup.string().required('Requerido'),
-    observaciones: Yup.string()
-      .optional()
-      .trim()
-      .min(2, 'Demasiado corto!')
-      .max(80, 'Demasiado largo!'),
-
+    // deterioros: Yup.array().min(1, 'Debe seleccionar al menos un deterioro.'),
+    // actuacion: Yup.string().required('Requerido'),
+    // compuesta: Yup.string().required('Requerido'),
+    // prioridad: Yup.string().required('Requerido'),
+    // observaciones: Yup.string()
+    //   .optional()
+    //   .trim()
+    //   .min(2, 'Demasiado corto!')
+    //   .max(80, 'Demasiado largo!'),
     // Juntas
     anchoCalzada: Yup.number()
       .moreThan(-1, 'Debe ser un número positivo o cero')
@@ -514,19 +510,18 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
-
     // Neoprenos
-    noApoyos: Yup.number()
-      .moreThan(-1, 'Debe ser un número positivo o cero')
-      .positive('Debe ser un número positivo')
-      .optional(),
-    noEjes: Yup.number()
-      .moreThan(-1, 'Debe ser un número positivo o cero')
-      .positive('Debe ser un número positivo')
-      .optional(),
-
+    // noApoyos: Yup.number()
+    //   .moreThan(-1, 'Debe ser un número positivo o cero')
+    //   .positive('Debe ser un número positivo')
+    //   .optional()
+    //   .default(0),
+    // noEjes: Yup.number()
+    //   .moreThan(-1, 'Debe ser un número positivo o cero')
+    //   .positive('Debe ser un número positivo')
+    //   .optional()
+    //   .default(0),
     // Alternative input
-
     alternativeUnitMeasurementValue: Yup.number()
       .typeError('Debe ser un número')
       .min(0)
@@ -566,7 +561,6 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     }
   }
 
-  console.log(props.especialidad)
   const value: Partial<CrearMedicion> = {
     performanceCatalogId: actuacionSeleccionada
       ? actuacionSeleccionada.value
@@ -1474,102 +1468,6 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                   />
                 </div>
 
-                {/* <div>
-                        <label htmlFor="posicion" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                          Posicion
-                          <span className="ml-1 text-xs text-red-700">
-                            *
-                          </span>
-                        </label>
-                        
-                          <Field name="posicion">
-                            {({
-                              field, // { name, value, onChange, onBlur }
-                              value,
-                              form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                              meta,
-                            }: any) => (
-                              <div>
-                                <Select
-                                  {...field}
-                                  id='posicion'
-                                  instanceId={posicionId} 
-                                  placeholder="Seleccione posicion"
-                                  options={props.posicion}
-                                  value={posicionSeleccionada}
-                                  
-                                  defaultValue={ props.initValue != null ?
-                                    props.posicion.filter((item: any) => item['value'] == props.initValue.posicion)[0]
-                                    : null
-                                  }
-
-                                  onChange={(option: any) => {
-                                    setFieldValue(field.name, option ? option.value : null);
-                                    setPosicionSeleccionada(option)
-                                  }}
-                                  styles={customStyleSelect(errors.posicion && touched.posicion)}
-
-                                  className={cn(
-                                    'border text-sm rounded-lg block w-full',
-                                    errors.posicion && touched.posicion
-                                      ? 'bg-red-100 border-red-400 text-red-800 focus:border-red-400 focus:ring-red-400 dark:bg-red-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-400 dark:focus:ring-red-500 dark:focus:border-red-500'
-                                      : 'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                                  )} 
-                                />
-                              </div>
-                            )}
-                          </Field>
-                          <ErrorMessage name="posicion" component="div" className="mt-1 text-sm text-red-600 dark:text-red-500"/>
-                      </div> */}
-
-                {/* <div>
-                        <label htmlFor="disposicion" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                          Disposicion
-                          <span className="ml-1 text-xs text-red-700">
-                            *
-                          </span>
-                        </label>
-                        
-                          <Field name="disposicion">
-                            {({
-                              field, // { name, value, onChange, onBlur }
-                              value,
-                              form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                              meta,
-                            }: any) => (
-                              <div>
-                                <Select
-                                  {...field}
-                                  id='disposicion'
-                                  instanceId={disposicionId} 
-                                  placeholder="Seleccione disposicion"
-                                  options={props.posicion}
-                                  value={disposicionSeleccionada}
-                                  
-                                  defaultValue={ props.initValue != null ?
-                                    props.disposicion.filter((item: any) => item['value'] == props.initValue.disposicion)[0]
-                                    : null
-                                  }
-
-                                  onChange={(option: any) => {
-                                    setFieldValue(field.name, option ? option.value : null);
-                                    setDisposicionSeleccionada(option)
-                                  }}
-                                  styles={customStyleSelect(errors.disposicion && touched.disposicion)}
-
-                                  className={cn(
-                                    'border text-sm rounded-lg block w-full',
-                                    errors.disposicion && touched.disposicion
-                                      ? 'bg-red-100 border-red-400 text-red-800 focus:border-red-400 focus:ring-red-400 dark:bg-red-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-400 dark:focus:ring-red-500 dark:focus:border-red-500'
-                                      : 'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                                  )} 
-                                />
-                              </div>
-                            )}
-                          </Field>
-                          <ErrorMessage name="disposicion" component="div" className="mt-1 text-sm text-red-600 dark:text-red-500"/>
-                      </div> */}
-
                 <div>
                   <label
                     htmlFor="calificacion"
@@ -1959,6 +1857,9 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                                 type="number"
                                 step="0.01"
                                 min="0"
+                                value={
+                                  field.value !== undefined ? field.value : ''
+                                }
                                 onChange={(evt: any) => {
                                   setFieldValue(
                                     field.name,

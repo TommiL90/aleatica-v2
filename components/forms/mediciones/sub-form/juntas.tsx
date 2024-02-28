@@ -318,7 +318,6 @@ const JuntasSubForm = ({
                 step="0.01"
                 min={0}
                 max={100}
-                defaultValue={100}
                 value={porcentajeAfectacion}
                 onChange={(evt: any) => {
                   setFieldValue(field.name, evt.target.valueAsNumber)
