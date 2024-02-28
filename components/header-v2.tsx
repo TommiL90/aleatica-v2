@@ -5,7 +5,7 @@ import logo from '@/public/images/logo.svg'
 import { Navbar } from './navbar'
 import { NavbarMobile } from './navbar/navbar-mobile'
 
-export function Header() {
+export function HeaderV2() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-primary">
       <div className="flex h-16 items-center space-x-4 px-16 sm:justify-between sm:space-x-0">

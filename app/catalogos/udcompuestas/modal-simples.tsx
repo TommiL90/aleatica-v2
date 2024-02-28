@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { UnidadesSimples } from '@/components/forms/subform/unidadesSimples'
+import { UnidadesSimples } from '@/components/forms/subform/unidades-simples'
 
 interface Props {
   title: string

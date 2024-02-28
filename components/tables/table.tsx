@@ -19,9 +19,11 @@ import React, {
 import { Menu, MenuItem, MenuButton, SubMenu } from '@szhsin/react-menu'
 import Select from 'react-select'
 import Link from 'next/link'
-import Loading from '@/app/Loading'
-import ErrorComponent from '@/app/Error'
+
 import { cn } from '@/lib/utils'
+import SearchInput from '../inputs/searchInput'
+import Loading from '../loading'
+import ErrorComponent from '../error'
 
 const udsimples: any[] = new Array(20)
 udsimples.fill(20)
@@ -198,7 +200,7 @@ export default function Table(props: Props) {
           ) : null}
 
           <div className="mt-2 flex items-center justify-between pb-4">
-            {/* <form>
+            <form>
               <SearchInput
                 label=""
                 hideLabel={true}
@@ -214,7 +216,7 @@ export default function Table(props: Props) {
                 }
                 onSearch={(newValue: any) => props.onSearch(newValue)}
               />
-            </form> */}
+            </form>
             <div className="hidden lg:flex">
               {props.actions.map((item, index) => (
                 <button

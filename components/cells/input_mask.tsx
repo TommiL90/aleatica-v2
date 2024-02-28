@@ -106,7 +106,7 @@ export class MaskFieldCellTemplate implements CellTemplate<MaskFieldCell> {
 
     return (
       <InputMask
-        mask="999+9999"
+        mask="999+0999"
         alwaysShowMask={true}
         maskChar="#"
         value={cell.text}

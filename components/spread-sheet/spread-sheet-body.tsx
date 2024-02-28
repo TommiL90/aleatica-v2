@@ -301,7 +301,7 @@ export default function SpreadSheetBody({
 
   return (
     <>
-      <div className="flex overflow-scroll" style={{ height: '75vh' }}>
+      <div className="flex overflow-scroll" style={{ height: '70vh' }}>
         {!refresh && !loading ? (
           <ReactGrid
             rows={rows}

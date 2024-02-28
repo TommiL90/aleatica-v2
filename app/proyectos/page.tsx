@@ -9,6 +9,7 @@ import { FaEdit, FaRegTrashAlt, FaRegClone } from 'react-icons/fa'
 import fetcher from '@/services/fetcher'
 import { toast } from 'sonner'
 import Table from '@/components/tables/table'
+import ModalDeleteRow from '@/components/common-modals/modal-delete-row'
 
 interface Option {
   label: string
@@ -422,7 +423,7 @@ export default function Proyectos() {
 
   return (
     <main>
-      {/* <Header></Header> */}
+      {/* '' */}
 
       {/* <!-- Start block --> */}
       <section className="max-h-screen w-full bg-white dark:bg-gray-900 lg:m-auto lg:w-10/12">
@@ -473,7 +474,7 @@ export default function Proyectos() {
                   visibleLabel: true,
                   style:
                     'px-3 py-2.5 flex items-center mx-1 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
-                  onClick: () => router.prefetch('/proyectos/nuevo'),
+                  onClick: () => router.push('/proyectos/nuevo'),
                 },
                 {
                   label: 'Eliminar',
@@ -608,16 +609,14 @@ export default function Proyectos() {
         </div>
       </section>
 
-      {/* {modalDelete ? (
+      {modalDelete ? (
         <ModalDeleteRow
           titulo={`Eliminar ${selectedRows.length > 1 ? 'proyectos' : 'proyecto'}`}
           mensaje={`¿Estás seguro de que deseas eliminar ${selectedRows.length > 1 ? 'estos proyectos' : 'este proyecto'} de la lista? Una vez ${selectedRows.length > 1 ? 'eliminadas' : 'eliminada'}, no podrás recuperar los datos asociados. `}
           onClose={() => handleCloseModal('')}
           onDelete={() => handleDeleteRow()}
         />
-      ) : null} */}
-
-      {/* <Footer></Footer> */}
+      ) : null}
     </main>
   )
 }
