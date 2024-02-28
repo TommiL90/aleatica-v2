@@ -6,8 +6,10 @@ import '@szhsin/react-menu/dist/transitions/slide.css'
 import { cn } from '@/lib/utils'
 import { fontSans } from '@/lib/fonts'
 import { Toaster } from '@/components/ui/sonner'
-import { Header } from '@/components/header'
+
 import { TailwindIndicator } from '@/components/tailwind-indicator'
+import Header from '@/components/header'
+import Provider from './Provider'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -27,8 +29,10 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <Header />
-        <div className="flex-1">{children}</div>
+        <Provider>
+          <Header />
+          <div className="flex-1">{children}</div>
+        </Provider>
         <Toaster position="top-center" richColors expand={true} />
         <TailwindIndicator />
       </body>

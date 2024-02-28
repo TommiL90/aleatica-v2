@@ -423,7 +423,7 @@ export default function Proyectos() {
 
   return (
     <main>
-      {/* <Header></Header> */}
+      {/* '' */}
 
       {/* <!-- Start block --> */}
       <section className="max-h-screen w-full bg-white dark:bg-gray-900 lg:m-auto lg:w-10/12">
