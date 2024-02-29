@@ -103,7 +103,7 @@ export default function Table(props: Props) {
   const router = useRouter()
   const [_document, set_document] = useState<Document>()
   const [modalFilter, setModalFilter] = useState(false)
-
+  console.log(props.selectedItems)
   useEffect(() => {
     set_document(document)
   }, [])

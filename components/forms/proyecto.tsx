@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, useId, useEffect } from 'react'
 import * as Yup from 'yup'
+
 import {
   FormikProps,
   Form,
@@ -15,8 +16,6 @@ import { FaEdit, FaRegTrashAlt, FaRegFile } from 'react-icons/fa'
 import { useStateCallback } from '@/hooks/useStateCallback'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-
-// import { v4 as uuidv4 } from 'uuid';
 
 interface FormValues {
   nombreProyecto: string
@@ -553,9 +552,26 @@ export function Tareas(props: TareasProps) {
   const [tasks, setTask] = useState(props.taskList)
   const [currentTaskList, setCurrentTaskList] = useState<any>(null)
 
+  /* Campos de duplicacion de configuracion */
+  const [taskSaved, setTaskSaved] = useState(false)
+  const [duplicateConfig, setDuplicateConfig] = useState(false)
+  const [duplicatedSubcategoria, setDuplicatedSubcategoria] = useState(null)
+  const [duplicatedEspecialidad, setDuplicatedEspecialidad] =
+    useStateCallback(null)
+  // console.log(currentTaskList)
+
+  /********************************************/
+
   useEffect(() => {
     set_document(document)
-  }, [])
+
+    if (currentTaskList !== null)
+      setTaskSaved(
+        tasks.some(
+          (item: any) => item.especialidad === currentTaskList.especialidad,
+        ),
+      )
+  }, [currentTaskList])
 
   for (let i = 0; i < props.taskList.length; i++) {
     const val = crypto.randomUUID()
@@ -570,33 +586,28 @@ export function Tareas(props: TareasProps) {
     let inicioFecha = currentFechaInicio
     let finalFecha = currentFechaFinal
 
-    // const taskList =
-
     const list = tasks.filter(
       (item: any) => item.especialidad === newValue['value'],
     )
-
-    console.log(newValue['value'])
 
     setCurrentTaskList(
       list.length > 0
         ? list[0]
         : {
             subcategoria: currentSubcategoria['value'],
-
             especialidad: newValue['value'],
             tasks: props.processForms.map((item: any) => {
               inicioFecha =
-                item.id == 1
+                item.formularioProceso == 1
                   ? currentFechaInicio
                   : dateStr(generarFecha(finalFecha, 2))
               finalFecha =
-                item.id == 1
+                item.formularioProceso == 1
                   ? currentFechaFinal
                   : dateStr(generarFecha(inicioFecha, 15))
 
               return {
-                id: item.id,
+                formularioProceso: item.id,
                 name: item.name,
                 responsables: null,
                 dependencia: false,
@@ -616,7 +627,8 @@ export function Tareas(props: TareasProps) {
       ...prev,
       tasks: prev.tasks.map((item: any) => ({
         ...item,
-        responsables: item.id === id ? newValue : item.responsables,
+        responsables:
+          item.formularioProceso === id ? newValue : item.responsables,
       })),
     }))
   }
@@ -626,37 +638,42 @@ export function Tareas(props: TareasProps) {
       ...prev,
       tasks: prev.tasks.map((item: any) => ({
         ...item,
-        aprobado: item.id === id ? newValue : item.aprobado,
+        aprobado: item.formularioProceso === id ? newValue : item.aprobado,
       })),
     }))
   }
 
-  const handleDependencia = (id: number) => {
-    setCurrentTaskList((prev: any) => ({
-      ...prev,
-      tasks: prev.tasks.map((item: any) => ({
-        ...item,
-        dependencia: item.id === id ? !item.dependencia : item.dependencia,
-      })),
-    }))
-  }
+  // const handleDependencia = (id: number) => {
+  //   setCurrentTaskList((prev: any) => ({
+  //     ...prev,
+  //     tasks: prev.tasks.map((item: any) => (
+  //       {
+  //         ...item,
+  //         dependencia: item.formularioProceso === id ? !item.dependencia : item.dependencia
+  //       }
+  //     ))
+  //   }))
+  // }
 
-  const handleNecesidad = (id: number) => {
-    setCurrentTaskList((prev: any) => ({
-      ...prev,
-      tasks: prev.tasks.map((item: any) => ({
-        ...item,
-        necesidad: item.id === id ? !item.necesidad : item.necesidad,
-      })),
-    }))
-  }
+  // const handleNecesidad = (id: number) => {
+  //   setCurrentTaskList((prev: any) => ({
+  //     ...prev,
+  //     tasks: prev.tasks.map((item: any) => (
+  //       {
+  //         ...item,
+  //         necesidad: item.formularioProceso === id ? !item.necesidad : item.necesidad
+  //       }
+  //     ))
+  //   }))
+  // }
 
   const handleHabilitado = (id: number) => {
     setCurrentTaskList((prev: any) => ({
       ...prev,
       tasks: prev.tasks.map((item: any) => ({
         ...item,
-        habilitado: item.id === id ? !item.habilitado : item.habilitado,
+        habilitado:
+          item.formularioProceso === id ? !item.habilitado : item.habilitado,
       })),
     }))
   }
@@ -666,7 +683,10 @@ export function Tareas(props: TareasProps) {
       ...prev,
       tasks: prev.tasks.map((item: any) => ({
         ...item,
-        fechaInicio: item.id === id ? formatedDate(newDate) : item.fechaInicio,
+        fechaInicio:
+          item.formularioProceso === id
+            ? formatedDate(newDate)
+            : item.fechaInicio,
       })),
     }))
   }
@@ -676,7 +696,10 @@ export function Tareas(props: TareasProps) {
       ...prev,
       tasks: prev.tasks.map((item: any) => ({
         ...item,
-        fechaFinal: item.id === id ? formatedDate(newDate) : item.fechaFinal,
+        fechaFinal:
+          item.formularioProceso === id
+            ? formatedDate(newDate)
+            : item.fechaFinal,
       })),
     }))
   }
@@ -713,12 +736,6 @@ export function Tareas(props: TareasProps) {
 
     if (!validateTaskDeadlineOk(currentTaskList)) return
 
-    console.log(
-      tasks.filter(
-        (item: any) => item.especialidad === currentTaskList.especialidad,
-      ).length,
-    )
-
     setTask((prev) =>
       tasks.filter(
         (item: any) => item.especialidad === currentTaskList.especialidad,
@@ -751,6 +768,53 @@ export function Tareas(props: TareasProps) {
             ]
           : [...tasks, currentTaskList],
       )
+
+      console.log(currentTaskList)
+
+      setTaskSaved(true)
+    }
+  }
+
+  const handleDuplicateTasks = () => {
+    if (
+      currentSubcategoria == null ||
+      currentEspecialidad == null ||
+      duplicatedEspecialidad == null ||
+      duplicatedSubcategoria == null
+    ) {
+      return
+    }
+
+    let toastId
+
+    if (typeof props.onChange === 'function') {
+      props.onChange([
+        ...props.taskList,
+        {
+          especialidad: duplicatedEspecialidad['value'],
+          // subcategoria: duplicatedSubcategoria["value"],
+          tasks: currentTaskList.tasks.map((item: any) => ({
+            ...item,
+            id: '',
+          })),
+        },
+      ])
+
+      setTask([
+        ...tasks,
+        {
+          especialidad: duplicatedEspecialidad['value'],
+          // subcategoria: duplicatedSubcategoria["value"],
+          tasks: currentTaskList.tasks.map((item: any) => ({
+            ...item,
+            id: '',
+          })),
+        },
+      ])
+
+      // console.log(props.taskList)
+
+      toast.success('Tareas duplicadas con éxito 🙌', { id: toastId })
     }
   }
 
@@ -767,6 +831,9 @@ export function Tareas(props: TareasProps) {
 
   return (
     <div className="mb-4">
+      {duplicateConfig ? (
+        <p className="mb-3 font-semibold">Configuracion a duplicar</p>
+      ) : null}
       <div className="mb-6 grid gap-6 md:grid-cols-2">
         <div>
           <label className="text-left text-sm text-gray-700 dark:text-gray-400">
@@ -777,6 +844,7 @@ export function Tareas(props: TareasProps) {
             id="subcategoria"
             placeholder="Inserte subcategoria"
             className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            isDisabled={duplicateConfig}
             styles={{
               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
               menuList: (base) => ({ ...base, color: 'black' }),
@@ -802,6 +870,7 @@ export function Tareas(props: TareasProps) {
             id="especialidad"
             placeholder="Inserte subcategoria"
             className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            isDisabled={duplicateConfig}
             styles={{
               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
               menuList: (base) => ({ ...base, color: 'black' }),
@@ -857,351 +926,471 @@ export function Tareas(props: TareasProps) {
           </button>
         </div> */}
       </div>
-      {currentTaskList ? (
-        <div className="relative h-[650px] overflow-scroll shadow-md sm:rounded-lg">
-          <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-            <thead
-              className={cn(
-                'text-xs uppercase text-gray-700',
-                // props.errors.tareas
-                //   ? 'bg-red-100 border-red-400 text-red-800 focus:border-red-400 focus:ring-red-400 dark:bg-red-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-400 dark:focus:ring-red-500 dark:focus:border-red-500'
-                //   : 'bg-gray-50 dark:bg-gray-700 dark:text-gray-400'
-              )}
-            >
-              <tr>
-                <th
-                  scope="col"
-                  className="w-52  px-3 py-3"
-                  style={{ minWidth: 208 }}
-                >
-                  Tarea
-                </th>
-                <th
-                  scope="col"
-                  className="w-52  px-3 py-3"
-                  style={{ minWidth: 208 }}
-                >
-                  Responsable
-                </th>
-                <th scope="col" className="w-8  px-2 py-3">
-                  Dependencia
-                </th>
-                <th scope="col" className="w-8  px-2 py-3">
-                  Necesidad
-                </th>
-                <th
-                  scope="col"
-                  className="w-52  px-3 py-3"
-                  style={{ minWidth: 208 }}
-                >
-                  Inicio
-                </th>
-                <th
-                  scope="col"
-                  className="w-52  px-3 py-3"
-                  style={{ minWidth: 208 }}
-                >
-                  Final
-                </th>
-                <th scope="col" className="w-8  px-2 py-3">
-                  Dias
-                </th>
-                <th
-                  scope="col"
-                  className="w-52  px-3 py-3"
-                  style={{ minWidth: 208 }}
-                >
-                  Aprobado
-                </th>
-                <th scope="col" className="w-4 px-2 py-3">
-                  Habilitado?
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentTaskList && currentTaskList['tasks'].length > 0
-                ? currentTaskList['tasks'].map((item: any, index: number) => (
-                    <tr
-                      key={index}
-                      className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-                    >
-                      <td
-                        scope="col"
-                        className="w-52 whitespace-nowrap px-3 py-4 font-medium text-gray-900 dark:text-white"
-                        style={{ minWidth: 208 }}
+      {!duplicateConfig ? (
+        currentTaskList ? (
+          <div className="relative h-[650px] overflow-scroll shadow-md sm:rounded-lg">
+            <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+              <thead
+                className={cn(
+                  'text-xs uppercase text-gray-700',
+                  // props.errors.tareas
+                  //   ? 'bg-red-100 border-red-400 text-red-800 focus:border-red-400 focus:ring-red-400 dark:bg-red-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-400 dark:focus:ring-red-500 dark:focus:border-red-500'
+                  //   : 'bg-gray-50 dark:bg-gray-700 dark:text-gray-400'
+                )}
+              >
+                <tr>
+                  <th
+                    scope="col"
+                    className="w-52  px-3 py-3"
+                    style={{ minWidth: 208 }}
+                  >
+                    Tarea
+                  </th>
+                  <th
+                    scope="col"
+                    className="w-52  px-3 py-3"
+                    style={{ minWidth: 208 }}
+                  >
+                    Responsable
+                  </th>
+                  {/* <th scope="col" className="w-8  px-2 py-3">
+                      Dependencia
+                    </th>
+                    <th scope="col" className="w-8  px-2 py-3">
+                      Necesidad
+                    </th> */}
+                  <th
+                    scope="col"
+                    className="w-52  px-3 py-3"
+                    style={{ minWidth: 208 }}
+                  >
+                    Inicio
+                  </th>
+                  <th
+                    scope="col"
+                    className="w-52  px-3 py-3"
+                    style={{ minWidth: 208 }}
+                  >
+                    Final
+                  </th>
+                  <th scope="col" className="w-8  px-2 py-3">
+                    Dias
+                  </th>
+                  <th
+                    scope="col"
+                    className="w-52  px-3 py-3"
+                    style={{ minWidth: 208 }}
+                  >
+                    Aprobado
+                  </th>
+                  <th scope="col" className="w-4 px-2 py-3">
+                    Habilitado?
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentTaskList && currentTaskList['tasks'].length > 0
+                  ? currentTaskList['tasks'].map((item: any, index: number) => (
+                      <tr
+                        key={index}
+                        className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                       >
-                        {
-                          props.processForms.filter(
-                            (pf: any) => pf.id === item.id,
-                          )[0].name
-                        }
-                      </td>
-                      <th
-                        scope="col"
-                        className="w-52 px-3 py-3"
-                        style={{ minWidth: 208 }}
-                      >
-                        <Select
-                          id={`responsable-${index}`}
-                          instanceId={`responsable-${index}`}
-                          placeholder=""
-                          className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                          // isMulti
-                          styles={{
-                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                            menuList: (base) => ({ ...base, color: 'black' }),
-                          }}
-                          menuPortalTarget={_document?.body}
-                          menuPlacement="auto"
-                          options={props.users}
-                          value={item['responsables']}
-                          onChange={(newValue: any) =>
-                            handleResponsables(item['id'], newValue)
+                        <td
+                          scope="col"
+                          className="w-52 whitespace-nowrap px-3 py-4 font-medium text-gray-900 dark:text-white"
+                          style={{ minWidth: 208 }}
+                        >
+                          {
+                            props.processForms.filter(
+                              (pf: any) => pf.id === item.formularioProceso,
+                            )[0].name
                           }
-                        />
-                      </th>
-                      <th scope="col" className="w-8 px-3 py-3 text-center">
-                        <input
-                          id={`checkbox-dependencia-${item['id']}`}
-                          onChange={(e: any) => handleDependencia(item['id'])}
-                          checked={item['dependencia']}
-                          type="checkbox"
-                          className="h-4 w-4  rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
-                        />
-                      </th>
-                      <th scope="col" className="w-8 px-3 py-3 text-center">
-                        <input
-                          id={`checkbox-necesidad-${item['id']}`}
-                          onChange={(e: any) => handleNecesidad(item['id'])}
-                          checked={item['necesidad']}
-                          type="checkbox"
-                          className="h-4 w-4  rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
-                        />
-                      </th>
-                      <th
-                        scope="col"
-                        className="w-52  px-3 py-3"
-                        style={{ minWidth: 208 }}
-                      >
-                        <div className="relative max-w-sm">
-                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <svg
-                              className="h-4 w-4 text-gray-500 dark:text-gray-400"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
-                          </div>
-                          <input
-                            id={`fecha-inicio-${index}`}
-                            type="date"
-                            onChange={(e: any) =>
-                              handleFechaInicio(
-                                item['id'],
-                                e.target.valueAsDate,
+                        </td>
+                        <th
+                          scope="col"
+                          className="w-52 px-3 py-3"
+                          style={{ minWidth: 208 }}
+                        >
+                          <Select
+                            id={`responsable-${index}`}
+                            instanceId={`responsable-${index}`}
+                            placeholder=""
+                            className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            // isMulti
+                            styles={{
+                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                              menuList: (base) => ({ ...base, color: 'black' }),
+                            }}
+                            menuPortalTarget={_document?.body}
+                            menuPlacement="auto"
+                            options={props.users}
+                            value={item['responsables']}
+                            onChange={(newValue: any) =>
+                              handleResponsables(
+                                item['formularioProceso'],
+                                newValue,
                               )
                             }
-                            value={item['fechaInicio']}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Select date"
                           />
-                        </div>
-                      </th>
-                      <th
-                        scope="col"
-                        className="w-52  px-3 py-3"
-                        style={{ minWidth: 208 }}
-                      >
-                        <div className="relative max-w-sm">
-                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <svg
-                              className="h-4 w-4 text-gray-500 dark:text-gray-400"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
+                        </th>
+                        {/* <th scope="col" className="w-8 text-center px-3 py-3">
+                            <input 
+                              id={`checkbox-dependencia-${item['id']}`}
+                              onChange={(e : any)  => handleDependencia(item['formularioProceso'])}
+                              checked={item['dependencia']}
+                              type="checkbox" 
+                              className="w-4 h-4  text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                          </th>
+                          <th scope="col" className="w-8 text-center px-3 py-3">
+                            <input 
+                              id={`checkbox-necesidad-${item['id']}`}
+                              onChange={(e : any)  => handleNecesidad(item['formularioProceso'])}
+                              checked={item['necesidad']}
+                              type="checkbox" 
+                              className="w-4 h-4  text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                          </th> */}
+                        <th
+                          scope="col"
+                          className="w-52  px-3 py-3"
+                          style={{ minWidth: 208 }}
+                        >
+                          <div className="relative max-w-sm">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                              <svg
+                                className="h-4 w-4 text-gray-500 dark:text-gray-400"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                              </svg>
+                            </div>
+                            <input
+                              id={`fecha-inicio-${index}`}
+                              type="date"
+                              onChange={(e: any) =>
+                                handleFechaInicio(
+                                  item['formularioProceso'],
+                                  e.target.valueAsDate,
+                                )
+                              }
+                              value={item['fechaInicio']}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                              placeholder="Select date"
+                            />
                           </div>
-                          <input
-                            type="date"
-                            id={`fecha-fin-${index}`}
-                            onChange={(e: any) =>
-                              handleFechaFinal(item['id'], e.target.valueAsDate)
+                        </th>
+                        <th
+                          scope="col"
+                          className="w-52  px-3 py-3"
+                          style={{ minWidth: 208 }}
+                        >
+                          <div className="relative max-w-sm">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                              <svg
+                                className="h-4 w-4 text-gray-500 dark:text-gray-400"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                              </svg>
+                            </div>
+                            <input
+                              type="date"
+                              id={`fecha-fin-${index}`}
+                              onChange={(e: any) =>
+                                handleFechaFinal(
+                                  item['formularioProceso'],
+                                  e.target.valueAsDate,
+                                )
+                              }
+                              value={item['fechaFinal']}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                              placeholder="Select date"
+                            />
+                          </div>
+                        </th>
+                        <th scope="col" className="w-8  px-3 py-3">
+                          {calcularDiferenciaDias(
+                            item['fechaInicio'],
+                            item['fechaFinal'],
+                          )}
+                        </th>
+                        <th
+                          scope="col"
+                          className="w-52  px-3 py-3"
+                          style={{ minWidth: 208 }}
+                        >
+                          <Select
+                            id={`aprobado-${index}`}
+                            instanceId={`aprobado-${index}`}
+                            placeholder=""
+                            className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            isMulti
+                            styles={{
+                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                              menuList: (base) => ({ ...base, color: 'black' }),
+                            }}
+                            menuPortalTarget={_document?.body}
+                            menuPlacement="auto"
+                            options={props.users}
+                            value={item['aprobado']}
+                            onChange={(newValue: any) =>
+                              handleAprobado(
+                                item['formularioProceso'],
+                                newValue,
+                              )
                             }
-                            value={item['fechaFinal']}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Select date"
                           />
-                        </div>
-                      </th>
-                      <th scope="col" className="w-8  px-3 py-3">
-                        {calcularDiferenciaDias(
-                          item['fechaInicio'],
-                          item['fechaFinal'],
-                        )}
-                      </th>
-                      <th
-                        scope="col"
-                        className="w-52  px-3 py-3"
-                        style={{ minWidth: 208 }}
-                      >
-                        <Select
-                          id={`aprobado-${index}`}
-                          instanceId={`aprobado-${index}`}
-                          placeholder=""
-                          className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                          isMulti
-                          styles={{
-                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                            menuList: (base) => ({ ...base, color: 'black' }),
-                          }}
-                          menuPortalTarget={_document?.body}
-                          menuPlacement="auto"
-                          options={props.users}
-                          value={item['aprobado']}
-                          onChange={(newValue: any) =>
-                            handleAprobado(item['id'], newValue)
-                          }
-                        />
-                      </th>
+                        </th>
 
-                      <td className="w-4 px-3 py-4 text-center">
-                        <input
-                          id={`habilitado-${item['id']}`}
-                          onChange={(e: any) => handleHabilitado(item['id'])}
-                          checked={item['habilitado']}
-                          type="checkbox"
-                          className="h-4 w-4  rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
-                        />
-                      </td>
-                    </tr>
-                  ))
-                : null}
-            </tbody>
-          </table>
-        </div>
+                        <td className="w-4 px-3 py-4 text-center">
+                          <input
+                            id={`habilitado-${item['id']}`}
+                            onChange={(e: any) =>
+                              handleHabilitado(item['formularioProceso'])
+                            }
+                            checked={item['habilitado']}
+                            type="checkbox"
+                            className="h-4 w-4  rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  : null}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <>
+            <p className="p-4 text-red-700">
+              {' '}
+              Seleccione una subcategoria y especialidad para ver los
+              formularios de procesos.
+            </p>
+            {currentSubcategoria ? (
+              <>
+                {props.taskList.length > 0 ? (
+                  <>
+                    <div className="border-b py-4 text-xl">
+                      {' '}
+                      Estado de las tareas por especialidad
+                    </div>
+                    <div className=" h-[560px] overflow-y-auto ">
+                      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                        <thead
+                          className={cn(
+                            'text-xs uppercase text-gray-700',
+                            // props.errors.tareas
+                            //   ? 'bg-red-100 border-red-400 text-red-800 focus:border-red-400 focus:ring-red-400 dark:bg-red-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-400 dark:focus:ring-red-500 dark:focus:border-red-500'
+                            //   : 'bg-gray-50 dark:bg-gray-700 dark:text-gray-400'
+                          )}
+                        >
+                          <tr>
+                            <th
+                              scope="col"
+                              className="w-52  px-3 py-3"
+                              style={{ minWidth: 208 }}
+                            >
+                              Especialidad
+                            </th>
+                            <th
+                              scope="col"
+                              className="w-52  px-3 py-3"
+                              style={{ minWidth: 208 }}
+                            >
+                              Estado de tareas
+                            </th>
+                            <th
+                              scope="col"
+                              className="w-52  px-3 py-3"
+                              style={{ minWidth: 208 }}
+                            ></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {props.especialidades
+                            .filter(
+                              (item: any) =>
+                                currentSubcategoria &&
+                                String(item.subcategory) ===
+                                  currentSubcategoria['value'],
+                            )
+                            .map((item: any, idx: number) => (
+                              <tr
+                                key={idx}
+                                className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                              >
+                                <th scope="col" className="w-full  px-3 py-3">
+                                  {item.label}
+                                </th>
+                                <th scope="col" className="w-full  px-3 py-3">
+                                  {props.taskList.filter(
+                                    (task: any) =>
+                                      task.especialidad === item.value,
+                                  ).length > 0 ? (
+                                    <span className="text-blue-500">
+                                      Definida
+                                    </span>
+                                  ) : (
+                                    <span className="text-red-500">
+                                      No definida
+                                    </span>
+                                  )}
+                                </th>
+                                <th scope="col" className="w-full  px-3 py-3">
+                                  <button
+                                    type="button"
+                                    className={cn(
+                                      'font-medium text-blue-600 hover:underline dark:text-blue-500',
+                                    )}
+                                    onClick={async () => {
+                                      // const newSubcategoria: Option| any = {
+                                      //   label: props.especialidades.filter((item: any)=> item.subcategory === task.especialidad)[0].label,
+                                      //   value: task.subcategoria
+                                      // }
+                                      // const newEspecialidad: Option| any = {label: task.especialidadName, value: task.especialidad}
+                                      // setCurrentSubcategoria(newSubcategoria,)
+                                      setCurrentEspecialidad(item, (s) =>
+                                        handleEspecialidad(item),
+                                      )
+                                    }}
+                                  >
+                                    Ver tareas
+                                  </button>
+                                </th>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                ) : null}
+              </>
+            ) : null}
+          </>
+        )
       ) : (
         <>
-          <p className="p-4 text-red-700">
-            {' '}
-            Seleccione una subcategoria y especialidad para ver los formularios
-            de procesos.
-          </p>
-          {currentSubcategoria ? (
-            <>
-              <div className="border-b py-4 text-xl">
+          <p className="mb-3 font-semibold">Duplicar en</p>
+          <div className="mb-6 grid gap-6 md:grid-cols-2">
+            <div>
+              <label className="text-left text-sm text-gray-700 dark:text-gray-400">
                 {' '}
-                Estado de las tareas por especialidad
-              </div>
-              <div className=" h-[560px] overflow-y-auto ">
-                {props.taskList.length > 0 ? (
-                  <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                    <thead
-                      className={cn(
-                        'text-xs uppercase text-gray-700',
-                        // props.errors.tareas
-                        //   ? 'bg-red-100 border-red-400 text-red-800 focus:border-red-400 focus:ring-red-400 dark:bg-red-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-400 dark:focus:ring-red-500 dark:focus:border-red-500'
-                        //   : 'bg-gray-50 dark:bg-gray-700 dark:text-gray-400'
-                      )}
-                    >
-                      <tr>
-                        <th
-                          scope="col"
-                          className="w-52  px-3 py-3"
-                          style={{ minWidth: 208 }}
-                        >
-                          Especialidad
-                        </th>
-                        <th
-                          scope="col"
-                          className="w-52  px-3 py-3"
-                          style={{ minWidth: 208 }}
-                        >
-                          Estado de tareas
-                        </th>
-                        <th
-                          scope="col"
-                          className="w-52  px-3 py-3"
-                          style={{ minWidth: 208 }}
-                        ></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {props.especialidades
-                        .filter(
-                          (item: any) =>
-                            currentSubcategoria &&
-                            String(item.subcategory) ===
-                              currentSubcategoria['value'],
-                        )
-                        .map((item: any, idx: number) => (
-                          <tr
-                            key={idx}
-                            className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-                          >
-                            <th scope="col" className="w-full  px-3 py-3">
-                              {item.label}
-                            </th>
-                            <th scope="col" className="w-full  px-3 py-3">
-                              {props.taskList.filter(
-                                (task: any) => task.especialidad === item.value,
-                              ).length > 0 ? (
-                                <span className="text-blue-500">Definida</span>
-                              ) : (
-                                <span className="text-red-500">
-                                  No definida
-                                </span>
-                              )}
-                            </th>
-                            <th scope="col" className="w-full  px-3 py-3">
-                              <button
-                                type="button"
-                                className={cn(
-                                  'font-medium text-blue-600 hover:underline dark:text-blue-500',
-                                )}
-                                onClick={async () => {
-                                  // const newSubcategoria: Option| any = {
-                                  //   label: props.especialidades.filter((item: any)=> item.subcategory === task.especialidad)[0].label,
-                                  //   value: task.subcategoria
-                                  // }
-                                  // const newEspecialidad: Option| any = {label: task.especialidadName, value: task.especialidad}
-                                  // setCurrentSubcategoria(newSubcategoria,)
-                                  setCurrentEspecialidad(item, (s) =>
-                                    handleEspecialidad(item),
-                                  )
-                                }}
-                              >
-                                Ver tareas
-                              </button>
-                            </th>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                ) : null}
-              </div>
-            </>
-          ) : null}
+                Subcategoria
+              </label>
+              <Select
+                id="subcategoria"
+                placeholder="Inserte subcategoria"
+                className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                  menuList: (base) => ({ ...base, color: 'black' }),
+                }}
+                menuPortalTarget={_document?.body}
+                menuPlacement="auto"
+                options={props.subcategorias}
+                value={duplicatedSubcategoria}
+                onChange={(newValue: any) => {
+                  console.log(newValue)
+                  setDuplicatedSubcategoria(newValue)
+                  setDuplicatedEspecialidad(null)
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="text-left text-sm text-gray-700 dark:text-gray-400">
+                {' '}
+                Especialidad
+              </label>
+              <Select
+                id="especialidad"
+                placeholder="Inserte subcategoria"
+                className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                  menuList: (base) => ({ ...base, color: 'black' }),
+                }}
+                menuPortalTarget={_document?.body}
+                menuPlacement="auto"
+                options={
+                  duplicatedSubcategoria != null
+                    ? props.especialidades.filter(
+                        (item: any) =>
+                          item['subcategory'] ==
+                          duplicatedSubcategoria['value'],
+                      )
+                    : []
+                }
+                value={duplicatedEspecialidad}
+                onChange={(newValue: any) =>
+                  setDuplicatedEspecialidad(newValue)
+                }
+              />
+            </div>
+          </div>
         </>
       )}
 
       {currentTaskList ? (
         <div className="mt-6 text-center">
-          <button
-            type="button"
-            className={cn(
-              'w-10 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto',
-              'bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
-            )}
-            onClick={() => handleSaveTasks()}
-          >
-            Guardar Tareas
-          </button>
+          {!duplicateConfig ? (
+            <button
+              type="button"
+              className={cn(
+                'mx-4 w-10 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto',
+                'bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
+              )}
+              onClick={() => handleSaveTasks()}
+            >
+              Guardar Tareas
+            </button>
+          ) : null}
+
+          {taskSaved && !duplicateConfig ? (
+            <button
+              type="button"
+              className={cn(
+                'w-10 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto',
+                'bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800',
+              )}
+              onClick={() => setDuplicateConfig(true)}
+            >
+              Duplicar configuracion
+            </button>
+          ) : null}
+
+          {duplicateConfig ? (
+            <>
+              <button
+                type="button"
+                className={cn(
+                  'mx-4 w-10 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto',
+                  'bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
+                )}
+                onClick={() => handleDuplicateTasks()}
+              >
+                Duplicar
+              </button>
+
+              <button
+                type="button"
+                className={cn(
+                  'w-10 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto',
+                  'bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800',
+                )}
+                onClick={() => setDuplicateConfig(false)}
+              >
+                Ir a tareas
+              </button>
+            </>
+          ) : null}
         </div>
       ) : null}
     </div>
