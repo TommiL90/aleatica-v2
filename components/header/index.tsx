@@ -411,7 +411,7 @@ export default function Header() {
   }
 
   return (
-    <header className="relative z-20 bg-green-400">
+    <header className="relative z-20 bg-primary">
       <nav
         className="flex w-full items-center justify-between p-6 lg:px-8"
         aria-label="Global"

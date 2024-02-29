@@ -23,7 +23,7 @@ interface Props {
   selectValue: any
   selectPlaceholder: string
   inputPlaceholder: string
-  options: Option[]
+  options: any
   searchInputValue: string
   onChangeSelect: Function
   onChangeInput: Function
