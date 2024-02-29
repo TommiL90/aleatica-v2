@@ -434,7 +434,7 @@ export default function MedicionesFicha() {
                 'Calzada',
                 'Cad. Inicial',
                 'Cad. Final',
-                'Intervencion',
+                'ID Interv. - Loc.',
                 'Actuacion',
                 'Compuesta',
                 'Ud',

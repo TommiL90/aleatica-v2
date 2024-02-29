@@ -75,22 +75,21 @@ export interface Medicion {
   m4: number
   O: number
   distanciaPreviaCad: number
-  densidad: number
-  porcentajeAfectacion: number
   idIntervencion: string
   deterioros: any[]
   prioridad: any
   observacion: string | null
   actuacion: any
   compuesta: any // tipo de tratamiento
+
+  porcentajeAfectacion: number
   longitud: number
   ancho: number
   area: number
   espesor: number
   volumen: number
-  litro: number
-  unidad: number // ud
-  tonelada: number
+  densidad: number
+  masa: number
 
   estudio: number
 
@@ -104,6 +103,7 @@ export interface Medicion {
 
   // compuestaFilter: any[]
   newItem: boolean // indica si es elemento nuevo: true, o cagado desde bd: false
+  habilitarInputs: boolean
 }
 
 interface Option {
@@ -364,9 +364,7 @@ const RoadSurfacesMeasurements = ({
 
                 thickness: item.espesor,
                 width: item.ancho,
-                ud: item.unidad,
-                t: item.tonelada,
-                l: item.litro,
+                t: item.masa,
 
                 mtDeteriorationTypeIds: item.deterioros.map(
                   (item: any) => item.value,
@@ -452,14 +450,16 @@ const RoadSurfacesMeasurements = ({
         observacion: item.observation,
         actuacion: String(item.performanceCatalogId),
         compuesta: String(item.compositeCatalogId),
+
+        porcentajeAfectacion: item.affectePercentage,
+
         longitud: item.length,
         ancho: item.width,
         area: item.area,
         espesor: item.thickness,
+        densidad: item.density,
+        masa: item.t,
         volumen: item.volume,
-        litro: 0,
-        unidad: item.ud,
-        tonelada: item.t,
         estudio: 0,
 
         tramoisOpen: false,
@@ -470,9 +470,7 @@ const RoadSurfacesMeasurements = ({
         actuacionisOpen: false,
         compuestaisOpen: false,
         newItem: false,
-
-        densidad: item.density,
-        porcentajeAfectacion: item.affectePercentage,
+        habilitarInputs: false,
       }
     },
     [],

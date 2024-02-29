@@ -46,14 +46,17 @@ export const getRoadSurfaceColumns = (): Column[] => [
   { columnId: 'observacion', width: 150, reorderable: true },
   { columnId: 'actuacion', width: 150, reorderable: true },
   { columnId: 'compuesta', width: 150, reorderable: true },
+
+  { columnId: 'habilitarInputs', width: 150, reorderable: true },
+  { columnId: 'porcentajeAfectacion', width: 150, reorderable: true },
   { columnId: 'longitud', width: 150, reorderable: true },
   { columnId: 'ancho', width: 150, reorderable: true },
   { columnId: 'area', width: 150, reorderable: true },
   { columnId: 'espesor', width: 150, reorderable: true },
   { columnId: 'volumen', width: 150, reorderable: true },
-  { columnId: 'litro', width: 150, reorderable: true },
-  { columnId: 'unidad', width: 150, reorderable: true },
-  { columnId: 'tonelada', width: 150, reorderable: true },
+  { columnId: 'densidad', width: 150, reorderable: true },
+  { columnId: 'masa', width: 150, reorderable: true },
+  // { columnId: 'unidadAlernativa', width: 150, reorderable: true },
 
   { columnId: 'modal', width: 150, reorderable: true },
   { columnId: 'button_save', width: 150, reorderable: true },
@@ -76,7 +79,7 @@ export const headerRow = (columns: Column[]): Row => ({
       case 'fechaPrevia':
         elem = {
           type: 'header',
-          text: 'Fecha Previa *',
+          text: 'Fecha E. Previos *',
           style: { color: '#666179' },
         }
         break
@@ -146,7 +149,7 @@ export const headerRow = (columns: Column[]): Row => ({
       case 'idIntervencion':
         elem = {
           type: 'header',
-          text: 'Intervencion',
+          text: 'ID Interv. - Loc.',
           style: { color: '#666179' },
         }
         break
@@ -179,29 +182,68 @@ export const headerRow = (columns: Column[]): Row => ({
           style: { color: '#666179' },
         }
         break
+      case 'habilitarInputs':
+        elem = {
+          type: 'header',
+          text: 'Habilitar Inputs',
+          style: { color: '#666179' },
+        }
+        break
+      case 'porcentajeAfectacion':
+        elem = {
+          type: 'header',
+          text: '% afectación',
+          style: { color: '#666179' },
+        }
+        break
       case 'longitud':
-        elem = { type: 'header', text: 'Longitud', style: { color: '#666179' } }
+        elem = {
+          type: 'header',
+          text: 'Longitud (m)',
+          style: { color: '#666179' },
+        }
         break
       case 'ancho':
-        elem = { type: 'header', text: 'Ancho *', style: { color: '#666179' } }
+        elem = {
+          type: 'header',
+          text: 'Ancho (m) ',
+          style: { color: '#666179' },
+        }
         break
       case 'area':
-        elem = { type: 'header', text: 'Area', style: { color: '#666179' } }
+        elem = {
+          type: 'header',
+          text: 'Area (m²)',
+          style: { color: '#666179' },
+        }
         break
       case 'espesor':
-        elem = { type: 'header', text: 'Espesor', style: { color: '#666179' } }
+        elem = {
+          type: 'header',
+          text: 'Espesor (cm)',
+          style: { color: '#666179' },
+        }
         break
       case 'volumen':
-        elem = { type: 'header', text: 'Volumen', style: { color: '#666179' } }
+        elem = {
+          type: 'header',
+          text: 'Volumen (m³)',
+          style: { color: '#666179' },
+        }
         break
-      case 'litro':
-        elem = { type: 'header', text: 'Litro', style: { color: '#666179' } }
+      case 'densidad':
+        elem = {
+          type: 'header',
+          text: 'Densidad (t/m³)',
+          style: { color: '#666179' },
+        }
         break
-      case 'unidad':
-        elem = { type: 'header', text: 'Unidad', style: { color: '#666179' } }
-        break
-      case 'tonelada':
-        elem = { type: 'header', text: 'Tonelada', style: { color: '#666179' } }
+      case 'masa':
+        elem = {
+          type: 'header',
+          text: 'Masa (t)',
+          style: { color: '#666179' },
+        }
         break
 
       case 'modal':
@@ -262,7 +304,11 @@ export const getRoadSurfaceRows = (
         | ButtonCell
         | DateCell
         | DropdownCell
-        | MaskFieldCell = { type: 'header', text: '', style: { color: '' } }
+        | MaskFieldCell = {
+        type: 'header',
+        text: '',
+        style: { color: '' },
+      }
       switch (col.columnId) {
         case 'id':
           elem = {
@@ -278,7 +324,7 @@ export const getRoadSurfaceRows = (
             text: `Editar`,
             style: { color: '#666179' },
             enabled: true,
-            size: item.deterioros.length,
+            size: -1, // item.deterioros.length
             id: item.id,
             onClick: () => {},
           }
@@ -488,12 +534,27 @@ export const getRoadSurfaceRows = (
             className: 'text-sm  block w-full bg-gray-100 text-gray-800',
           }
           break
+        case 'habilitarInputs':
+          elem = {
+            type: 'checkbox',
+            checked: item.habilitarInputs,
+            className:
+              'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+          }
+          break
 
+        case 'porcentajeAfectacion':
+          elem = {
+            type: 'number',
+            value: item.porcentajeAfectacion,
+            className: `text-sm  block w-full`,
+          }
+          break
         case 'longitud':
           elem = {
-            type: 'header',
-            text: String(item.longitud),
-            style: { color: '#666179' },
+            type: 'number',
+            value: item.longitud,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-100'}`,
           }
           break
         case 'ancho':
@@ -524,24 +585,17 @@ export const getRoadSurfaceRows = (
             style: { color: '#666179' },
           }
           break
-        case 'litro':
+        case 'densidad':
           elem = {
             type: 'number',
-            value: item.litro,
+            value: item.densidad,
             style: { color: '#666179' },
           }
           break
-        case 'unidad':
+        case 'masa':
           elem = {
             type: 'number',
-            value: item.unidad,
-            style: { color: '#666179' },
-          }
-          break
-        case 'tonelada':
-          elem = {
-            type: 'number',
-            value: item.tonelada,
+            value: item.masa,
             style: { color: '#666179' },
           }
           break
@@ -582,9 +636,7 @@ export const getRoadSurfaceEmpty = (id: number = 1): Medicion => ({
   area: 0,
   espesor: 0,
   volumen: 0,
-  litro: 0,
-  unidad: 0,
-  tonelada: 0,
+  masa: 0,
   estudio: 0,
   densidad: 0, // Add the missing property "densidad"
   porcentajeAfectacion: 0, // Add the missing property "porcentajeAfectacion"
@@ -598,6 +650,7 @@ export const getRoadSurfaceEmpty = (id: number = 1): Medicion => ({
 
   // compuestaFilter: [],
   newItem: true,
+  habilitarInputs: false,
 })
 
 export const moreRoadSurfaceRows = (

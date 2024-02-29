@@ -134,7 +134,7 @@ export function Deterioros(props: DeteriorosProps) {
               htmlFor="idIntervencion"
               className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
             >
-              Id intervencion - localizacion
+              Id ID Interv. - Loc. - localizacion
             </label>
             <input
               type="text"
