@@ -468,7 +468,7 @@ function CatalogoUDSimplesForm(props: FormProps) {
                   </div>
                   <div className="">
                     <div className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                      Codigo SAP
+                      ID SAP
                     </div>
                     <Field
                       disabled={disabled}
