@@ -625,7 +625,7 @@ export const getRoadSurfaceRows = (
         case 'unidadAlernativa':
           elem = {
             type: 'number',
-            value: item.longitud,
+            value: item.alternativeUnitMeasurementValue,
             className: `text-sm  block w-full text-gray-800 ${item.habilitarUdAlt === true ? '' : 'bg-gray-200'}`,
           }
           break

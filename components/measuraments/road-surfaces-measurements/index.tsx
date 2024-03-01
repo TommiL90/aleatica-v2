@@ -663,7 +663,7 @@ const RoadSurfacesMeasurements = ({
                 mtSlipLaneRoadId: values.gaza,
                 mtHighwayLaneId: values.carril,
                 performanceCatalogId: values.actuacion,
-                interventionIdLocation: values.idIntervencion,
+                // interventionIdLocation: values.idIntervencion,
                 compositeCatalogId: values.compuesta,
                 mtPriorityId: values.prioridad,
 
