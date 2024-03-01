@@ -91,6 +91,9 @@ export interface Medicion {
   densidad: number
   masa: number
 
+  alternativeUnitMeasurementValue: number
+  habilitarUdAlt: boolean
+
   estudio: number
 
   tramoisOpen: boolean
@@ -347,24 +350,26 @@ const RoadSurfacesMeasurements = ({
                 mtSlipLaneRoadId: item.cuerpo,
                 mtHighwayLaneId: item.carril,
                 performanceCatalogId: item.actuacion,
-
+                interventionIdLocation: item.idIntervencion,
                 compositeCatalogId: item.compuesta,
                 mtPriorityId: item.prioridad,
 
                 mtSpecialtyActionId: specialty.value,
                 observation: item.observacion,
-                initialNumber:
-                  cadInicial.length > 1
-                    ? Number(`${cadInicial[0]}${cadInicial[1]}`)
-                    : Number(cadInicial[0]),
-                finalNumber:
-                  cadFinal.length > 1
-                    ? Number(`${cadFinal[0]}${cadFinal[1]}`)
-                    : Number(cadFinal[0]),
+                initialNumber: item.cadenamientoInicial.replace('+', ''),
+                finalNumber: item.cadenamientoFinal.replace('+', ''),
 
-                thickness: item.espesor,
+                affectePercentage: item.porcentajeAfectacion,
+                length: item.longitud,
                 width: item.ancho,
+                area: item.area,
+                thickness: item.espesor,
+                volume: item.volumen,
+                density: item.densidad,
                 t: item.masa,
+
+                alternativeUnitMeasurementValue:
+                  item.alternativeUnitMeasurementValue,
 
                 mtDeteriorationTypeIds: item.deterioros.map(
                   (item: any) => item.value,
@@ -460,6 +465,7 @@ const RoadSurfacesMeasurements = ({
         densidad: item.density,
         masa: item.t,
         volumen: item.volume,
+        alternativeUnitMeasurementValue: item.alternativeUnitMeasurementValue,
         estudio: 0,
 
         tramoisOpen: false,
@@ -471,6 +477,7 @@ const RoadSurfacesMeasurements = ({
         compuestaisOpen: false,
         newItem: false,
         habilitarInputs: false,
+        habilitarUdAlt: false,
       }
     },
     [],
@@ -656,7 +663,7 @@ const RoadSurfacesMeasurements = ({
                 mtSlipLaneRoadId: values.gaza,
                 mtHighwayLaneId: values.carril,
                 performanceCatalogId: values.actuacion,
-
+                interventionIdLocation: values.idIntervencion,
                 compositeCatalogId: values.compuesta,
                 mtPriorityId: values.prioridad,
 
@@ -665,13 +672,15 @@ const RoadSurfacesMeasurements = ({
                 initialNumber: values.cadenamientoInicial.replace('+', ''),
                 finalNumber: values.cadenamientoFinal.replace('+', ''),
 
-                thickness: values.espesor,
-                width: values.ancho,
-                ud: values.unidad,
-                t: values.masa,
-                l: values.litro,
-                density: values.densidad,
                 affectePercentage: values.porcentajeAfectacion,
+                length: values.longitud,
+                width: values.ancho,
+                area: values.area,
+                thickness: values.espesor,
+                volume: values.volumen,
+                density: values.densidad,
+                t: values.masa,
+
                 alternativeUnitMeasurementValue:
                   values.alternativeUnitMeasurementValue,
 

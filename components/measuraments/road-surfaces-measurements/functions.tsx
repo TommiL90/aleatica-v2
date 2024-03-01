@@ -56,7 +56,8 @@ export const getRoadSurfaceColumns = (): Column[] => [
   { columnId: 'volumen', width: 150, reorderable: true },
   { columnId: 'densidad', width: 150, reorderable: true },
   { columnId: 'masa', width: 150, reorderable: true },
-  // { columnId: 'unidadAlernativa', width: 150, reorderable: true },
+  { columnId: 'habilitarUdAlt', width: 150, reorderable: true },
+  { columnId: 'unidadAlernativa', width: 150, reorderable: true },
 
   { columnId: 'modal', width: 150, reorderable: true },
   { columnId: 'button_save', width: 150, reorderable: true },
@@ -242,6 +243,20 @@ export const headerRow = (columns: Column[]): Row => ({
         elem = {
           type: 'header',
           text: 'Masa (t)',
+          style: { color: '#666179' },
+        }
+        break
+      case 'habilitarUdAlt':
+        elem = {
+          type: 'header',
+          text: 'Habilitar Ud. Alt',
+          style: { color: '#666179' },
+        }
+        break
+      case 'unidadAlernativa':
+        elem = {
+          type: 'header',
+          text: 'Unidad Alternativa',
           style: { color: '#666179' },
         }
         break
@@ -554,7 +569,7 @@ export const getRoadSurfaceRows = (
           elem = {
             type: 'number',
             value: item.longitud,
-            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-100'}`,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
         case 'ancho':
@@ -566,9 +581,9 @@ export const getRoadSurfaceRows = (
           break
         case 'area':
           elem = {
-            type: 'header',
-            text: String(item.area),
-            style: { color: '#666179' },
+            type: 'number',
+            value: item.area,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
         case 'espesor':
@@ -580,9 +595,9 @@ export const getRoadSurfaceRows = (
           break
         case 'volumen':
           elem = {
-            type: 'header',
-            text: String(item.volumen),
-            style: { color: '#666179' },
+            type: 'number',
+            value: item.area,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
         case 'densidad':
@@ -595,8 +610,23 @@ export const getRoadSurfaceRows = (
         case 'masa':
           elem = {
             type: 'number',
-            value: item.masa,
-            style: { color: '#666179' },
+            value: item.area,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
+          }
+          break
+        case 'habilitarUdAlt':
+          elem = {
+            type: 'checkbox',
+            checked: item.habilitarUdAlt,
+            className:
+              'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+          }
+          break
+        case 'unidadAlernativa':
+          elem = {
+            type: 'number',
+            value: item.longitud,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarUdAlt === true ? '' : 'bg-gray-200'}`,
           }
           break
       }
@@ -651,6 +681,8 @@ export const getRoadSurfaceEmpty = (id: number = 1): Medicion => ({
   // compuestaFilter: [],
   newItem: true,
   habilitarInputs: false,
+  alternativeUnitMeasurementValue: 0,
+  habilitarUdAlt: false,
 })
 
 export const moreRoadSurfaceRows = (
