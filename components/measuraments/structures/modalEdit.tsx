@@ -15,7 +15,7 @@ interface PropsModalNewItem {
   // compuestas: any[];
   prioridades: any[]
 
-  numeroEstructuras: any[]
+  numeroEstructura: any[]
   tipoEstructura: any[]
   eje: any[]
   lado: any[]
@@ -79,7 +79,7 @@ export default function ModalNewItem(props: PropsModalNewItem) {
                   actuaciones={props.actuaciones}
                   // compuestas={props.compuestas}
                   prioridades={props.prioridades}
-                  numeroEstructuras={props.numeroEstructuras}
+                  numeroEstructura={props.numeroEstructura}
                   tipoEstructura={props.tipoEstructura}
                   eje={props.eje}
                   lado={props.lado}
@@ -102,6 +102,14 @@ export default function ModalNewItem(props: PropsModalNewItem) {
                             props.itemSelected.cadenamientoFinal,
                           deterioros: props.itemSelected.deterioros,
                           actuacion: props.itemSelected.actuacion,
+                          lado: props.itemSelected.lado,
+                          tipoEstructura: props.itemSelected.tipoEstructura,
+                          numeroEstructura: props.itemSelected.numeroEstructura,
+                          elementoEstructura:
+                            props.itemSelected.elementoEstructura,
+                          calificacion: props.itemSelected.calificacion,
+                          eje: props.itemSelected.eje,
+
                           compuesta: props.itemSelected.compuesta,
                           prioridad: props.itemSelected.prioridad,
                           observaciones: props.itemSelected.observacion,
@@ -119,6 +127,8 @@ export default function ModalNewItem(props: PropsModalNewItem) {
                             props.itemSelected.longitudJuntasAfectadas,
                           noEjes: props.itemSelected.noEjes,
                           noApoyos: props.itemSelected.noApoyos,
+                          alternativeUnitMeasurementValue:
+                            props.itemSelected.alternativeUnitMeasurementValue,
                         }
                       : null
                   }

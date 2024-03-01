@@ -5,6 +5,8 @@ import React, {
   useId,
   useEffect,
   useMemo,
+  useRef,
+  Fragment,
 } from 'react'
 import * as Yup from 'yup'
 
@@ -56,7 +58,7 @@ interface FormValues {
   tonelada: number
   observacion: string
 
-  numeroEstructuras: any
+  numeroEstructura: any
   tipoEstructura: any
   idGeneral: string
   eje: any
@@ -82,7 +84,7 @@ interface FormProps {
   actuaciones: any[]
   // compuestas: any[];
   prioridades: any[]
-  numeroEstructuras: any[]
+  numeroEstructura: any[]
   tipoEstructura: any[]
   eje: any[]
   lado: any[]
@@ -144,6 +146,7 @@ interface CrearMedicion {
   supportsAffectedCount: number
   cosForCalculate: boolean
   mtDeteriorationTypeIds?: number[] | null // Puede ser nulo
+  mtUnitOfMeasurementId: number
 }
 
 const initialValues: FormValues = {
@@ -166,7 +169,7 @@ const initialValues: FormValues = {
   tonelada: 0,
   observacion: '',
 
-  numeroEstructuras: null,
+  numeroEstructura: null,
   tipoEstructura: null,
   idGeneral: '',
   eje: null,
@@ -280,11 +283,11 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     props.initValue ? props.initValue.observaciones : '',
   )
 
-  const [numeroEstructurasSeleccionada, setNumeroEstructurasSeleccionada] =
+  const [numeroEstructuraSeleccionada, setNumeroEstructuraSeleccionada] =
     useState(
       props.initValue
-        ? props.numeroEstructuras.filter(
-            (item: any) => item['value'] === props.initValue.numeroEstructuras,
+        ? props.numeroEstructura.filter(
+            (item: any) => item['value'] === props.initValue.numeroEstructura,
           )[0]
         : null,
     )
@@ -329,14 +332,6 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
         )[0]
       : null,
   )
-  // anchoCalzada: props.itemSelected.anchoCalzada,
-  // esviaje: props.itemSelected.esviaje,
-  // coseno: props.itemSelected.coseno,
-  // longitudCadaJunta: props.itemSelected.longitudCadaJunta,
-  // noElementos: props.itemSelected.noElementos,
-  // longitudTotalJuntas: props.itemSelected.longitudTotalJuntas,
-  // porcentajeAfectacion: props.itemSelected.porcentajeAfectacion,
-  // longitudJuntasAfectadas: props.itemSelected.longitudJuntasAfectadas,
   const [anchoCalzada, setAnchoCalzada] = useState(
     props.initValue ? props.initValue.anchoCalzada : null,
   )
@@ -376,6 +371,11 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
   const [noEjes, setNoEjes] = useState(
     props.initValue ? props.initValue.noEjes : null,
   )
+
+  const [alternativeUnitMeasurementValue, setAlternativeUnitMeasurementValue] =
+    useState(
+      props.initValue ? props.initValue.alternativeUnitMeasurementValue : 0,
+    )
 
   const [altInput, setAltInput] = useState(false)
   const [activeZincInputs, setActiveInputs] = useState(true)
@@ -570,31 +570,31 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     }
   }
 
-  const value: Partial<CrearMedicion> = {
-    performanceCatalogId: actuacionSeleccionada
-      ? actuacionSeleccionada.value
-      : '',
-    compositeCatalogId: compuestaSeleccionada
-      ? compuestaSeleccionada.value
-      : '',
-    mtPriorityId: prioridadSeleccionada ? prioridadSeleccionada.value : '',
-    mtSpecialtyActionId: props.especialidad.value,
-    initialNumber: cadenamientoInicialSeleccionada
-      ? cadenamientoInicialSeleccionada.replace('+', '')
-      : '',
-    finalNumber: cadenamientoFinalSeleccionada
-      ? cadenamientoFinalSeleccionada.replace('+', '')
-      : '',
-    roadAverage: anchoCalzada || 0,
-    esviaje: esviaje || 0,
-    cosForCalculate: coseno ? coseno.value : false,
-    elementsCount: noElementos || 0,
-    affectePercentage: porcentajeAfectacion || 100,
+  const handleGetInfo = useCallback(async () => {
+    const value: Partial<CrearMedicion> = {
+      performanceCatalogId: actuacionSeleccionada
+        ? actuacionSeleccionada.value
+        : '',
+      compositeCatalogId: compuestaSeleccionada
+        ? compuestaSeleccionada.value
+        : '',
+      mtPriorityId: prioridadSeleccionada ? prioridadSeleccionada.value : '',
+      mtSpecialtyActionId: props.especialidad.value,
+      initialNumber: cadenamientoInicialSeleccionada
+        ? cadenamientoInicialSeleccionada.replace('+', '')
+        : '',
+      finalNumber: cadenamientoFinalSeleccionada
+        ? cadenamientoFinalSeleccionada.replace('+', '')
+        : '',
+      roadAverage: anchoCalzada || 0,
+      esviaje: esviaje || 0,
+      cosForCalculate: coseno ? coseno.value : false,
+      elementsCount: noElementos || 0,
+      affectePercentage: porcentajeAfectacion || 100,
 
-    // NumberAxies: noEjes ? noEjes : 0,
-    supportsAffectedCount: noApoyos || 0,
-  }
-  const handleGetInfo = async () => {
+      supportsAffectedCount: noApoyos || 0,
+      mtUnitOfMeasurementId: alternativeUnitMeasurementValue,
+    }
     const res = await fetch(`${process.env.API_URL}/MeasurementTab/GetInfo`, {
       method: 'POST',
       headers: {
@@ -611,8 +611,28 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
       setLongitudJuntasAfectadas(affectedJointsLength)
       setLongitudTotalJuntas(totalJointsLength)
     }
-  }
+  }, [
+    actuacionSeleccionada,
+    alternativeUnitMeasurementValue,
+    anchoCalzada,
+    cadenamientoFinalSeleccionada,
+    cadenamientoInicialSeleccionada,
+    compuestaSeleccionada,
+    coseno,
+    esviaje,
+    noApoyos,
+    noElementos,
+    porcentajeAfectacion,
+    prioridadSeleccionada,
+    props.especialidad.value,
+  ])
+
+  const isFirstRender = useRef(true)
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false // marca que ya no es la primera renderización
+      return
+    }
     handleGetInfo()
   }, [
     cadenamientoInicialSeleccionada,
@@ -624,9 +644,10 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     esviaje,
     coseno,
     noElementos,
-    porcentajeAfectacion,
     noApoyos,
     noEjes,
+    alternativeUnitMeasurementValue,
+    handleGetInfo,
   ])
 
   return (
@@ -1183,14 +1204,14 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
               <div className="mb-6 grid gap-6 md:grid-cols-2">
                 <div>
                   <label
-                    htmlFor="numeroEstructuras"
+                    htmlFor="numeroEstructura"
                     className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Numero de estructuras
                     <span className="ml-1 text-xs text-red-700">*</span>
                   </label>
 
-                  <Field name="numeroEstructuras">
+                  <Field name="numeroEstructura">
                     {({
                       field, // { name, value, onChange, onBlur }
                       value,
@@ -1200,17 +1221,17 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                       <div>
                         <Select
                           {...field}
-                          id="numeroEstructuras"
+                          id="numeroEstructura"
                           instanceId={numeroEstructurasId}
                           placeholder="Seleccione numero de estructuras"
-                          options={props.numeroEstructuras}
-                          value={numeroEstructurasSeleccionada}
+                          options={props.numeroEstructura}
+                          value={numeroEstructuraSeleccionada}
                           defaultValue={
                             props.initValue != null
-                              ? props.numeroEstructuras.filter(
+                              ? props.numeroEstructura.filter(
                                   (item: any) =>
                                     item['value'] ==
-                                    props.initValue.numeroEstructuras,
+                                    props.initValue.numeroEstructura,
                                 )[0]
                               : null
                           }
@@ -1219,16 +1240,14 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                               field.name,
                               option ? option.value : null,
                             )
-                            setNumeroEstructurasSeleccionada(option)
+                            setNumeroEstructuraSeleccionada(option)
                           }}
                           styles={customStyleSelect(
-                            errors.numeroEstructuras &&
-                              touched.numeroEstructuras,
+                            errors.numeroEstructura && touched.numeroEstructura,
                           )}
                           className={cn(
                             'block w-full rounded-lg border text-sm',
-                            errors.numeroEstructuras &&
-                              touched.numeroEstructuras
+                            errors.numeroEstructura && touched.numeroEstructura
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
                               : 'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                           )}
@@ -1237,7 +1256,7 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                     )}
                   </Field>
                   <ErrorMessage
-                    name="numeroEstructuras"
+                    name="numeroEstructura"
                     component="div"
                     className="mt-1 text-sm text-red-600 dark:text-red-500"
                   />
@@ -1815,7 +1834,12 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                     </label>
                   </div>
                 </div>
-                {props.especialidad.value === 32 ? (
+                <div
+                  className={cn(
+                    'mb-6 grid gap-6 md:grid-cols-4',
+                    props.especialidad.value === 32 ? '' : 'hidden',
+                  )}
+                >
                   <JuntasSubForm
                     anchoCalzada={anchoCalzada}
                     setAnchoCalzada={setAnchoCalzada}
@@ -1835,14 +1859,21 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                     setLongitudJuntasAfectadas={setLongitudJuntasAfectadas}
                     activeZincInputs={activeZincInputs}
                   />
-                ) : (
+                </div>
+                <div
+                  className={cn(
+                    'mb-6 grid gap-6 md:grid-cols-3',
+                    props.especialidad.value === 32 ? 'hidden' : '',
+                  )}
+                >
                   <NeoprenosSubForm
                     noApoyos={noApoyos}
                     setNoApoyos={setNoApoyos}
                     noEjes={noEjes}
                     setNoEjes={setNoEjes}
                   />
-                )}
+                </div>
+
                 <div className="mb-6 grid gap-6 md:grid-cols-4">
                   {unitOfMeasurement &&
                     altInput &&
@@ -1866,13 +1897,14 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                                 type="number"
                                 step="0.01"
                                 min="0"
-                                value={
-                                  field.value !== undefined ? field.value : ''
-                                }
+                                value={alternativeUnitMeasurementValue}
                                 onChange={(evt: any) => {
                                   setFieldValue(
                                     field.name,
                                     evt.target.valueAsNumber,
+                                    setAlternativeUnitMeasurementValue(
+                                      evt.target.valueAsNumber,
+                                    ),
                                   )
                                 }}
                                 className={cn(
