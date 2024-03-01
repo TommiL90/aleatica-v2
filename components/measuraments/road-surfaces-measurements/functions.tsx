@@ -57,7 +57,11 @@ export const getRoadSurfaceColumns = (): Column[] => [
   { columnId: 'densidad', width: 150, reorderable: true },
   { columnId: 'masa', width: 150, reorderable: true },
   { columnId: 'habilitarUdAlt', width: 150, reorderable: true },
-  { columnId: 'unidadAlernativa', width: 150, reorderable: true },
+  {
+    columnId: 'alternativeUnitMeasurementValue',
+    width: 150,
+    reorderable: true,
+  },
 
   { columnId: 'modal', width: 150, reorderable: true },
   { columnId: 'button_save', width: 150, reorderable: true },
@@ -253,7 +257,7 @@ export const headerRow = (columns: Column[]): Row => ({
           style: { color: '#666179' },
         }
         break
-      case 'unidadAlernativa':
+      case 'alternativeUnitMeasurementValue':
         elem = {
           type: 'header',
           text: 'Unidad Alternativa',
@@ -596,7 +600,7 @@ export const getRoadSurfaceRows = (
         case 'volumen':
           elem = {
             type: 'number',
-            value: item.area,
+            value: item.volumen,
             className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
@@ -610,7 +614,7 @@ export const getRoadSurfaceRows = (
         case 'masa':
           elem = {
             type: 'number',
-            value: item.area,
+            value: item.masa,
             className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
@@ -622,11 +626,11 @@ export const getRoadSurfaceRows = (
               'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
           }
           break
-        case 'unidadAlernativa':
+        case 'alternativeUnitMeasurementValue':
           elem = {
             type: 'number',
             value: item.alternativeUnitMeasurementValue,
-            className: `text-sm  block w-full text-gray-800 ${item.habilitarUdAlt === true ? '' : 'bg-gray-200'}`,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
       }
