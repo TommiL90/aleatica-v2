@@ -580,7 +580,7 @@ export const getRoadSurfaceRows = (
           elem = {
             type: 'number',
             value: item.ancho,
-            style: { color: '#666179' },
+            className: `text-sm  block w-full`,
           }
           break
         case 'area':
@@ -594,7 +594,7 @@ export const getRoadSurfaceRows = (
           elem = {
             type: 'number',
             value: item.espesor,
-            style: { color: '#666179' },
+            className: `text-sm  block w-full`,
           }
           break
         case 'volumen':
@@ -608,7 +608,7 @@ export const getRoadSurfaceRows = (
           elem = {
             type: 'number',
             value: item.densidad,
-            style: { color: '#666179' },
+            className: `text-sm  block w-full`,
           }
           break
         case 'masa':

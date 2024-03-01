@@ -18,7 +18,7 @@ export const getStructuresMediciones = (): Medicion[] => []
 
 export const getStructuresColumns = (): Column[] => [
   { columnId: 'id', width: 30, reorderable: true, resizable: true },
-  { columnId: 'fechaPrevia', width: 200, reorderable: true, resizable: true },
+  { columnId: 'fechaPrevia', width: 150, reorderable: true, resizable: true },
   { columnId: 'tramo', width: 350, reorderable: true, resizable: true },
   { columnId: 'entronque', width: 200, reorderable: true, resizable: true },
   { columnId: 'cuerpo', width: 200, reorderable: true, resizable: true },
@@ -29,44 +29,46 @@ export const getStructuresColumns = (): Column[] => [
     reorderable: true,
     resizable: true,
   },
-  { columnId: 'km', width: 200, reorderable: true, resizable: true },
-  { columnId: 'M', width: 150, reorderable: true },
-  { columnId: 'L', width: 150, reorderable: true },
-  { columnId: 'distanciaSeguimientoCad', width: 150, reorderable: true },
-  { columnId: 'cadenamientoFinal', width: 200, reorderable: true },
-  { columnId: 'km2', width: 150, reorderable: true },
-  { columnId: 'm4', width: 150, reorderable: true },
-  { columnId: 'O', width: 150, reorderable: true },
-  { columnId: 'distanciaPreviaCad', width: 150, reorderable: true },
+  { columnId: 'km', width: 100, reorderable: true, resizable: true },
+  { columnId: 'M', width: 100, reorderable: true },
+  { columnId: 'L', width: 100, reorderable: true },
+  { columnId: 'distanciaSeguimientoCad', width: 250, reorderable: true },
+  { columnId: 'cadenamientoFinal', width: 220, reorderable: true },
+  { columnId: 'km2', width: 100, reorderable: true },
+  { columnId: 'm4', width: 100, reorderable: true },
+  { columnId: 'O', width: 100, reorderable: true },
+  { columnId: 'distanciaPreviaCad', width: 200, reorderable: true },
 
-  { columnId: 'idIntervencion', width: 150, reorderable: true },
+  { columnId: 'idIntervencion', width: 350, reorderable: true },
   // { columnId: "deterioro", width: 150, reorderable: true},
   { columnId: 'prioridad', width: 150, reorderable: true },
   { columnId: 'observacion', width: 150, reorderable: true },
   { columnId: 'actuacion', width: 150, reorderable: true },
   { columnId: 'compuesta', width: 150, reorderable: true },
-  { columnId: 'longitud', width: 150, reorderable: true },
-  { columnId: 'ancho', width: 150, reorderable: true },
-  { columnId: 'area', width: 150, reorderable: true },
-  { columnId: 'espesor', width: 150, reorderable: true },
-  { columnId: 'volumen', width: 150, reorderable: true },
-  { columnId: 'litro', width: 150, reorderable: true },
-  { columnId: 'unidad', width: 150, reorderable: true },
-  { columnId: 'tonelada', width: 150, reorderable: true },
-
-  { columnId: 'numeroEstructuras', width: 150, reorderable: true },
+  { columnId: 'numeroEstructura', width: 150, reorderable: true },
   { columnId: 'tipoEstructura', width: 150, reorderable: true },
   { columnId: 'idGeneral', width: 150, reorderable: true },
   { columnId: 'eje', width: 150, reorderable: true },
   { columnId: 'lado', width: 150, reorderable: true },
   { columnId: 'elementoEstructura', width: 150, reorderable: true },
-  // { columnId: "posicion", width: 150, reorderable: true},
-  // { columnId: "disposicion", width: 150, reorderable: true},
   { columnId: 'calificacion', width: 150, reorderable: true },
-  { columnId: 'anchoPromedioCalzada', width: 150, reorderable: true },
+  { columnId: 'anchoCalzada', width: 150, reorderable: true },
   { columnId: 'esviaje', width: 150, reorderable: true },
-  { columnId: 'anchoJunta', width: 150, reorderable: true },
-  { columnId: 'numeroElementos', width: 150, reorderable: true },
+  { columnId: 'coseno', width: 70, reorderable: true },
+  { columnId: 'habilitarInputs', width: 150, reorderable: true },
+  { columnId: 'longitudJunta', width: 200, reorderable: true },
+  { columnId: 'noElementos', width: 150, reorderable: true },
+  { columnId: 'longitudTotalJuntas', width: 200, reorderable: true },
+  { columnId: 'porcentajeAfectacion', width: 150, reorderable: true },
+  { columnId: 'longitudJuntasAfectadas', width: 250, reorderable: true },
+  { columnId: 'noEjes', width: 120, reorderable: true },
+  { columnId: 'noApoyos', width: 120, reorderable: true },
+  { columnId: 'habilitarUdAlt', width: 140, reorderable: true },
+  {
+    columnId: 'alternativeUnitMeasurementValue',
+    width: 100,
+    reorderable: true,
+  },
 
   { columnId: 'modal', width: 150, reorderable: true },
   { columnId: 'button_save', width: 150, reorderable: true },
@@ -192,35 +194,10 @@ const headerRow = (columns: Column[]): Row => ({
           style: { color: '#666179' },
         }
         break
-      case 'longitud':
-        elem = { type: 'header', text: 'Longitud', style: { color: '#666179' } }
-        break
-      case 'ancho':
-        elem = { type: 'header', text: 'Ancho *', style: { color: '#666179' } }
-        break
-      case 'area':
-        elem = { type: 'header', text: 'Area', style: { color: '#666179' } }
-        break
-      case 'espesor':
-        elem = { type: 'header', text: 'Espesor', style: { color: '#666179' } }
-        break
-      case 'volumen':
-        elem = { type: 'header', text: 'Volumen', style: { color: '#666179' } }
-        break
-      case 'litro':
-        elem = { type: 'header', text: 'Litro', style: { color: '#666179' } }
-        break
-      case 'unidad':
-        elem = { type: 'header', text: 'Unidad', style: { color: '#666179' } }
-        break
-      case 'tonelada':
-        elem = { type: 'header', text: 'Tonelada', style: { color: '#666179' } }
-        break
-
-      case 'numeroEstructuras':
+      case 'numeroEstructura':
         elem = {
           type: 'header',
-          text: 'Numero de estructuras',
+          text: 'Nº de estructura',
           style: { color: '#666179' },
         }
         break
@@ -234,7 +211,7 @@ const headerRow = (columns: Column[]): Row => ({
       case 'idGeneral':
         elem = {
           type: 'header',
-          text: 'idGeneral',
+          text: 'ID General',
           style: { color: '#666179' },
         }
         break
@@ -247,7 +224,7 @@ const headerRow = (columns: Column[]): Row => ({
       case 'elementoEstructura':
         elem = {
           type: 'header',
-          text: 'Elemento de Estructura',
+          text: 'El. de Estructura',
           style: { color: '#666179' },
         }
         break
@@ -255,33 +232,99 @@ const headerRow = (columns: Column[]): Row => ({
       case 'calificacion':
         elem = {
           type: 'header',
-          text: 'Calificacion',
+          text: 'Calificación',
           style: { color: '#666179' },
         }
         break
-      // case "posicion": elem = { type: "header", text: "Posicion *", style: {color: '#666179'}}; break;
-      // case "disposicion": elem = { type: "header", text: "Disposicion *", style: {color: '#666179'}}; break;
-      case 'anchoPromedioCalzada':
+      case 'habilitarInputs':
         elem = {
           type: 'header',
-          text: 'Ancho Promedio de Calzada',
+          text: 'Habilitar Inputs',
+          style: { color: '#666179' },
+        }
+        break
+      case 'anchoCalzada':
+        elem = {
+          type: 'header',
+          text: 'Ancho Calzada (m)',
           style: { color: '#666179' },
         }
         break
       case 'esviaje':
-        elem = { type: 'header', text: 'Esviaje', style: { color: '#666179' } }
-        break
-      case 'anchoJunta':
         elem = {
           type: 'header',
-          text: 'Ancho de Junta',
+          text: 'Esviaje (º)',
           style: { color: '#666179' },
         }
         break
-      case 'numeroElementos':
+      case 'coseno':
         elem = {
           type: 'header',
-          text: 'Numero de Elementos',
+          text: 'Coseno',
+          style: { color: '#666179' },
+        }
+        break
+      case 'longitudJunta':
+        elem = {
+          type: 'header',
+          text: 'Long. de cada junta (m)',
+          style: { color: '#666179' },
+        }
+        break
+
+      case 'noElementos':
+        elem = {
+          type: 'header',
+          text: 'Nº de Elementos',
+          style: { color: '#666179' },
+        }
+        break
+      case 'longitudTotalJuntas':
+        elem = {
+          type: 'header',
+          text: 'Long. de juntas afectadas (m)',
+          style: { color: '#666179' },
+        }
+        break
+      case 'porcentajeAfectacion':
+        elem = {
+          type: 'header',
+          text: '% afectación',
+          style: { color: '#666179' },
+        }
+        break
+      case 'longitudJuntasAfectadas':
+        elem = {
+          type: 'header',
+          text: 'Long. juntas afectadas (m)',
+          style: { color: '#666179' },
+        }
+        break
+      case 'noEjes':
+        elem = {
+          type: 'header',
+          text: 'Nº Ejes',
+          style: { color: '#666179' },
+        }
+        break
+      case 'noApoyos':
+        elem = {
+          type: 'header',
+          text: 'Nº de apoyos',
+          style: { color: '#666179' },
+        }
+        break
+      case 'habilitarUdAlt':
+        elem = {
+          type: 'header',
+          text: 'Habilitar Ud. Alt',
+          style: { color: '#666179' },
+        }
+        break
+      case 'alternativeUnitMeasurementValue':
+        elem = {
+          type: 'header',
+          text: 'Ud. Alt.',
           style: { color: '#666179' },
         }
         break
@@ -315,7 +358,7 @@ export const getStructuresRows = (
   prioridades: any[],
   actuaciones: any[],
   compuestas: any[],
-  numeroEstructuras: any[],
+  numeroEstructura: any[],
   tipoEstructuras: any[],
   ejes: any[],
   lados: any[],
@@ -532,117 +575,13 @@ export const getStructuresRows = (
             style: { color: '#666179' },
           }
           break
-        case 'idIntervencion':
-          elem = {
-            type: 'header',
-            text: `${item.idIntervencion}`,
-            style: { color: '#666179' },
-          }
-          break
-
-        case 'prioridad':
+        case 'numeroEstructura':
           elem = {
             type: 'dropdown',
-            selectedValue: item.prioridad,
-            // inputValue: item.subcategoriaActuacion,
-            isOpen: item.prioridadisOpen,
-            values: prioridades,
-            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
-          }
-          break
-        case 'observacion':
-          elem = {
-            type: 'text',
-            text: item.observacion,
-            className: 'text-sm block w-full text-gray-800',
-          }
-          break
-        case 'actuacion':
-          elem = {
-            type: 'dropdown',
-            selectedValue: item.actuacion,
-            // inputValue: item.subcategoriaActuacion,
-            isOpen: item.actuacionisOpen,
-            values: actuaciones,
-            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
-          }
-          break
-
-        case 'compuesta':
-          elem = {
-            type: 'dropdown',
-            selectedValue: item.compuesta,
-            // inputValue: item.subcategoriaActuacion,
-            isOpen: item.compuestaisOpen,
-            values: compuestas,
-            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
-          }
-          break
-
-        case 'longitud':
-          elem = {
-            type: 'header',
-            text: String(item.longitud),
-            style: { color: '#666179' },
-          }
-          break
-        case 'ancho':
-          elem = {
-            type: 'number',
-            value: item.ancho,
-            style: { color: '#666179' },
-          }
-          break
-        case 'area':
-          elem = {
-            type: 'header',
-            text: String(item.area),
-            style: { color: '#666179' },
-          }
-          break
-        case 'espesor':
-          elem = {
-            type: 'number',
-            value: item.espesor,
-            style: { color: '#666179' },
-          }
-          break
-        case 'volumen':
-          elem = {
-            type: 'header',
-            text: String(item.volumen),
-            style: { color: '#666179' },
-          }
-          break
-        case 'litro':
-          elem = {
-            type: 'number',
-            value: item.litro,
-            style: { color: '#666179' },
-          }
-          break
-        case 'unidad':
-          elem = {
-            type: 'number',
-            value: item.unidad,
-            style: { color: '#666179' },
-          }
-          break
-        case 'tonelada':
-          elem = {
-            type: 'number',
-            value: item.tonelada,
-            style: { color: '#666179' },
-          }
-          break
-
-        case 'numeroEstructuras':
-          elem = {
-            type: 'dropdown',
-            selectedValue: item.numeroEstructuras,
+            selectedValue: item.numeroEstructura,
             // inputValue: item.subcategoriaActuacion,
             isOpen: item.numeroEstructurasisOpen,
-            values: numeroEstructuras,
+            values: numeroEstructura,
             className: 'text-sm  block w-full bg-gray-100 text-gray-800',
           }
           break
@@ -728,32 +667,144 @@ export const getStructuresRows = (
             style: { color: '#666179' },
           }
           break
-        case 'anchoPromedioCalzada':
+        case 'idIntervencion':
+          elem = {
+            type: 'header',
+            text: `${item.idIntervencion}`,
+            style: { color: '#666179' },
+          }
+          break
+
+        case 'prioridad':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.prioridad,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.prioridadisOpen,
+            values: prioridades,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+        case 'observacion':
+          elem = {
+            type: 'text',
+            text: item.observacion,
+            className: 'text-sm block w-full text-gray-800',
+          }
+          break
+        case 'actuacion':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.actuacion,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.actuacionisOpen,
+            values: actuaciones,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+
+        case 'compuesta':
+          elem = {
+            type: 'dropdown',
+            selectedValue: item.compuesta,
+            // inputValue: item.subcategoriaActuacion,
+            isOpen: item.compuestaisOpen,
+            values: compuestas,
+            className: 'text-sm  block w-full bg-gray-100 text-gray-800',
+          }
+          break
+        case 'habilitarInputs':
+          elem = {
+            type: 'checkbox',
+            checked: item.habilitarInputs,
+            className:
+              'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+          }
+          break
+        case 'anchoCalzada':
           elem = {
             type: 'number',
-            value: item.anchoPromedioCalzada,
-            style: { color: '#666179' },
+            value: item.anchoCalzada,
+            className: `text-sm  block w-full`,
           }
           break
         case 'esviaje':
           elem = {
             type: 'number',
             value: item.esviaje,
-            style: { color: '#666179' },
+            className: `text-sm  block w-full`,
           }
           break
-        case 'anchoJunta':
+        case 'coseno':
           elem = {
-            type: 'number',
-            value: item.anchoJunta,
-            style: { color: '#666179' },
+            type: 'checkbox',
+            checked: item.coseno,
+            className: `text-sm  block w-full`,
           }
           break
-        case 'numeroElementos':
+        case 'longitudJunta':
           elem = {
             type: 'number',
-            value: item.numeroElementos,
-            style: { color: '#666179' },
+            value: item.longitudJunta,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
+          }
+          break
+        case 'noElementos':
+          elem = {
+            type: 'number',
+            value: item.noElementos,
+            className: `text-sm  block w-full`,
+          }
+          break
+        case 'longitudTotalJuntas':
+          elem = {
+            type: 'number',
+            value: item.longitudTotalJuntas,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
+          }
+          break
+        case 'porcentajeAfectacion':
+          elem = {
+            type: 'number',
+            value: item.porcentajeAfectacion,
+            className: `text-sm  block w-full`,
+          }
+          break
+        case 'longitudJuntasAfectadas':
+          elem = {
+            type: 'number',
+            value: item.longitudJuntasAfectadas,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
+          }
+          break
+        case 'noEjes':
+          elem = {
+            type: 'number',
+            value: item.noEjes,
+            className: `text-sm  block w-full`,
+          }
+          break
+        case 'noApoyos':
+          elem = {
+            type: 'number',
+            value: item.noApoyos,
+            className: `text-sm  block w-full`,
+          }
+          break
+
+        case 'habilitarUdAlt':
+          elem = {
+            type: 'checkbox',
+            checked: item.habilitarUdAlt,
+            className:
+              'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+          }
+          break
+        case 'alternativeUnitMeasurementValue':
+          elem = {
+            type: 'number',
+            value: item.alternativeUnitMeasurementValue,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
       }
@@ -788,7 +839,6 @@ export const getStructuresEmpty = (id: number = 1): Medicion => ({
   observacion: '',
   actuacion: null,
   compuesta: null,
-  longitud: 0,
   ancho: 0,
   area: 0,
   espesor: 0,
@@ -798,7 +848,7 @@ export const getStructuresEmpty = (id: number = 1): Medicion => ({
   tonelada: 0,
   estudio: 0,
 
-  numeroEstructuras: null,
+  numeroEstructura: null,
   tipoEstructura: null,
   idGeneral: '',
   eje: null,
@@ -807,20 +857,22 @@ export const getStructuresEmpty = (id: number = 1): Medicion => ({
   posicion: null,
   disposicion: null,
   calificacion: null,
-  anchoPromedioCalzada: 0,
   esviaje: 0,
   anchoJunta: 0,
-  numeroElementos: 0,
 
   anchoCalzada: 0,
   coseno: false,
-  longitudCadaJunta: 0,
+  longitudJunta: 0,
   longitudJuntasAfectadas: 0,
   longitudTotalJuntas: 0,
   noApoyos: 0,
   noEjes: 0,
   noElementos: 0,
   porcentajeAfectacion: 0,
+
+  alternativeUnitMeasurementValue: 0,
+  habilitarInputs: false,
+  habilitarUdAlt: false,
 
   numeroEstructurasisOpen: false,
   tipoEstructuraisOpen: false,
@@ -917,7 +969,7 @@ export const applyStructuresChanges = (
             dataRow['compuestaisOpen'] = change.newCell.isOpen as never
             break
 
-          case 'numeroEstructuras':
+          case 'numeroEstructura':
             dataRow['numeroEstructurasisOpen'] = change.newCell.isOpen as never
             break
           case 'tipoEstructura':

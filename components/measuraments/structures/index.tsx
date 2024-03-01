@@ -97,7 +97,6 @@ export interface Medicion {
   observacion: string
   actuacion: any
   compuesta: any // tipo de tratamiento
-  longitud: number
   ancho: number
   area: number
   espesor: number
@@ -109,7 +108,7 @@ export interface Medicion {
   estudio: number
 
   // estructuras
-  numeroEstructuras: any
+  numeroEstructura: any
   tipoEstructura: any
   idGeneral: string
   eje: any
@@ -118,17 +117,19 @@ export interface Medicion {
   posicion: any
   disposicion: any
   calificacion: any
-  anchoPromedioCalzada: number
-  esviaje: number
-  anchoJunta: number
-  numeroElementos: number
+
+  // Juntas
   anchoCalzada: number
+  esviaje: number
   coseno: boolean
-  longitudCadaJunta: number
+  longitudJunta: number
+  anchoJunta: number
   noElementos: number
   longitudTotalJuntas: number
   porcentajeAfectacion: number
   longitudJuntasAfectadas: number
+
+  // neoprenos
   noEjes: number
   noApoyos: number
 
@@ -152,6 +153,9 @@ export interface Medicion {
 
   compuestaFilter: any[]
   newItem: boolean // indica si es elemento nuevo: true, o cagado desde bd: false
+  alternativeUnitMeasurementValue: number
+  habilitarUdAlt: boolean
+  habilitarInputs: boolean
 }
 
 const breadcrumbs = [
@@ -436,13 +440,9 @@ const StructuresMeasurements = ({
               Number(item.ancho) > 0 &&
               item.espesor > 0
             ) {
-              const cadInicial = item.cadenamientoInicial.split('+')
-              const cadFinal = item.cadenamientoFinal.split('+')
-
               toastId = toast.loading('Enviando... 🚀')
-              console.log('cadenamientoInicial', cadInicial)
-              // Submit data
-              const value: any = {
+
+              let value: any = {
                 // id: 0,
                 previousStudiesDate: item.fechaPrevia,
                 mtRoadSectionId: item.tramo,
@@ -456,20 +456,8 @@ const StructuresMeasurements = ({
 
                 mtSpecialtyActionId: specialty.value,
                 observation: item.observacion,
-                initialNumber:
-                  cadInicial.length > 1
-                    ? Number(`${cadInicial[0]}${cadInicial[1]}`)
-                    : Number(cadInicial[0]),
-                finalNumber:
-                  cadFinal.length > 1
-                    ? Number(`${cadFinal[0]}${cadFinal[1]}`)
-                    : Number(cadFinal[0]),
-
-                thickness: item.espesor,
-                width: item.ancho,
-                ud: item.unidad,
-                t: item.tonelada,
-                l: item.litro,
+                initialNumber: item.cadenamientoInicial.replace('+', ''),
+                finalNumber: item.cadenamientoFinal.replace('+', ''),
 
                 mtDeteriorationTypeIds: item.deterioros.map(
                   (item: any) => item.value,
@@ -480,12 +468,30 @@ const StructuresMeasurements = ({
                 mtElementId: item.elementoEstructura,
                 mtCalificationId: item.calificacion,
                 axisId: item.eje,
-                mtStructureNumberId: item.numeroEstructuras,
+                mtStructureNumberId: item.numeroEstructura,
 
-                // roadAverage: item.anchoPromedioCalzada,
-                // esviaje: item.esviaje,
-                // jointWidth: item.anchoJunta,
-                // elementsCount: item.numeroElementos,
+                alternativeUnitMeasurementValue:
+                  item.alternativeUnitMeasurementValue,
+              }
+
+              if (specialty.value === 32) {
+                value = {
+                  ...value,
+                  roadAverage: item.anchoCalzada,
+                  esviaje: item.esviaje,
+                  coseno: item.coseno,
+                  length: item.longitudJunta,
+                  elementsCount: item.noElementos,
+                  totalJointsLength: item.longitudTotalJuntas,
+                  affectePercentage: item.porcentajeAfectacion,
+                  affectedJointsLength: item.longitudJuntasAfectadas,
+                }
+              } else {
+                value = {
+                  ...value,
+                  numberAxles: item.noEjes,
+                  supportCount: item.noApoyos,
+                }
               }
 
               let result: any = null
@@ -576,15 +582,15 @@ const StructuresMeasurements = ({
         tonelada: item.t,
         estudio: 0,
 
-        numeroEstructuras: null,
-        tipoEstructura: null,
+        numeroEstructura: item.mtStructureNumberId,
+        tipoEstructura: item.mtStructureTypeId,
         idGeneral: '',
-        eje: null,
-        lado: null,
-        elementoEstructura: null,
+        eje: item.axisId,
+        lado: item.mtSideId,
+        elementoEstructura: item.mtElementId,
         posicion: null,
         disposicion: null,
-        calificacion: null,
+        calificacion: item.mtCalificationId,
 
         numeroEstructurasisOpen: false,
         tipoEstructuraisOpen: false,
@@ -595,24 +601,24 @@ const StructuresMeasurements = ({
         disposicionisOpen: false,
         calificacionisOpen: false,
 
-        // hay que borrar:
-        anchoPromedioCalzada: 0,
-        anchoJunta: 0,
-        compuestaFilter: [],
-        longitud: 0,
-        numeroElementos: 0,
         // ---------
         anchoCalzada: item.roadAverage,
         esviaje: item.esviaje,
         coseno: item.coseno ? item.coseno : false,
-        longitudCadaJunta: item.length,
+        longitudJunta: item.length,
         noElementos: item.elementsCount,
         longitudTotalJuntas: item.totalJointsLength,
         porcentajeAfectacion: item.affectePercentage,
         longitudJuntasAfectadas: item.affectedJointsLength,
-
+        anchoJunta: parseFloat(item.jointWidth),
         noEjes: item.numberAxles,
-        noApoyos: item.supportCount,
+        noApoyos: item.supportsAffectedCount,
+
+        alternativeUnitMeasurementValue: item.alternativeUnitMeasurementValue,
+
+        compuestaFilter: [],
+        habilitarInputs: false,
+        habilitarUdAlt: false,
 
         tramoisOpen: false,
         prioridadisOpen: false,
@@ -646,7 +652,7 @@ const StructuresMeasurements = ({
     } finally {
     }
   }, [data, processUnidad])
-
+  console.log(data)
   if (isLoading) return <p>Loading ...</p>
   if (error) return <p>Error: {error}</p>
   return (
@@ -654,8 +660,8 @@ const StructuresMeasurements = ({
       <div style={{ margin: '0 20px' }}>
         <SpreadSheet.Root>
           <SpreadSheet.Header
-            title="Mediciones de pavimento"
-            description="Repositorio de mediciones de pavimento"
+            title="Mediciones de estructuras"
+            description="Desglose de mediciones de estructuras."
           >
             <div className="flex items-center py-4">
               <div className="flex">
@@ -759,7 +765,7 @@ const StructuresMeasurements = ({
             label: item.name,
             value: String(item.id),
           }))}
-          numeroEstructuras={numeroEstructura.map((item: any) => ({
+          numeroEstructura={numeroEstructura.map((item: any) => ({
             label: item.name,
             value: item.id,
           }))}
@@ -813,33 +819,25 @@ const StructuresMeasurements = ({
                 mtSlipLaneRoadId: values.gaza,
                 mtHighwayLaneId: values.carril,
                 performanceCatalogId: values.actuacion,
-
                 compositeCatalogId: values.compuesta,
                 mtPriorityId: values.prioridad,
-
                 mtSpecialtyActionId: specialty.value,
                 observation: values.observacion,
                 initialNumber: values.cadenamientoInicial.replace('+', ''),
                 finalNumber: values.cadenamientoFinal.replace('+', ''),
 
-                thickness: values.espesor,
-                width: values.ancho,
-                ud: values.unidad,
-                t: values.tonelada,
-                l: values.litro,
-
                 mtDeteriorationTypeIds: values.deterioros.map(
                   (item: any) => item.value,
                 ),
 
+                mtStructureNumberId: values.numeroEstructura,
+                axisId: values.eje,
                 mtSideId: values.lado,
                 mtStructureTypeId: values.tipoEstructura,
                 mtElementId: values.elementoEstructura,
                 mtCalificationId: values.calificacion,
-                axisId: values.eje,
-                mtStructureNumberId: values.numeroEstructuras,
 
-                jointWidth: values.anchoJunta,
+                // jointWidth: values.anchoJunta,
 
                 roadAverage: values.anchoCalzada,
                 esviaje: values.esviaje,
@@ -851,7 +849,7 @@ const StructuresMeasurements = ({
                 affectedJointsLength: values.longitudJuntasAfectadas,
 
                 numberAxles: values.noEjes,
-                supportCount: values.noApoyos,
+                supportsAffectedCount: values.noApoyos,
 
                 alternativeUnitMeasurementValue:
                   values.alternativeUnitMeasurementValue,
@@ -897,7 +895,7 @@ const StructuresMeasurements = ({
               )
             }
           }}
-          onClose={() => {}}
+          onClose={() => setModalNewItem(false)}
         />
       ) : null}
       {modalDetail ? (
