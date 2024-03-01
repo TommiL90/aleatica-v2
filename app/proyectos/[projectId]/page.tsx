@@ -1,9 +1,12 @@
 'use client'
 import Link from 'next/link'
 
+// import 'swiper/css'
+
 import { useParams, useRouter } from 'next/navigation'
 import useSWRMutation from 'swr/mutation'
 import { useState } from 'react'
+
 import Select from 'react-select'
 import useSWR from 'swr'
 import { toast } from 'sonner'
@@ -12,8 +15,6 @@ import Breadcrumbs from '@/components/breadcrumbs'
 import { cn } from '@/lib/utils'
 import fetcher from '@/services/fetcher'
 import ModalDuplicateProject from '@/components/common-modals/modal-duplicate-proyect'
-
-// import ModalDuplicateProject from '@/components/modal/duplicateProyect'
 
 export default function Selectors() {
   const params = useParams<{ projectId: string }>()
@@ -283,6 +284,19 @@ export default function Selectors() {
                     Consultas
                   </button>
                 </li>
+                <li className="mr-2">
+                  <button
+                    onClick={() => setTab('presupuesto')}
+                    className={cn(
+                      'inline-block p-4',
+                      tab === 'presupuesto'
+                        ? 'active rounded-t-lg border-b-2 border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500'
+                        : ' rounded-t-lg border-b-2 border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300',
+                    )}
+                  >
+                    Plantilla de presupuestos
+                  </button>
+                </li>
               </ul>
             </div>
             {tab === 'tareas' ? (
@@ -339,59 +353,72 @@ export default function Selectors() {
                             el.mtSubCategoryActionId === subcategoria['value'],
                         )
                         .map((item: any, idx: number) => (
-                          <div
-                            key={idx}
-                            className="m-2 w-full rounded-lg border border-gray-200 bg-white text-base font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                          >
+                          <>
                             <div
-                              aria-current="true"
-                              className="block w-full cursor-pointer rounded-t-lg border-b border-gray-200 bg-blue-700 px-4 py-2 text-white dark:border-gray-600 dark:bg-gray-800"
+                              key={idx}
+                              className="m-2 w-full rounded-lg border border-gray-200 bg-white text-base font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             >
-                              {
-                                espRes.result.filter(
-                                  (esp: any) =>
-                                    esp.id === item.mtSpecialtyActionId,
-                                )[0].name
-                              }
-                            </div>
-                            {item.projectTaskInfos.map(
-                              (task: any, taskIdx: number) => {
-                                let generateLink: string | undefined
-
-                                if (task.processFormId !== 6) {
-                                  generateLink = generateTaskLink(
-                                    task.id,
-                                    task.processFormId,
-                                    item.mtSpecialtyActionId,
-                                  )
-                                } else {
-                                  const actionId = item.projectTaskInfos.find(
-                                    (task: any) => task.processFormId === 4,
-                                  )?.id
-
-                                  generateLink = generateTaskLink(
-                                    task.id,
-                                    task.processFormId,
-                                    item.mtSpecialtyActionId,
-                                    actionId,
-                                  )
+                              <div
+                                aria-current="true"
+                                className="block w-full cursor-pointer rounded-t-lg border-b border-gray-200 bg-blue-700 px-4 py-2 text-white dark:border-gray-600 dark:bg-gray-800"
+                              >
+                                {
+                                  espRes.result.filter(
+                                    (esp: any) =>
+                                      esp.id === item.mtSpecialtyActionId,
+                                  )[0].name
                                 }
-                                return (
-                                  <Link
-                                    key={crypto.randomUUID()}
-                                    href={`${generateLink}`}
-                                    className="block w-full cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-gray-100 hover:text-blue-700 focus:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:text-white dark:focus:ring-gray-500"
-                                  >
-                                    {task.taskName} {task.id}
-                                  </Link>
+                              </div>
+                              {item.projectTaskInfos.filter(
+                                (task: any) => task.enable,
+                              ).length > 0 ? (
+                                item.projectTaskInfos.map(
+                                  (task: any, taskIdx: number) => {
+                                    let generateLink: string | undefined
+
+                                    if (task.processFormId !== 6) {
+                                      generateLink = generateTaskLink(
+                                        task.id,
+                                        task.processFormId,
+                                        item.mtSpecialtyActionId,
+                                      )
+                                    } else {
+                                      const actionId =
+                                        item.projectTaskInfos.find(
+                                          (task: any) =>
+                                            task.processFormId === 4,
+                                        )?.id
+
+                                      generateLink = generateTaskLink(
+                                        task.id,
+                                        task.processFormId,
+                                        item.mtSpecialtyActionId,
+                                        actionId,
+                                      )
+                                    }
+                                    return task.enable ? (
+                                      <Link
+                                        key={crypto.randomUUID()}
+                                        href={`${generateLink}`}
+                                        className="block w-full cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-gray-100 hover:text-blue-700 focus:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:text-white dark:focus:ring-gray-500"
+                                      >
+                                        {task.taskName} {task.id}
+                                      </Link>
+                                    ) : null
+                                  },
                                 )
-                              },
-                            )}
-                          </div>
+                              ) : (
+                                <p className="p-4">
+                                  No hay tareas habilitadas para esta
+                                  especialidad
+                                </p>
+                              )}
+                            </div>
+                          </>
                         ))
                     ) : (
                       <p className="mt-6 text-black">
-                        Al seleccionar una subcategoría se mostrarán las
+                        Al seleccionar una subcategoria se mostrara las
                         especialidades con sus respectivos formularios de
                         procesos
                       </p>
@@ -400,7 +427,6 @@ export default function Selectors() {
                 </div>
               </>
             ) : null}
-
             {tab === 'consultas' ? (
               <div className="mb-6 grid gap-6 md:grid-cols-3">
                 <div className="w-full">
@@ -490,6 +516,60 @@ export default function Selectors() {
                         className="mb-2 mr-2 w-full rounded-lg bg-blue-700 px-5 py-2.5 text-base font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       >
                         Ratio P Actualizado
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            ) : null}
+
+            {tab === 'presupuesto' ? (
+              <div className="mb-6 grid gap-6 md:grid-cols-3">
+                <div className="w-full">
+                  <ul className="w-full">
+                    <li className="p-2">
+                      <button
+                        type="button"
+                        className="mb-2 mr-2 w-full rounded-lg bg-blue-700 px-5 py-2.5 text-base font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
+                        Actuaciones diferidas
+                      </button>
+                    </li>
+                    <li className="p-2">
+                      <button
+                        type="button"
+                        className="mb-2 mr-2 w-full rounded-lg bg-blue-700 px-5 py-2.5 text-base font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
+                        Actuaciones manuales
+                      </button>
+                    </li>
+                    <li className="p-2">
+                      <button
+                        type="button"
+                        className="mb-2 mr-2 w-full rounded-lg bg-blue-700 px-5 py-2.5 text-base font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
+                        Editar plantilla
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="w-full">
+                  <ul className="w-full">
+                    <li className="p-2">
+                      <button
+                        type="button"
+                        className="mb-2 mr-2 w-full rounded-lg bg-blue-700 px-5 py-2.5 text-base font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
+                        Planificacion de tareas preconstructivas
+                      </button>
+                    </li>
+                    <li className="p-2">
+                      <button
+                        type="button"
+                        className="mb-2 mr-2 w-full rounded-lg bg-blue-700 px-5 py-2.5 text-base font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
+                        Planificacion de mensualizacion
                       </button>
                     </li>
                   </ul>

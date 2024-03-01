@@ -40,6 +40,7 @@ import { ModalDelete } from '@/components/common-modals/modal-delete'
 import ModalDeleteRow from '@/components/common-modals/modal-delete-row'
 import ModalInputMask from '@/components/common-modals/modal-input-mask'
 import { MesurementBySpecialty } from '../types'
+import SearchInput from '@/components/inputs/searchInput'
 
 interface Props {
   specialty: Specialty
@@ -74,22 +75,24 @@ export interface Medicion {
   m4: number
   O: number
   distanciaPreviaCad: number
-  densidad: number
-  porcentajeAfectacion: number
   idIntervencion: string
   deterioros: any[]
   prioridad: any
   observacion: string | null
   actuacion: any
   compuesta: any // tipo de tratamiento
+
+  porcentajeAfectacion: number
   longitud: number
   ancho: number
   area: number
   espesor: number
   volumen: number
-  litro: number
-  unidad: number // ud
-  tonelada: number
+  densidad: number
+  masa: number
+
+  alternativeUnitMeasurementValue: number
+  habilitarUdAlt: boolean
 
   estudio: number
 
@@ -103,6 +106,7 @@ export interface Medicion {
 
   // compuestaFilter: any[]
   newItem: boolean // indica si es elemento nuevo: true, o cagado desde bd: false
+  habilitarInputs: boolean
 }
 
 interface Option {
@@ -139,6 +143,8 @@ const creator = async (
 
 const RoadSurfacesMeasurements = ({
   specialty,
+  subcat,
+  esp,
   performanceCatalogByEsp: actuaciones,
   roadSection: tramo,
   highwayIntersection: entronque,
@@ -344,26 +350,26 @@ const RoadSurfacesMeasurements = ({
                 mtSlipLaneRoadId: item.cuerpo,
                 mtHighwayLaneId: item.carril,
                 performanceCatalogId: item.actuacion,
-
+                interventionIdLocation: item.idIntervencion,
                 compositeCatalogId: item.compuesta,
                 mtPriorityId: item.prioridad,
 
                 mtSpecialtyActionId: specialty.value,
                 observation: item.observacion,
-                initialNumber:
-                  cadInicial.length > 1
-                    ? Number(`${cadInicial[0]}${cadInicial[1]}`)
-                    : Number(cadInicial[0]),
-                finalNumber:
-                  cadFinal.length > 1
-                    ? Number(`${cadFinal[0]}${cadFinal[1]}`)
-                    : Number(cadFinal[0]),
+                initialNumber: item.cadenamientoInicial.replace('+', ''),
+                finalNumber: item.cadenamientoFinal.replace('+', ''),
 
-                thickness: item.espesor,
+                affectePercentage: item.porcentajeAfectacion,
+                length: item.longitud,
                 width: item.ancho,
-                ud: item.unidad,
-                t: item.tonelada,
-                l: item.litro,
+                area: item.area,
+                thickness: item.espesor,
+                volume: item.volumen,
+                density: item.densidad,
+                t: item.masa,
+
+                alternativeUnitMeasurementValue:
+                  item.alternativeUnitMeasurementValue,
 
                 mtDeteriorationTypeIds: item.deterioros.map(
                   (item: any) => item.value,
@@ -449,14 +455,17 @@ const RoadSurfacesMeasurements = ({
         observacion: item.observation,
         actuacion: String(item.performanceCatalogId),
         compuesta: String(item.compositeCatalogId),
+
+        porcentajeAfectacion: item.affectePercentage,
+
         longitud: item.length,
         ancho: item.width,
         area: item.area,
         espesor: item.thickness,
+        densidad: item.density,
+        masa: item.t,
         volumen: item.volume,
-        litro: 0,
-        unidad: item.ud,
-        tonelada: item.t,
+        alternativeUnitMeasurementValue: item.alternativeUnitMeasurementValue,
         estudio: 0,
 
         tramoisOpen: false,
@@ -467,9 +476,8 @@ const RoadSurfacesMeasurements = ({
         actuacionisOpen: false,
         compuestaisOpen: false,
         newItem: false,
-
-        densidad: item.density,
-        porcentajeAfectacion: item.affectePercentage,
+        habilitarInputs: false,
+        habilitarUdAlt: false,
       }
     },
     [],
@@ -501,33 +509,63 @@ const RoadSurfacesMeasurements = ({
       <div style={{ margin: '0 20px' }}>
         <SpreadSheet.Root>
           <SpreadSheet.Header
-            title="Mediciones de pavimento"
-            description="Repositorio de mediciones de pavimento"
+            title="Desglose de mediciones"
+            description="Repositorio de mediciones de fichas de campo"
           >
-            <div className="flex items-center py-4">
-              <div className="flex">
-                <Button className="rounded-r-none" type="button">
-                  Filtros
-                </Button>
-                <div className="relative w-full">
-                  <Input
-                    type="search"
-                    placeholder="Buscar..."
-                    className="w-60 max-w-sm rounded-l-none"
-                  />
-                  <Button
-                    type="submit"
-                    size="icon"
-                    variant="secondary"
-                    className="absolute end-0 top-0 rounded-l-none"
-                  >
-                    <BiSearch size={16} />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <form className="py-4">
+              <SearchInput
+                label=""
+                hideLabel={true}
+                selectValue={null}
+                hideFilter={false}
+                selectPlaceholder="Subcategorias"
+                inputPlaceholder="Buscar mediciones"
+                options={{
+                  filtros: {
+                    tramos: tramo.map((item: any) => ({
+                      label: item.name,
+                      value: item.id,
+                    })),
+                    subcategorias: subcat.map((item: any) => ({
+                      label: item.text,
+                      value: String(item.value),
+                    })),
+                    especialidades: esp.map((item: any) => ({
+                      label: item.name,
+                      value: String(item.id),
+                      subcategory: String(item.mtSubCategoryActionId),
+                    })),
+                  },
+                  values: {
+                    subcategoria: filtroSubcategoria,
+                    especialidad: filtroEspecialidad,
+                    tramo: filtroTramo,
+                  },
+                }}
+                searchInputValue={searchInput}
+                onChangeInput={(newValue: any) => setSearchInput(newValue)}
+                onChangeSelect={(newValue: any) => setFiltros(newValue)}
+                onSearch={async (values: any) => {
+                  console.log(values)
+                  if (
+                    'subcategoria' in values &&
+                    values.subcategoria !== undefined
+                  )
+                    setFiltroSubcategoria(values.subcategoria.value)
 
+                  if (
+                    'especialidad' in values &&
+                    values.especialidad !== undefined
+                  )
+                    setFiltroEspecialidad(values.especialidad.value)
+
+                  if ('tramo' in values && values.tramo !== undefined)
+                    setFiltroTramo(values.tramo.value)
+
+                  await mutate()
+                }}
+              />
+            </form>
             <Button variant="default" onClick={handleNewItem}>
               <FaPlus className="mr-2" size={14} />
               Nuevo
@@ -625,7 +663,7 @@ const RoadSurfacesMeasurements = ({
                 mtSlipLaneRoadId: values.gaza,
                 mtHighwayLaneId: values.carril,
                 performanceCatalogId: values.actuacion,
-
+                // interventionIdLocation: values.idIntervencion,
                 compositeCatalogId: values.compuesta,
                 mtPriorityId: values.prioridad,
 
@@ -634,13 +672,15 @@ const RoadSurfacesMeasurements = ({
                 initialNumber: values.cadenamientoInicial.replace('+', ''),
                 finalNumber: values.cadenamientoFinal.replace('+', ''),
 
-                thickness: values.espesor,
-                width: values.ancho,
-                ud: values.unidad,
-                t: values.masa,
-                l: values.litro,
-                density: values.densidad,
                 affectePercentage: values.porcentajeAfectacion,
+                length: values.longitud,
+                width: values.ancho,
+                area: values.area,
+                thickness: values.espesor,
+                volume: values.volumen,
+                density: values.densidad,
+                t: values.masa,
+
                 alternativeUnitMeasurementValue:
                   values.alternativeUnitMeasurementValue,
 

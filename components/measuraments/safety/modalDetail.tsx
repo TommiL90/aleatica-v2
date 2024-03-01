@@ -69,7 +69,7 @@ export default function ModalDetail(props: PropsModalDetailItem) {
                   <div className="mb-6 grid gap-6 md:grid-cols-2">
                     <div className="mb-2 w-full border-gray-300  p-2 ">
                       <h2 className="mb-2 text-sm font-semibold text-gray-800">
-                        Fecha Previa
+                        Fecha E. Previos
                       </h2>
                       <p className="text-sm text-gray-700">
                         {props.itemSelected.fechaPrevia.split('T')[0]}

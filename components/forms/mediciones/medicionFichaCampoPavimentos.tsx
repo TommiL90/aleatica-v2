@@ -6,6 +6,7 @@ import React, {
   useId,
   useEffect,
   useMemo,
+  useRef,
 } from 'react'
 import * as Yup from 'yup'
 
@@ -32,6 +33,7 @@ import { FaLessThan } from 'react-icons/fa'
 import fetcher from '@/services/fetcher'
 import { Deterioros } from '../subform/deterioros'
 import { cn } from '@/lib/utils'
+import { set } from 'date-fns'
 // import { v4 as uuidv4 } from 'uuid';
 
 interface CrearMedicion {
@@ -78,6 +80,7 @@ interface CrearMedicion {
   supportsAffectedCount: number
   cosForCalculate: boolean
   mtDeteriorationTypeIds?: number[] | null // Puede ser nulo
+  mtUnitOfMeasurementId: number
 }
 
 interface MtDeteriorationType {
@@ -278,12 +281,18 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
   const [altInput, setAltInput] = useState(false)
   const [activeZincInputs, setActiveInputs] = useState(true)
 
-  const [length, setLength] = useState(0)
-  const [area, setArea] = useState(0)
-  const [volume, setVolume] = useState(0)
-  const [masa, setMasa] = useState(
-    props.initValue ? props.initValue.tonelada : 0,
+  const [length, setLength] = useState(
+    props.initValue ? props.initValue.longitud : 0,
   )
+  const [area, setArea] = useState(props.initValue ? props.initValue.area : 0)
+  const [volume, setVolume] = useState(
+    props.initValue ? props.initValue.volumen : 0,
+  )
+  const [masa, setMasa] = useState(props.initValue ? props.initValue.masa : 0)
+  const [alternativeUnitMeasurementValue, setAlternativeUnitMeasurementValue] =
+    useState(
+      props.initValue ? props.initValue.alternativeUnitMeasurementValue : 0,
+    )
   const { data, isLoading } = useSWR(
     compuestaSeleccionada
       ? `${process.env.API_URL}/MtUnitOfMeasurement/GetAll`
@@ -471,27 +480,28 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>,
   ) => {
-    console.log(values)
+    let data: any = values
+
+    data = {
+      ...values,
+      longitud: length,
+      area,
+      volumen: volume,
+      masa,
+    }
+
+    submitEnquiryForm({ ...data })
+
+    formikHelpers.resetForm()
+  }
+
+  const submitEnquiryForm = async (values: FormValues): Promise<any> => {
     try {
       if (typeof props.onSubmit === 'function') {
         await props.onSubmit(values)
       }
-
-      formikHelpers.resetForm()
-    } catch (error) {
-      console.log(error)
-    }
+    } catch (e) {}
   }
-
-  // const submitEnquiryForm = async (values: FormValues): Promise<any> => {
-
-  //   try {
-  //     if (typeof props.onSubmit === 'function') {
-  //       await props.onSubmit(values);
-  //     }
-  //   } catch (e) {
-  //   }
-  // };
 
   const customStyleSelect = (isValid: boolean) => {
     return {
@@ -503,40 +513,29 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
     }
   }
 
-  // const calculateCadenamiento = (km: number = 0, mtrs: number = 0, km2: number = 0, m4: number = 0): { next: number, previous: number } => {
-  //   if ((km2 > km || (km2 === km && mtrs <= m4)) && mtrs <= 999) {
-  //     const nextKm = 1000 - mtrs;
-  //     return { next: nextKm, previous: m4 };
-  //   }
-  //   if ((km > km2 || (km === km2 && mtrs >= m4)) && m4 <= 999) {
-  //     const previousKm = 1000 - m4;
-  //     return { next: mtrs, previous: previousKm };
-  //   }
+  const handleGetInfo = useCallback(async () => {
+    const value: Partial<CrearMedicion> = {
+      performanceCatalogId: actuacionSeleccionada
+        ? actuacionSeleccionada.value
+        : '',
+      compositeCatalogId: compuestaSeleccionada
+        ? compuestaSeleccionada.value
+        : '',
+      mtPriorityId: prioridadSeleccionada ? prioridadSeleccionada.value : '',
+      mtSpecialtyActionId: props.especialidad.value,
+      initialNumber: cadenamientoInicialSeleccionada
+        ? cadenamientoInicialSeleccionada.replace('+', '')
+        : '',
+      finalNumber: cadenamientoFinalSeleccionada
+        ? cadenamientoFinalSeleccionada.replace('+', '')
+        : '',
+      thickness: espesorSeleccionada || 0,
+      width: anchoSeleccionada || 0,
+      affectePercentage: porcentajeAfectacion,
+      density: densidad,
+      mtUnitOfMeasurementId: alternativeUnitMeasurementValue,
+    }
 
-  //   return { next: 0, previous: 0 };
-  // };
-
-  const value: Partial<CrearMedicion> = {
-    performanceCatalogId: actuacionSeleccionada
-      ? actuacionSeleccionada.value
-      : '',
-    compositeCatalogId: compuestaSeleccionada
-      ? compuestaSeleccionada.value
-      : '',
-    mtPriorityId: prioridadSeleccionada ? prioridadSeleccionada.value : '',
-    mtSpecialtyActionId: props.especialidad.value,
-    initialNumber: cadenamientoInicialSeleccionada
-      ? cadenamientoInicialSeleccionada.replace('+', '')
-      : '',
-    finalNumber: cadenamientoFinalSeleccionada
-      ? cadenamientoFinalSeleccionada.replace('+', '')
-      : '',
-    thickness: espesorSeleccionada || 0,
-    width: anchoSeleccionada || 0,
-    affectePercentage: porcentajeAfectacion,
-    density: densidad,
-  }
-  const handleGetInfo = async () => {
     console.log(value)
     const res = await fetch(`${process.env.API_URL}/MeasurementTab/GetInfo`, {
       method: 'POST',
@@ -565,8 +564,57 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
       setVolume(volumeRes)
       setMasa(t)
     }
-  }
+  }, [
+    actuacionSeleccionada,
+    compuestaSeleccionada,
+    prioridadSeleccionada,
+    props.especialidad.value,
+    cadenamientoInicialSeleccionada,
+    cadenamientoFinalSeleccionada,
+    espesorSeleccionada,
+    anchoSeleccionada,
+    porcentajeAfectacion,
+    densidad,
+    alternativeUnitMeasurementValue,
+  ])
+
+  // const handleGetInfo = useCallback(async () => {
+  //   console.log(value)
+  //   const res = await fetch(`${process.env.API_URL}/MeasurementTab/GetInfo`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(value),
+  //   })
+  //   const data = await res.json()
+  //   console.log(data.result)
+  //   if (data.result) {
+  //     const {
+  //       length: lengthRes,
+  //       area: areaRes,
+  //       volume: volumeRes,
+  //       t,
+  //     } = data.result
+
+  //     console.log(lengthRes)
+  //     console.log(areaRes)
+  //     console.log(volumeRes)
+  //     console.log(t)
+
+  //     setLength(lengthRes)
+  //     setArea(areaRes)
+  //     setVolume(volumeRes)
+  //     setMasa(t)
+  //   }
+  // }, [])
+
+  const isFirstRender = useRef(true)
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false // marca que ya no es la primera renderización
+      return
+    }
     handleGetInfo()
   }, [
     cadenamientoInicialSeleccionada,
@@ -577,6 +625,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
     densidad,
     compuestaSeleccionada,
     prioridadSeleccionada,
+    handleGetInfo,
   ])
 
   return (
@@ -1782,6 +1831,9 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                                 onChange={(evt: any) => {
                                   setFieldValue(
                                     field.name,
+                                    evt.target.valueAsNumber,
+                                  )
+                                  setAlternativeUnitMeasurementValue(
                                     evt.target.valueAsNumber,
                                   )
                                 }}

@@ -405,7 +405,7 @@ const ActionsTable = ({
               toastId = toast.loading('Enviando... 🚀')
               // Submit data
               const value: any = {
-                projectTaskId: Number(taskId as string),
+                projectTaskId: parseInt(taskId),
                 mtProjectCategoryId: parseInt(item.categoriaProyecto),
                 mtActionCategoryId: parseInt(item.categoriaActuacion),
                 fileNumber: item.expediente,
@@ -594,7 +594,7 @@ const ActionsTable = ({
               // Submit data
               const value: any = {
                 id: itemId,
-                projectTaskId: taskId, // debe venir desde antes
+                projectTaskId: parseInt(taskId), // debe venir desde antes
                 mtProjectCategoryId: parseInt(values.categoriaProyecto),
                 mtActionCategoryId: parseInt(values.categoriaActuacion),
                 fileNumber: values.expediente,

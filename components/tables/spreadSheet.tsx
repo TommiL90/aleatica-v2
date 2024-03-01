@@ -773,7 +773,7 @@ const mapColumnOptions = [
   { label: 'Sostenibilidad', value: 'sostenibilidad' },
   { label: 'PRA', value: 'PRA' },
   { label: 'Puntos negro TCA', value: 'puntosNegrosTCA' },
-  { label: 'Codigo SAP', value: 'codigoSAP' },
+  { label: 'ID SAP', value: 'codigoSAP' },
   { label: 'Ambito de actuacion', value: 'ambitoActuacion' },
   { label: 'MRAsociado', value: 'MRAsociado' },
   { label: 'Fase/Tramo', value: 'faseTramo' },

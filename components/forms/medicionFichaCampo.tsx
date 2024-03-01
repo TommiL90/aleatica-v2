@@ -1305,7 +1305,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                       htmlFor="idIntervencion"
                       className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      identificador de intervencion
+                      identificador de ID Interv. - Loc.
                     </label>
                     <Field
                       disabled={true}

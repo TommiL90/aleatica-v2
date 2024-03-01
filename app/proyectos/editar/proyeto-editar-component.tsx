@@ -1,21 +1,24 @@
 'use client'
+
+import { useRouter, useSearchParams } from 'next/navigation'
+import React from 'react'
+import useSWR from 'swr'
+import useSWRMutation from 'swr/mutation'
+import fetcher from '../../../services/fetcher'
+import Breadcrumbs from '../../../components/breadcrumbs'
+import Loading from '../../../components/loading'
+import { toast } from 'sonner'
 import ProyectoForm from '@/components/forms/proyecto'
 
-import useSWRMutation from 'swr/mutation'
-import { useState } from 'react'
-import useSWR from 'swr'
-import Breadcrumbs from '@/components/breadcrumbs'
-import fetcher from '@/services/fetcher'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import Loading from '@/components/loading'
-
-const creator = async (
+const updater = async (
   url: string,
   {
     arg,
   }: {
     arg: {
+      id: number
+      code: string
+      version: string
       name: string
       description: string
       mtBusinessUnitId: number
@@ -26,7 +29,7 @@ const creator = async (
   },
 ) => {
   const res = await fetch(url, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -46,6 +49,72 @@ const creator = async (
   return res.json()
 }
 
+const generateTaskList = (array: any[]) => {
+  if (!array) return
+
+  // let result = array.reduce((acc, curr) => {
+  //     let foundIndex = acc.findIndex((item: any) => item.especialidad === curr.mtSpecialtyActionId);
+
+  // const task = {
+  //     id: curr.mtProcessFormId,
+  //     name: curr.name,
+  //     responsables: curr.user ? {label: curr.user.userName, value: curr.user.id} : null,//.responsibles.map((user: any)=>({label: user.userName, value: user.id})),
+  //     dependencia: curr.dependency,
+  //     necesidad: curr.needAdvisors,
+  //     fechaInicio: curr.startDate.split("T")[0],
+  //     fechaFinal: curr.endDate.split("T")[0],
+  //     aprobado: curr.responsiblesForApproving.map((user: any)=>({label: user.userName, value: user.id})),
+  //     habilitado: curr.enable
+  // };
+
+  //     if (foundIndex !== -1) {
+  //       acc[foundIndex].tasks.push(task);
+  //     } else {
+  //       acc.push({
+  //         especialidad: String(curr.mtSpecialtyActionId),
+  //         tasks: [task]
+  //       });
+  //     }
+  //     return acc;
+  //   }, []);
+
+  const grouped = array.reduce((acc, curr) => {
+    const key = curr.mtSpecialtyActionId
+    if (!acc[key]) {
+      acc[key] = []
+    }
+    acc[key].push({
+      id: curr.id,
+      formularioProceso: curr.mtProcessFormId,
+      name: curr.name,
+      responsables: curr.user
+        ? { label: curr.user.userName, value: curr.user.id }
+        : null, // .responsibles.map((user: any)=>({label: user.userName, value: user.id})),
+      dependencia: curr.dependency,
+      necesidad: curr.needAdvisors,
+      fechaInicio: curr.startDate.split('T')[0],
+      fechaFinal: curr.endDate.split('T')[0],
+      aprobado: curr.responsiblesForApproving.map((user: any) => ({
+        label: user.userName,
+        value: user.id,
+      })),
+      habilitado: curr.enable,
+    })
+    return acc
+  }, {})
+
+  const result = Object.keys(grouped).map((key) => ({
+    especialidad: key,
+    tasks: grouped[key],
+  }))
+
+  console.log(result)
+
+  // console.log(result);
+
+  return result
+}
+
 const flattenArrays = (arrayList: Array<Array<any>>): any[] => {
   let result: any[] = []
   for (let i = 0; i < arrayList.length; i++) {
@@ -59,13 +128,14 @@ const projectTasksFormat = (tasks: any[]) => {
     tasks.map((item: any) =>
       item.tasks.map((task: any) => ({
         mtSpecialtyActionId: Number(item.especialidad),
+        id: Number(task.id),
         mtProcessFormId: Number(task.formularioProceso),
         userId: task.responsables ? Number(task.responsables.value) : 0,
         startDate: new Date(task.fechaInicio).toISOString(),
         endDate: new Date(task.fechaFinal).toISOString(),
         dependency: task.dependencia,
-        enable: task.habilitado,
         needAdvisors: task.necesidad,
+        enable: task.habilitado,
         responsiblesForApprovingIds: task.aprobado.map((user: any) =>
           Number(user.value),
         ),
@@ -74,16 +144,19 @@ const projectTasksFormat = (tasks: any[]) => {
   )
 }
 
-export default function ProyectoNuevo() {
+const ProyectoEditar = () => {
+  const searchParams = useSearchParams()
+  const id = searchParams.get('id')
+  const router = useRouter()
+
   const { data: unitRes } = useSWR(
     `${process.env.API_URL}/MtBusinessUnit/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
     fetcher,
   )
-  const {
-    data: yearRes,
-    mutate,
-    isLoading,
-  } = useSWR(`${process.env.API_URL}/MtYear/GetAll`, fetcher)
+  const { data: yearRes } = useSWR(
+    `${process.env.API_URL}/MtYear/GetAll`,
+    fetcher,
+  )
   const { data: formRes } = useSWR(
     `${process.env.API_URL}/MtProcessForm/GetAll`,
     fetcher,
@@ -100,25 +173,28 @@ export default function ProyectoNuevo() {
     `${process.env.API_URL}/User/GetAll`,
     fetcher,
   )
-  const { data, trigger, error, isMutating } = useSWRMutation(
-    `${process.env.API_URL}/Project/Create`,
-    creator /* options */,
+  const { data, mutate, error, isLoading } = useSWR(
+    id ? `${process.env.API_URL}/Project/FindById/${id}` : '',
+    fetcher,
   )
-  const [failure, setFailure] = useState<any>(null)
-  const router = useRouter()
+
+  const mutation = useSWRMutation(
+    `${process.env.API_URL}/Project/Update/${id}`,
+    updater /* options */,
+  )
+
+  console.log(data)
 
   const saveProyecto = async (values: any): Promise<any> => {
     let toastId
-    // console.log(values);
 
     try {
       toastId = toast.loading('Enviando... 🚀')
-
-      // console.log(values);
-      // return;
-
       // Submit data
       const item: any = {
+        id,
+        code: data.result.code,
+        version: data.result.version,
         name: values.nombreProyecto,
         description: values.descripcionProyecto,
         mtBusinessUnitId: Number(values.unidadNegocio),
@@ -130,10 +206,9 @@ export default function ProyectoNuevo() {
       }
 
       console.log(item)
-      const result = await trigger(item)
+      const result = await mutation.trigger(item)
 
-      if (result != undefined && result.status === 201) {
-        console.log(result)
+      if (result != undefined && result.status === 200) {
         toast.success('Enviado con éxito 🙌', { id: toastId })
         router.push('/proyectos')
       }
@@ -142,13 +217,6 @@ export default function ProyectoNuevo() {
         toast.error('No se puede enviar 😱', { id: toastId })
       }
     } catch (e) {
-      const message: string = (e as any).info.errorMessage
-
-      if (message.includes('Cannot insert duplicate key row in object')) {
-        toast.error('Nombre de proyecto ya existe 😱', { id: toastId })
-        return
-      }
-
       toast.error('No se puede enviar 😱', { id: toastId })
     }
   }
@@ -156,22 +224,19 @@ export default function ProyectoNuevo() {
   const breadcrumbs = [
     { label: 'Inicio', link: '/' },
     { label: 'Proyectos', link: '/proyectos' },
-    { label: 'Nuevo', link: null },
+    { label: 'Editar', link: null },
   ]
-
-  if (error) console.log(error)
 
   return (
     <main>
-      {/* <!-- Start block --> */}
       <section className="max-h-screen w-full bg-white dark:bg-gray-900 lg:m-auto lg:w-10/12">
         <Breadcrumbs items={breadcrumbs} />
         <div className="mx-auto max-w-screen-xl px-4 pb-8 pt-8">
-          {isMutating ? (
+          {isLoading || mutation.isMutating ? (
             <Loading label="Actualizando ..." />
           ) : (
             <div className="w-full md:mx-auto md:w-10/12 lg:mx-auto lg:w-10/12 xl:mx-auto xl:w-10/12">
-              {error ? (
+              {error || mutation.error ? (
                 <div
                   className="mb-4 flex rounded-lg bg-red-50 p-4 text-sm text-red-800 dark:bg-gray-800 dark:text-red-400"
                   role="alert"
@@ -190,12 +255,16 @@ export default function ProyectoNuevo() {
                     <span className="font-medium">
                       Asegurese que estos requerimientos se cumplen:
                     </span>
-                    <div className="mt-4">{error.info.errorMessage}</div>
+                    <div className="mt-4">
+                      {error
+                        ? error.info.errorMessage
+                        : mutation.error.info.errorMessage}
+                    </div>
                   </div>
                 </div>
               ) : null}
               <h1 className="mb-4 max-w-2xl text-xl font-extrabold leading-none tracking-tight dark:text-white">
-                Proyecto
+                Unidad de negocio
               </h1>
               <ProyectoForm
                 units={
@@ -244,7 +313,23 @@ export default function ProyectoNuevo() {
                     ? formRes.result
                     : []
                 }
-                initValue={null}
+                initValue={
+                  data !== undefined && data.status == 200
+                    ? {
+                        nombreProyecto: data.result.name,
+                        descripcionProyecto: data.result.description,
+                        unidadNegocio: data.result.mtBusinessUnitId,
+                        year: Number(data.result.mtYearId),
+                        responsables: data.result.responsibles.map(
+                          (user: any) => ({
+                            label: user.userName,
+                            value: user.id,
+                          }),
+                        ),
+                        tareas: generateTaskList(data.result.projectTasks),
+                      }
+                    : null
+                }
                 buttonText="Guardar"
                 onSubmit={saveProyecto}
               />
@@ -252,8 +337,8 @@ export default function ProyectoNuevo() {
           )}
         </div>
       </section>
-
-      {/* <Footer></Footer> */}
     </main>
   )
 }
+
+export default ProyectoEditar

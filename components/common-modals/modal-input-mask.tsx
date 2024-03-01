@@ -64,7 +64,7 @@ export default function ModalInputMask(props: Props) {
                                 </span>
                             </label> */}
               <InputMask
-                mask="999+9999"
+                mask="999+0999"
                 alwaysShowMask={true}
                 maskChar="#"
                 onChange={(evt: any) => setValue(evt.currentTarget.value)}

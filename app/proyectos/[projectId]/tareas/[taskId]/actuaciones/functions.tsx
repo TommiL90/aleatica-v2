@@ -29,9 +29,9 @@ export const getActionsColumns = (): Column[] => [
     reorderable: true,
     resizable: true,
   },
-  // { columnId: "codigoActuacion", width: 180, reorderable: true, resizable: true },
-  { columnId: 'noActuacion', width: 200, reorderable: true, resizable: true },
   { columnId: 'expediente', width: 200, reorderable: true, resizable: true },
+  { columnId: 'noActuacion', width: 200, reorderable: true, resizable: true },
+
   { columnId: 'diferido', width: 70, reorderable: true, resizable: true },
   {
     columnId: 'nombreActuacion',
@@ -168,14 +168,14 @@ export const headerActionsRow = (columns: Column[]): Row => ({
       case 'puntosNegrosTCA':
         elem = {
           type: 'header',
-          text: 'Puntos Negros',
+          text: 'Puntos Negros / TCA',
           style: { color: '#666179' },
         }
         break
       case 'codigoSAP':
         elem = {
           type: 'header',
-          text: 'Codigo SAP',
+          text: 'ID SAP',
           style: { color: '#666179' },
         }
         break

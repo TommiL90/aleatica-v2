@@ -89,7 +89,7 @@ const headerRow = (columns: Column[]): Row => ({
       case 'fechaPrevia':
         elem = {
           type: 'header',
-          text: 'Fecha Previa *',
+          text: 'Fecha E. Previos *',
           style: { color: '#666179' },
         }
         break
@@ -159,7 +159,7 @@ const headerRow = (columns: Column[]): Row => ({
       case 'idIntervencion':
         elem = {
           type: 'header',
-          text: 'Intervencion',
+          text: 'ID Interv. - Loc.',
           style: { color: '#666179' },
         }
         break
