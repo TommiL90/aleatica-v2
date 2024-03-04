@@ -527,6 +527,8 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
       .min(0)
       .moreThan(-1, 'Debe ser un número positivo o cero')
       .optional()
+      .default(0)
+
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/

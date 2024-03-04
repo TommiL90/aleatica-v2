@@ -48,6 +48,7 @@ import {
 import { spec } from 'node:test/reporters'
 import ModalNewItem from './modalEdit'
 import ModalDetail from './modalDetail'
+import ModalDeteriorosParaSpreadsheet from '../modalDeteriorosParaSpeadsheet'
 
 interface Props {
   specialty: Specialty
@@ -90,25 +91,23 @@ export interface Medicion {
   m4: number
   O: number
   distanciaPreviaCad: number
-  porcentajeAfectacion: number
+
   idIntervencion: string
   deterioros: any[]
   prioridad: any
   observacion: string
   actuacion: any
   compuesta: any // tipo de tratamiento
+
   longitud: number
-  ancho: number
-  area: number
-  espesor: number
-  volumen: number
-  litro: number
-  unidad: number // ud
-  tonelada: number
+  porcentajeAfectacion: number
   longitudAfectadas: number
+  unidad: number // ud
   areaElemento: number
   areaTotal: number
   noElementosPuntuales: number
+  alternativeUnitMeasurementValue: number
+
   estudio: number
 
   tipologia: any
@@ -128,6 +127,9 @@ export interface Medicion {
 
   compuestaFilter: any[]
   newItem: boolean // indica si es elemento nuevo: true, o cagado desde bd: false
+
+  habilitarUdAlt: boolean
+  habilitarInputs: boolean
 }
 
 const breadcrumbs = [
@@ -321,14 +323,12 @@ const SafetyMeasurement = ({
 
   const handleLocationClick = async (location: CellLocation) => {
     if (location.columnId.toString() === 'modal') {
-      setModal(!modal)
-
       const idx = location.rowId as number
       const item = mediciones.at(idx - 1)
 
       if (item) {
         setItem(item)
-        console.log(item)
+        setModal(!modal)
       }
     }
 
@@ -382,9 +382,7 @@ const SafetyMeasurement = ({
             item.deterioros.length > 0 &&
             item.prioridad !== null &&
             item.cadenamientoInicial.length > 5 &&
-            item.cadenamientoFinal.length > 5 &&
-            Number(item.ancho) > 0 &&
-            item.espesor > 0
+            item.cadenamientoFinal.length > 5
           ) {
             const cadInicial = item.cadenamientoInicial.split('+')
             const cadFinal = item.cadenamientoFinal.split('+')
@@ -392,7 +390,7 @@ const SafetyMeasurement = ({
             toastId = toast.loading('Enviando... 🚀')
             console.log('cadenamientoInicial', cadInicial)
             // Submit data
-            const value: any = {
+            let value: any = {
               // id: 0,
               previousStudiesDate: item.fechaPrevia,
               mtRoadSectionId: item.tramo,
@@ -406,20 +404,8 @@ const SafetyMeasurement = ({
 
               mtSpecialtyActionId: specialty.value,
               observation: item.observacion,
-              initialNumber:
-                cadInicial.length > 1
-                  ? Number(`${cadInicial[0]}${cadInicial[1]}`)
-                  : Number(cadInicial[0]),
-              finalNumber:
-                cadFinal.length > 1
-                  ? Number(`${cadFinal[0]}${cadFinal[1]}`)
-                  : Number(cadFinal[0]),
-
-              thickness: item.espesor,
-              width: item.ancho,
-              ud: item.unidad,
-              t: item.tonelada,
-              l: item.litro,
+              initialNumber: item.cadenamientoInicial.replace('+', ''),
+              finalNumber: item.cadenamientoFinal.replace('+', ''),
 
               mtDeteriorationTypeIds: item.deterioros.map(
                 (item: any) => item.value,
@@ -428,6 +414,24 @@ const SafetyMeasurement = ({
               mtTypologyId: item.tipologia,
               mtPositionId: item.posicion,
               mtDispositionId: item.disposicion,
+
+              ud: item.unidad,
+
+              alternativeUnitMeasurementValue:
+                item.alternativeUnitMeasurementValue,
+            }
+
+            if (specialty.value === 37) {
+              value = {
+                ...value,
+                length: item.longitud,
+                ud: item.unidad,
+                affectePercentage: item.porcentajeAfectacion,
+                affectedLength: item.longitudAfectadas,
+                elementArea: item.areaElemento,
+                totalArea: item.areaTotal,
+                elementsCount: item.noElementosPuntuales,
+              }
             }
 
             let result: any = null
@@ -499,12 +503,7 @@ const SafetyMeasurement = ({
         observacion: item.observation,
         actuacion: String(item.performanceCatalogId),
         compuesta: String(item.compositeCatalogId),
-        ancho: item.width,
-        area: item.area,
-        espesor: item.thickness,
-        volumen: item.volume,
-        litro: 0,
-        tonelada: item.t,
+
         estudio: 0,
 
         longitud: item.length,
@@ -532,6 +531,9 @@ const SafetyMeasurement = ({
         disposicion: item.mtDisposition,
         disposicionisOpen: false,
         compuestaFilter: [],
+        alternativeUnitMeasurementValue: item.alternativeUnitMeasurementValue,
+        habilitarUdAlt: false,
+        habilitarInputs: false,
       }
     },
     [],
@@ -564,8 +566,8 @@ const SafetyMeasurement = ({
       <div style={{ margin: '0 20px' }}>
         <SpreadSheet.Root>
           <SpreadSheet.Header
-            title="Mediciones de Safety Defense"
-            description="Repositorio de mediciones de Safety defense"
+            title={`Mediciones de ${specialty.label.toLowerCase()}`}
+            description={`Desglose de mediciones de ${specialty.label.toLowerCase()}`}
           >
             <div className="flex items-center py-4">
               <div className="flex">
@@ -808,6 +810,32 @@ const SafetyMeasurement = ({
             value: String(item.id),
           }))}
           onClose={() => setModalDetail(false)}
+        />
+      ) : null}
+      {modal ? (
+        <ModalDeteriorosParaSpreadsheet
+          title="Deterioros"
+          options={deterioros.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+            code: item.code,
+            subcategoria: item.mtActionSubCategory,
+            especialidad: item.mtSpecialtyAction,
+          }))}
+          deterioros={item.deterioros}
+          onChange={(values: any[]) => {
+            setMediciones([
+              ...mediciones.map((medicion: Medicion) => ({
+                ...medicion,
+                deterioros:
+                  medicion.idauto === item.idauto
+                    ? values
+                    : medicion.deterioros,
+              })),
+            ])
+          }}
+          onClose={() => setModal(!modal)}
+          isModalOpen={modal}
         />
       ) : null}
     </section>

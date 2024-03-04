@@ -48,6 +48,7 @@ import {
 import { spec } from 'node:test/reporters'
 import ModalNewItem from './modalEdit'
 import ModalDetail from './modalDetail'
+import ModalDeteriorosParaSpreadsheet from '../modalDeteriorosParaSpeadsheet'
 
 interface Props {
   specialty: Specialty
@@ -98,13 +99,7 @@ export interface Medicion {
   actuacion: any
   compuesta: any // tipo de tratamiento
   longitud: number
-  ancho: number
-  area: number
-  espesor: number
-  volumen: number
-  litro: number
   unidad: number // ud
-  tonelada: number
 
   estudio: number
 
@@ -125,6 +120,9 @@ export interface Medicion {
 
   compuestaFilter: any[]
   newItem: boolean // indica si es elemento nuevo: true, o cagado desde bd: false
+  alternativeUnitMeasurementValue: number
+  habilitarUdAlt: boolean
+  habilitarInputs: boolean
 }
 
 const breadcrumbs = [
@@ -318,14 +316,12 @@ const SafetyDefenseMeasurement = ({
 
   const handleLocationClick = async (location: CellLocation) => {
     if (location.columnId.toString() === 'modal') {
-      setModal(!modal)
-
       const idx = location.rowId as number
       const item = mediciones.at(idx - 1)
 
       if (item) {
         setItem(item)
-        console.log(item)
+        setModal(!modal)
       }
     }
 
@@ -379,9 +375,7 @@ const SafetyDefenseMeasurement = ({
             item.deterioros.length > 0 &&
             item.prioridad !== null &&
             item.cadenamientoInicial.length > 5 &&
-            item.cadenamientoFinal.length > 5 &&
-            Number(item.ancho) > 0 &&
-            item.espesor > 0
+            item.cadenamientoFinal.length > 5
           ) {
             const cadInicial = item.cadenamientoInicial.split('+')
             const cadFinal = item.cadenamientoFinal.split('+')
@@ -412,11 +406,7 @@ const SafetyDefenseMeasurement = ({
                   ? Number(`${cadFinal[0]}${cadFinal[1]}`)
                   : Number(cadFinal[0]),
 
-              thickness: item.espesor,
-              width: item.ancho,
               ud: item.unidad,
-              t: item.tonelada,
-              l: item.litro,
 
               mtDeteriorationTypeIds: item.deterioros.map(
                 (item: any) => item.value,
@@ -477,6 +467,9 @@ const SafetyDefenseMeasurement = ({
         entronque: String(item.mtHigwayIntersectionId),
         cuerpo: String(item.mtSlipLaneRoadId),
         carril: String(item.mtHighwayLaneId),
+        tipologia: item.mtTypology,
+        posicion: item.mtPosition,
+        disposicion: item.mtDisposition,
         cadenamientoInicial: String(item.initialNumber),
         km: item.km,
         M: item.m,
@@ -488,31 +481,22 @@ const SafetyDefenseMeasurement = ({
         O: item.o,
         distanciaPreviaCad: item.distanceToPreviousCd,
         idIntervencion: item.intervetionIdLocation,
-        deterioros: item.mtDeteriorationTypes.map((det: any) => ({
+        deterioros: item.mtDeteriorationTypes.map((det) => ({
           label: det.name,
           value: det.id,
         })),
         prioridad: String(item.mtPriorityId),
-        observacion: item.observation,
+        observacion: item.observation ? item.observation : '',
         actuacion: String(item.performanceCatalogId),
         compuesta: String(item.compositeCatalogId),
-        ancho: item.width,
-        area: item.area,
-        espesor: item.thickness,
-        volumen: item.volume,
-        litro: 0,
-        tonelada: item.t,
-        estudio: 0,
 
         longitud: item.length,
         unidad: item.ud,
         porcentajeAfectacion: item.affectePercentage,
+        alternativeUnitMeasurementValue: item.alternativeUnitMeasurementValue,
 
         compuestaFilter: [],
-
-        tipologia: item.mtTypology,
-        posicion: item.mtPosition,
-        disposicion: item.mtDisposition,
+        estudio: item.study,
 
         tramoisOpen: false,
         prioridadisOpen: false,
@@ -525,6 +509,9 @@ const SafetyDefenseMeasurement = ({
         posicionisOpen: false,
         disposicionisOpen: false,
         newItem: false,
+
+        habilitarUdAlt: false,
+        habilitarInputs: false,
       }
     },
     [],
@@ -557,8 +544,8 @@ const SafetyDefenseMeasurement = ({
       <div style={{ margin: '0 20px' }}>
         <SpreadSheet.Root>
           <SpreadSheet.Header
-            title="Mediciones de Safety Defense"
-            description="Repositorio de mediciones de Safety defense"
+            title={`Mediciones de ${specialty.label.toLowerCase()}`}
+            description={`Desglose de mediciones de ${specialty.label.toLowerCase()}`}
           >
             <div className="flex items-center py-4">
               <div className="flex">
@@ -806,6 +793,32 @@ const SafetyDefenseMeasurement = ({
             value: String(item.id),
           }))}
           onClose={() => setModalDetail(false)}
+        />
+      ) : null}
+      {modal ? (
+        <ModalDeteriorosParaSpreadsheet
+          title="Deterioros"
+          options={deterioros.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+            code: item.code,
+            subcategoria: item.mtActionSubCategory,
+            especialidad: item.mtSpecialtyAction,
+          }))}
+          deterioros={item.deterioros}
+          onChange={(values: any[]) => {
+            setMediciones([
+              ...mediciones.map((medicion: Medicion) => ({
+                ...medicion,
+                deterioros:
+                  medicion.idauto === item.idauto
+                    ? values
+                    : medicion.deterioros,
+              })),
+            ])
+          }}
+          onClose={() => setModal(!modal)}
+          isModalOpen={modal}
         />
       ) : null}
     </section>

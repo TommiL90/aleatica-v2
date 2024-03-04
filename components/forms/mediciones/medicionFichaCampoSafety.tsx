@@ -5,6 +5,7 @@ import React, {
   useId,
   useEffect,
   useMemo,
+  useRef,
 } from 'react'
 import * as Yup from 'yup'
 
@@ -79,6 +80,7 @@ interface CrearMedicion {
   mtDeteriorationTypeIds?: number[] | null // Puede ser nulo
   elementArea: number
   specificElementCount: number
+  alternativeUnitMeasurementValue: number
 }
 
 interface FormValues {
@@ -287,6 +289,11 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     props.initValue ? props.initValue.noElementos : 0,
   )
 
+  const [alternativeUnitMeasurementValue, setAlternativeUnitMeasurementValue] =
+    useState(
+      props.initValue ? props.initValue.alternativeUnitMeasurementValue : 0,
+    )
+
   const [altInput, setAltInput] = useState(false)
   const [activeZincInputs, setActiveInputs] = useState(true)
 
@@ -401,6 +408,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       .min(0)
       .moreThan(-1, 'Debe ser un número positivo o cero')
       .optional()
+      .default(0)
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
@@ -420,7 +428,13 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
   const submitEnquiryForm = async (values: FormValues): Promise<any> => {
     try {
       if (typeof props.onSubmit === 'function') {
-        await props.onSubmit(values)
+        const data = {
+          ...values,
+          longitud,
+          longitudAfectadas,
+          areaTotal,
+        }
+        await props.onSubmit(data)
       }
     } catch (e) {}
   }
@@ -454,6 +468,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     ud: unidad || 0,
     elementArea: areaElemento || 0,
     elementsCount: noElementosPuntuales || 0,
+    alternativeUnitMeasurementValue,
   }
   const handleGetInfo = async () => {
     const res = await fetch(`${process.env.API_URL}/MeasurementTab/GetInfo`, {
@@ -472,7 +487,13 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       setAreaTotal(totalArea)
     }
   }
+
+  const isFirstRender = useRef(true)
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false // marca que ya no es la primera renderización
+      return
+    }
     handleGetInfo()
   }, [
     cadenamientoInicialSeleccionada,
@@ -486,7 +507,6 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     noElementosPuntuales,
   ])
 
-  console.log(props.especialidad.value)
   return (
     <>
       <div className="text-black">
@@ -1446,275 +1466,273 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
                       className="mt-1 text-sm text-red-600 dark:text-red-500"
                     />
                   </div>
-                  {props.especialidad.value === 37 && (
-                    <>
-                      <div>
-                        <label
-                          htmlFor="porcentajeAfectacion"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          % afectación
-                        </label>
-                        <Field name="porcentajeAfectacion">
-                          {({
-                            field, // { name, value, onChange, onBlur }
-                            value,
-                            form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                            meta,
-                          }: any) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step="0.01"
-                              min={0}
-                              max={100}
-                              defaultValue={100}
-                              value={porcentajeAfectacion}
-                              onChange={(evt: any) => {
-                                setFieldValue(
-                                  field.name,
-                                  evt.target.valueAsNumber,
-                                )
-                                setPorcentajeAfectacion(
-                                  evt.target.valueAsNumber,
-                                )
-                              }}
-                              className={cn(
-                                'block w-full rounded-lg border text-sm',
-                                errors.porcentajeAfectacion &&
-                                  touched.porcentajeAfectacion
-                                  ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                                  : 'border-gray-300 bg-white text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                              )}
-                            />
+
+                  <div
+                    className={cn(
+                      props.especialidad.value === 37 ? '' : 'hidden',
+                    )}
+                  >
+                    <label
+                      htmlFor="porcentajeAfectacion"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      % afectación
+                    </label>
+                    <Field name="porcentajeAfectacion">
+                      {({
+                        field, // { name, value, onChange, onBlur }
+                        value,
+                        form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                        meta,
+                      }: any) => (
+                        <input
+                          {...field}
+                          type="number"
+                          step="0.01"
+                          min={0}
+                          max={100}
+                          value={porcentajeAfectacion}
+                          onChange={(evt: any) => {
+                            setFieldValue(field.name, evt.target.valueAsNumber)
+                            setPorcentajeAfectacion(evt.target.valueAsNumber)
+                          }}
+                          className={cn(
+                            'block w-full rounded-lg border text-sm',
+                            errors.porcentajeAfectacion &&
+                              touched.porcentajeAfectacion
+                              ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
+                              : 'border-gray-300 bg-white text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                           )}
-                        </Field>
-                        <ErrorMessage
-                          name="porcentajeAfectacion"
-                          component="div"
-                          className="mt-1 text-sm text-red-600 dark:text-red-500"
                         />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="longitud"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          longitud (m)
-                        </label>
-                        <Field name="longitud">
-                          {({
-                            field, // { name, value, onChange, onBlur }
-                            value,
-                            form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                            meta,
-                          }: any) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step="0.01"
-                              min={0}
-                              max={100}
-                              disabled={activeZincInputs}
-                              value={longitud}
-                              onChange={(evt: any) => {
-                                setFieldValue(
-                                  field.name,
-                                  evt.target.valueAsNumber,
-                                )
-                                setLongitud(evt.target.valueAsNumber)
-                              }}
-                              className={cn(
-                                'block w-full rounded-lg border text-sm',
-                                errors.longitud && touched.longitud
-                                  ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                                  : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                              )}
-                            />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="porcentajeAfectacion"
+                      component="div"
+                      className="mt-1 text-sm text-red-600 dark:text-red-500"
+                    />
+                  </div>
+                  <div
+                    className={cn(
+                      props.especialidad.value === 37 ? '' : 'hidden',
+                    )}
+                  >
+                    <label
+                      htmlFor="longitud"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      longitud (m)
+                    </label>
+                    <Field name="longitud">
+                      {({
+                        field, // { name, value, onChange, onBlur }
+                        value,
+                        form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                        meta,
+                      }: any) => (
+                        <input
+                          {...field}
+                          type="number"
+                          step="0.01"
+                          min={0}
+                          max={100}
+                          disabled={activeZincInputs}
+                          value={longitud}
+                          onChange={(evt: any) => {
+                            setFieldValue(field.name, evt.target.valueAsNumber)
+                            setLongitud(evt.target.valueAsNumber)
+                          }}
+                          className={cn(
+                            'block w-full rounded-lg border text-sm',
+                            errors.longitud && touched.longitud
+                              ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
+                              : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                           )}
-                        </Field>
-                        <ErrorMessage
-                          name="longitud"
-                          component="div"
-                          className="mt-1 text-sm text-red-600 dark:text-red-500"
                         />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="longitudAfectadas"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          Longitud afectada (m)
-                        </label>
-                        <Field name="longitudAfectadas">
-                          {({
-                            field, // { name, value, onChange, onBlur }
-                            value,
-                            form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                            meta,
-                          }: any) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step="0.01"
-                              min={0}
-                              max={100}
-                              disabled={activeZincInputs}
-                              value={longitudAfectadas}
-                              onChange={(evt: any) => {
-                                setFieldValue(
-                                  field.name,
-                                  evt.target.valueAsNumber,
-                                )
-                                setLongitudAfectadas(evt.target.valueAsNumber)
-                              }}
-                              className={cn(
-                                'block w-full rounded-lg border text-sm',
-                                errors.longitudAfectadas &&
-                                  touched.longitudAfectadas
-                                  ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                                  : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                              )}
-                            />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="longitud"
+                      component="div"
+                      className="mt-1 text-sm text-red-600 dark:text-red-500"
+                    />
+                  </div>
+                  <div
+                    className={cn(
+                      props.especialidad.value === 37 ? '' : 'hidden',
+                    )}
+                  >
+                    <label
+                      htmlFor="longitudAfectadas"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Longitud afectada (m)
+                    </label>
+                    <Field name="longitudAfectadas">
+                      {({
+                        field, // { name, value, onChange, onBlur }
+                        value,
+                        form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                        meta,
+                      }: any) => (
+                        <input
+                          {...field}
+                          type="number"
+                          step="0.01"
+                          min={0}
+                          max={100}
+                          disabled={activeZincInputs}
+                          value={longitudAfectadas}
+                          onChange={(evt: any) => {
+                            setFieldValue(field.name, evt.target.valueAsNumber)
+                            setLongitudAfectadas(evt.target.valueAsNumber)
+                          }}
+                          className={cn(
+                            'block w-full rounded-lg border text-sm',
+                            errors.longitudAfectadas &&
+                              touched.longitudAfectadas
+                              ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
+                              : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                           )}
-                        </Field>
-                        <ErrorMessage
-                          name="longitudAfectadas"
-                          component="div"
-                          className="mt-1 text-sm text-red-600 dark:text-red-500"
                         />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="areaElemento"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          Área / Elemento
-                        </label>
-                        <Field name="areaElemento">
-                          {({
-                            field, // { name, value, onChange, onBlur }
-                            value,
-                            form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                            meta,
-                          }: any) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step="0.01"
-                              min={0}
-                              value={areaElemento}
-                              onChange={(evt: any) => {
-                                setFieldValue(
-                                  field.name,
-                                  evt.target.valueAsNumber,
-                                )
-                                setAreaElemento(evt.target.valueAsNumber)
-                              }}
-                              className={cn(
-                                'block w-full rounded-lg border text-sm',
-                                errors.areaElemento && touched.areaElemento
-                                  ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                                  : 'border-gray-300 bg-white text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                              )}
-                            />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="longitudAfectadas"
+                      component="div"
+                      className="mt-1 text-sm text-red-600 dark:text-red-500"
+                    />
+                  </div>
+                  <div
+                    className={cn(
+                      props.especialidad.value === 37 ? '' : 'hidden',
+                    )}
+                  >
+                    <label
+                      htmlFor="areaElemento"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Área / Elemento
+                    </label>
+                    <Field name="areaElemento">
+                      {({
+                        field, // { name, value, onChange, onBlur }
+                        value,
+                        form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                        meta,
+                      }: any) => (
+                        <input
+                          {...field}
+                          type="number"
+                          step="0.01"
+                          min={0}
+                          value={areaElemento}
+                          onChange={(evt: any) => {
+                            setFieldValue(field.name, evt.target.valueAsNumber)
+                            setAreaElemento(evt.target.valueAsNumber)
+                          }}
+                          className={cn(
+                            'block w-full rounded-lg border text-sm',
+                            errors.areaElemento && touched.areaElemento
+                              ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
+                              : 'border-gray-300 bg-white text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                           )}
-                        </Field>
-                        <ErrorMessage
-                          name="areaElemento"
-                          component="div"
-                          className="mt-1 text-sm text-red-600 dark:text-red-500"
                         />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="areaTotal"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          Área total (m2)
-                        </label>
-                        <Field name="areaTotal">
-                          {({
-                            field, // { name, value, onChange, onBlur }
-                            value,
-                            form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                            meta,
-                          }: any) => (
-                            <input
-                              {...field}
-                              type="number"
-                              step="0.01"
-                              min={0}
-                              disabled={activeZincInputs}
-                              value={areaTotal}
-                              onChange={(evt: any) => {
-                                setFieldValue(
-                                  field.name,
-                                  evt.target.valueAsNumber,
-                                )
-                                setAreaTotal(evt.target.valueAsNumber)
-                              }}
-                              className={cn(
-                                'block w-full rounded-lg border text-sm',
-                                errors.areaTotal && touched.areaTotal
-                                  ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                                  : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                              )}
-                            />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="areaElemento"
+                      component="div"
+                      className="mt-1 text-sm text-red-600 dark:text-red-500"
+                    />
+                  </div>
+                  <div
+                    className={cn(
+                      props.especialidad.value === 37 ? '' : 'hidden',
+                    )}
+                  >
+                    <label
+                      htmlFor="areaTotal"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Área total (m2)
+                    </label>
+                    <Field name="areaTotal">
+                      {({
+                        field, // { name, value, onChange, onBlur }
+                        value,
+                        form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                        meta,
+                      }: any) => (
+                        <input
+                          {...field}
+                          type="number"
+                          step="0.01"
+                          min={0}
+                          disabled={activeZincInputs}
+                          value={areaTotal}
+                          onChange={(evt: any) => {
+                            setFieldValue(field.name, evt.target.valueAsNumber)
+                            setAreaTotal(evt.target.valueAsNumber)
+                          }}
+                          className={cn(
+                            'block w-full rounded-lg border text-sm',
+                            errors.areaTotal && touched.areaTotal
+                              ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
+                              : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                           )}
-                        </Field>
-                        <ErrorMessage
-                          name="areaTotal"
-                          component="div"
-                          className="mt-1 text-sm text-red-600 dark:text-red-500"
                         />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="noElementosPuntuales"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          Nº de elementos puntuales
-                        </label>
-                        <Field name="noElementosPuntuales">
-                          {({
-                            field, // { name, value, onChange, onBlur }
-                            value,
-                            form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-                            meta,
-                          }: any) => (
-                            <input
-                              {...field}
-                              type="number"
-                              min={0}
-                              value={noElementosPuntuales}
-                              onChange={(evt: any) => {
-                                setFieldValue(
-                                  field.name,
-                                  evt.target.valueAsNumber,
-                                )
-                                setNoElementosPuntuales(
-                                  evt.target.valueAsNumber,
-                                )
-                              }}
-                              className={cn(
-                                'block w-full rounded-lg border text-sm',
-                                errors.noElementosPuntuales &&
-                                  touched.noElementosPuntuales
-                                  ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                                  : 'border-gray-300 bg-white text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                              )}
-                            />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="areaTotal"
+                      component="div"
+                      className="mt-1 text-sm text-red-600 dark:text-red-500"
+                    />
+                  </div>
+                  <div
+                    className={cn(
+                      props.especialidad.value === 37 ? '' : 'hidden',
+                    )}
+                  >
+                    <label
+                      htmlFor="noElementosPuntuales"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Nº de elementos puntuales
+                    </label>
+                    <Field name="noElementosPuntuales">
+                      {({
+                        field, // { name, value, onChange, onBlur }
+                        value,
+                        form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                        meta,
+                      }: any) => (
+                        <input
+                          {...field}
+                          type="number"
+                          min={0}
+                          value={noElementosPuntuales}
+                          onChange={(evt: any) => {
+                            setFieldValue(field.name, evt.target.valueAsNumber)
+                            setNoElementosPuntuales(evt.target.valueAsNumber)
+                          }}
+                          className={cn(
+                            'block w-full rounded-lg border text-sm',
+                            errors.noElementosPuntuales &&
+                              touched.noElementosPuntuales
+                              ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
+                              : 'border-gray-300 bg-white text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                           )}
-                        </Field>
-                        <ErrorMessage
-                          name="noElementosPuntuales"
-                          component="div"
-                          className="mt-1 text-sm text-red-600 dark:text-red-500"
                         />
-                      </div>
-                    </>
-                  )}
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="noElementosPuntuales"
+                      component="div"
+                      className="mt-1 text-sm text-red-600 dark:text-red-500"
+                    />
+                  </div>
 
                   {unitOfMeasurement &&
                     altInput &&
@@ -1741,6 +1759,9 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
                                 onChange={(evt: any) => {
                                   setFieldValue(
                                     field.name,
+                                    evt.target.valueAsNumber,
+                                  )
+                                  setAlternativeUnitMeasurementValue(
                                     evt.target.valueAsNumber,
                                   )
                                 }}

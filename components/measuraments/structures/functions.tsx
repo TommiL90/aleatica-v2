@@ -804,7 +804,7 @@ export const getStructuresRows = (
           elem = {
             type: 'number',
             value: item.alternativeUnitMeasurementValue,
-            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarUdAlt === true ? '' : 'bg-gray-200'}`,
           }
           break
       }

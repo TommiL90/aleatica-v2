@@ -108,6 +108,8 @@ export default function ModalNewItem(props: PropsModalNewItem) {
                           areaTotal: props.itemSelected.areaTotal,
                           noElementosPuntuales:
                             props.itemSelected.noElementosPuntuales,
+                          alternativeUnitMeasurementValue:
+                            props.itemSelected.alternativeUnitMeasurementValue,
                         }
                       : null
                   }

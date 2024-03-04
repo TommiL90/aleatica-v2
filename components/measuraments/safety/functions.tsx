@@ -49,14 +49,22 @@ export const getSafetyColumns = (): Column[] => [
   { columnId: 'observacion', width: 150, reorderable: true },
   { columnId: 'actuacion', width: 150, reorderable: true },
   { columnId: 'compuesta', width: 150, reorderable: true },
+  { columnId: 'habilitarInputs', width: 150, reorderable: true },
+
   { columnId: 'longitud', width: 150, reorderable: true },
-  { columnId: 'ancho', width: 150, reorderable: true },
-  { columnId: 'area', width: 150, reorderable: true },
-  { columnId: 'espesor', width: 150, reorderable: true },
-  { columnId: 'volumen', width: 150, reorderable: true },
-  { columnId: 'litro', width: 150, reorderable: true },
+  { columnId: 'porcentajeAfectacion', width: 150, reorderable: true },
+  { columnId: 'longitudAfectadas', width: 150, reorderable: true },
   { columnId: 'unidad', width: 150, reorderable: true },
-  { columnId: 'tonelada', width: 150, reorderable: true },
+  { columnId: 'areaElemento', width: 150, reorderable: true },
+  { columnId: 'areaTotal', width: 150, reorderable: true },
+  { columnId: 'noElementosPuntuales', width: 150, reorderable: true },
+
+  { columnId: 'habilitarUdAlt', width: 140, reorderable: true },
+  {
+    columnId: 'alternativeUnitMeasurementValue',
+    width: 100,
+    reorderable: true,
+  },
 
   { columnId: 'modal', width: 150, reorderable: true },
   { columnId: 'button_save', width: 150, reorderable: true },
@@ -203,29 +211,72 @@ export const headerRow = (columns: Column[]): Row => ({
           style: { color: '#666179' },
         }
         break
+      case 'habilitarInputs':
+        elem = {
+          type: 'header',
+          text: 'Habilitar Inputs',
+          style: { color: '#666179' },
+        }
+        break
       case 'longitud':
-        elem = { type: 'header', text: 'Longitud', style: { color: '#666179' } }
+        elem = {
+          type: 'header',
+          text: 'Longitud (m)',
+          style: { color: '#666179' },
+        }
         break
-      case 'ancho':
-        elem = { type: 'header', text: 'Ancho *', style: { color: '#666179' } }
+      case 'porcentajeAfectacion':
+        elem = {
+          type: 'header',
+          text: '% de afectación',
+          style: { color: '#666179' },
+        }
         break
-      case 'area':
-        elem = { type: 'header', text: 'Area', style: { color: '#666179' } }
-        break
-      case 'espesor':
-        elem = { type: 'header', text: 'Espesor', style: { color: '#666179' } }
-        break
-      case 'volumen':
-        elem = { type: 'header', text: 'Volumen', style: { color: '#666179' } }
-        break
-      case 'litro':
-        elem = { type: 'header', text: 'Litro', style: { color: '#666179' } }
+      case 'longitudAfectadas':
+        elem = {
+          type: 'header',
+          text: 'Long. afectada (m)',
+          style: { color: '#666179' },
+        }
         break
       case 'unidad':
-        elem = { type: 'header', text: 'Unidad', style: { color: '#666179' } }
+        elem = { type: 'header', text: 'Nº elem.', style: { color: '#666179' } }
         break
-      case 'tonelada':
-        elem = { type: 'header', text: 'Tonelada', style: { color: '#666179' } }
+      case 'areaElemento':
+        elem = {
+          type: 'header',
+          text: 'Área/elem (m²)',
+          style: { color: '#666179' },
+        }
+        break
+      case 'areaTotal':
+        elem = {
+          type: 'header',
+          text: 'Área total (m²)',
+          style: { color: '#666179' },
+        }
+        break
+      case 'noElementosPuntuales':
+        elem = {
+          type: 'header',
+          text: 'Nº elem. puntuales',
+          style: { color: '#666179' },
+        }
+        break
+
+      case 'habilitarUdAlt':
+        elem = {
+          type: 'header',
+          text: 'Hab. Ud. Alt',
+          style: { color: '#666179' },
+        }
+        break
+      case 'alternativeUnitMeasurementValue':
+        elem = {
+          type: 'header',
+          text: 'Ud. Alt.',
+          style: { color: '#666179' },
+        }
         break
 
       case 'modal':
@@ -326,9 +377,7 @@ export const getSafetyRows = (
               item.deterioros.length > 0 &&
               item.prioridad !== null &&
               item.cadenamientoInicial.length > 5 &&
-              item.cadenamientoFinal.length > 5 &&
-              Number(item.ancho) > 0 &&
-              item.espesor > 0,
+              item.cadenamientoFinal.length > 5,
             size: -1,
             id: item.id,
             onClick: () => {},
@@ -549,60 +598,77 @@ export const getSafetyRows = (
           }
           break
 
+        case 'habilitarInputs':
+          elem = {
+            type: 'checkbox',
+            checked: item.habilitarInputs,
+            className:
+              'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+          }
+          break
         case 'longitud':
           elem = {
-            type: 'header',
-            text: String(item.longitud),
-            style: { color: '#666179' },
+            type: 'number',
+            value: item.longitud,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
-        case 'ancho':
+        case 'porcentajeAfectacion':
           elem = {
             type: 'number',
-            value: item.ancho,
-            style: { color: '#666179' },
+            value: item.porcentajeAfectacion,
+            className: `text-sm  block w-full`,
           }
           break
-        case 'area':
-          elem = {
-            type: 'header',
-            text: String(item.area),
-            style: { color: '#666179' },
-          }
-          break
-        case 'espesor':
+
+        case 'longitudAfectadas':
           elem = {
             type: 'number',
-            value: item.espesor,
-            style: { color: '#666179' },
-          }
-          break
-        case 'volumen':
-          elem = {
-            type: 'header',
-            text: String(item.volumen),
-            style: { color: '#666179' },
-          }
-          break
-        case 'litro':
-          elem = {
-            type: 'number',
-            value: item.litro,
-            style: { color: '#666179' },
+            value: item.longitudAfectadas,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
           }
           break
         case 'unidad':
           elem = {
             type: 'number',
             value: item.unidad,
-            style: { color: '#666179' },
+            className: `text-sm  block w-full`,
           }
           break
-        case 'tonelada':
+        case 'areaElemento':
           elem = {
             type: 'number',
-            value: item.tonelada,
-            style: { color: '#666179' },
+            value: item.areaElemento,
+            className: `text-sm  block w-full`,
+          }
+          break
+        case 'areaTotal':
+          elem = {
+            type: 'number',
+            value: item.areaTotal,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarInputs === true ? '' : 'bg-gray-200'}`,
+          }
+          break
+        case 'noElementosPuntuales':
+          elem = {
+            type: 'number',
+            value: item.noElementosPuntuales,
+            className: `text-sm  block w-full`,
+          }
+          break
+        case 'habilitarUdAlt':
+          elem = {
+            type: 'checkbox',
+            checked: item.habilitarUdAlt,
+            className:
+              'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+          }
+          break
+        case 'alternativeUnitMeasurementValue':
+          elem = {
+            type: 'number',
+            value: item.alternativeUnitMeasurementValue,
+            className: `text-sm  block w-full text-gray-800 ${item.habilitarUdAlt === true ? '' : 'bg-gray-200'}`,
           }
           break
       }
@@ -638,20 +704,14 @@ export const getSafetyEmpty = (id: number = 1): Medicion => ({
   observacion: '',
   actuacion: null,
   compuesta: null,
-  longitud: 0,
-  ancho: 0,
-  area: 0,
-  espesor: 0,
-  volumen: 0,
-  litro: 0,
-  unidad: 0,
-  tonelada: 0,
   estudio: 0,
+  longitud: 0,
+  unidad: 0,
   areaElemento: 0,
   areaTotal: 0,
   longitudAfectadas: 0,
   noElementosPuntuales: 0,
-
+  alternativeUnitMeasurementValue: 0,
   tipologia: null,
   posicion: null,
   disposicion: null,
@@ -670,6 +730,8 @@ export const getSafetyEmpty = (id: number = 1): Medicion => ({
 
   compuestaFilter: [],
   newItem: true,
+  habilitarInputs: false,
+  habilitarUdAlt: false,
 })
 
 export const applySafetyChanges = (
