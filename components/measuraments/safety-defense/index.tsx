@@ -749,13 +749,13 @@ const SafetyDefenseMeasurement = ({
                   },
                 )
               }
-
               if (
                 result != undefined &&
                 (result.status === 200 || result.status === 201)
               ) {
                 toast.success('Enviado con éxito 🙌', { id: toastId })
               }
+              console.log(result)
               if (result != undefined && result.status >= 400) {
                 toast.error(`No se puede enviar. ${result.errorMessage}😱`, {
                   id: toastId,
