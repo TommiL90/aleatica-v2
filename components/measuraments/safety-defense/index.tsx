@@ -370,15 +370,15 @@ const SafetyDefenseMeasurement = ({
           if (
             item.fechaPrevia !== '' &&
             item.tramo !== null &&
-            item.entronque !== null &&
-            item.cuerpo !== null &&
-            item.carril !== null &&
+            // item.entronque !== null &&
+            // item.cuerpo !== null &&
+            // item.carril !== null &&
             item.actuacion !== null &&
             item.compuesta !== null &&
-            item.deterioros.length > 0 &&
-            item.prioridad !== null &&
-            item.cadenamientoInicial.length > 5 &&
-            item.cadenamientoFinal.length > 5
+            // item.deterioros.length > 0 &&
+            item.prioridad !== null
+            // item.cadenamientoInicial.length > 5 &&
+            // item.cadenamientoFinal.length > 5
           ) {
             const cadInicial = item.cadenamientoInicial.split('+')
             const cadFinal = item.cadenamientoFinal.split('+')
@@ -400,16 +400,12 @@ const SafetyDefenseMeasurement = ({
 
               mtSpecialtyActionId: specialty.value,
               observation: item.observacion,
-              initialNumber:
-                cadInicial.length > 1
-                  ? Number(`${cadInicial[0]}${cadInicial[1]}`)
-                  : Number(cadInicial[0]),
-              finalNumber:
-                cadFinal.length > 1
-                  ? Number(`${cadFinal[0]}${cadFinal[1]}`)
-                  : Number(cadFinal[0]),
+              initialNumber: item.cadenamientoInicial.replace('+', ''),
+              finalNumber: item.cadenamientoFinal.replace('+', ''),
 
+              length: item.longitud,
               ud: item.unidad,
+              affectePercentage: item.porcentajeAfectacion,
 
               mtDeteriorationTypeIds: item.deterioros.map(
                 (item: any) => item.value,
@@ -701,11 +697,8 @@ const SafetyDefenseMeasurement = ({
             // }
             let toastId
             try {
-              const cadInicial = values.cadenamientoInicial.split('+')
-              const cadFinal = values.cadenamientoFinal.split('+')
-
               toastId = toast.loading('Enviando... 🚀')
-              console.log('cadenamientoInicial', cadInicial)
+
               // Submit data
               const value: any = {
                 id: itemId,
@@ -723,11 +716,6 @@ const SafetyDefenseMeasurement = ({
                 observation: values.observacion,
                 initialNumber: values.cadenamientoInicial.replace('+', ''),
                 finalNumber: values.cadenamientoFinal.replace('+', ''),
-
-                thickness: values.espesor,
-                width: values.ancho,
-                t: values.tonelada,
-                l: values.litro,
 
                 mtDeteriorationTypeIds: values.deterioros.map(
                   (item: any) => item.value,

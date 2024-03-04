@@ -284,23 +284,25 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       .trim()
       .min(2, 'Demasiado corto!')
       .max(80, 'Demasiado largo!')
-      .required('Requerido'),
+      .optional(),
     cadenamientoFinal: Yup.string()
       .trim()
       .min(2, 'Demasiado corto!')
       .max(80, 'Demasiado largo!')
-      .required('Requerido'),
+      .optional(),
     tramo: Yup.string().required('Requerido'),
-    entronque: Yup.string().required('Requerido'),
-    gaza: Yup.string().required('Requerido'),
-    carril: Yup.string().required('Requerido'),
-    deterioros: Yup.array().min(1, 'Debe seleccionar al menos un deterioro.'),
+    entronque: Yup.string().optional(),
+    gaza: Yup.string().optional(),
+    carril: Yup.string().optional(),
+    deterioros: Yup.array()
+      .min(1, 'Debe seleccionar al menos un deterioro.')
+      .optional(),
     actuacion: Yup.string().required('Requerido'),
     compuesta: Yup.string().required('Requerido'),
     prioridad: Yup.string().required('Requerido'),
-    tipologia: Yup.string().required('Requerido'),
-    posicion: Yup.string().required('Requerido'),
-    disposicion: Yup.string().required('Requerido'),
+    tipologia: Yup.string().optional(),
+    posicion: Yup.string().optional(),
+    disposicion: Yup.string().optional(),
 
     porcentajeAfectacion: Yup.number()
       .moreThan(-1, 'Debe ser un número positivo o cero')
@@ -312,7 +314,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
-    unidad: Yup.number().min(1).required('Requerido'),
+    unidad: Yup.number().min(1).optional(),
     longitud: Yup.number()
       .optional()
       .moreThan(-1, 'Debe ser un número positivo o cero')
