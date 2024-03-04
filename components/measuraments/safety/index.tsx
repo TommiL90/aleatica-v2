@@ -377,15 +377,15 @@ const SafetyMeasurement = ({
           if (
             item.fechaPrevia !== '' &&
             item.tramo !== null &&
-            item.entronque !== null &&
-            item.cuerpo !== null &&
-            item.carril !== null &&
+            // item.entronque !== null &&
+            // item.cuerpo !== null &&
+            // item.carril !== null &&
             item.actuacion !== null &&
             item.compuesta !== null &&
-            item.deterioros.length > 0 &&
-            item.prioridad !== null &&
-            item.cadenamientoInicial.length > 5 &&
-            item.cadenamientoFinal.length > 5
+            // item.deterioros.length > 0 &&
+            item.prioridad !== null
+            // item.cadenamientoInicial.length > 5 &&
+            // item.cadenamientoFinal.length > 5
           ) {
             const cadInicial = item.cadenamientoInicial.split('+')
             const cadFinal = item.cadenamientoFinal.split('+')
