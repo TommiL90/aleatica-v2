@@ -509,8 +509,8 @@ const RoadSurfacesMeasurements = ({
       <div style={{ margin: '0 20px' }}>
         <SpreadSheet.Root>
           <SpreadSheet.Header
-            title="Desglose de mediciones"
-            description="Repositorio de mediciones de fichas de campo"
+            title="Mediciones de pavimentos"
+            description="Desglose de mediciones de pavimentos"
           >
             <form className="py-4">
               <SearchInput

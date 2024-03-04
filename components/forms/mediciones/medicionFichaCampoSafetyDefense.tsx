@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   useState,
   useCallback,
@@ -5,6 +6,7 @@ import React, {
   useId,
   useEffect,
   useMemo,
+  useRef,
 } from 'react'
 import * as Yup from 'yup'
 
@@ -234,6 +236,11 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     props.initValue ? props.initValue.porcentajeAfectacion : 100,
   )
 
+  const [alternativeUnitMeasurementValue, setAlternativeUnitMeasurementValue] =
+    useState(
+      props.initValue ? props.initValue.alternativeUnitMeasurementValue : 0,
+    )
+
   const [altInput, setAltInput] = useState(false)
   const [activeZincInputs, setActiveInputs] = useState(true)
 
@@ -332,7 +339,12 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>,
   ) => {
-    submitEnquiryForm({ ...values })
+    const data = {
+      ...values,
+      longitud,
+    }
+
+    submitEnquiryForm({ ...data })
 
     formikHelpers.resetForm()
   }
@@ -372,6 +384,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       : '',
     affectePercentage: porcentajeAfectacion || 100,
     ud: unidad || 0,
+    alternativeUnitMeasurementValue,
   }
   const handleGetInfo = async () => {
     const res = await fetch(`${process.env.API_URL}/MeasurementTab/GetInfo`, {
@@ -387,7 +400,13 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       setLongitud(length)
     }
   }
+
+  const isFirstRender = useRef(true)
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false // marca que ya no es la primera renderización
+      return
+    }
     handleGetInfo()
   }, [
     cadenamientoInicialSeleccionada,
@@ -395,8 +414,8 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     porcentajeAfectacion,
     compuestaSeleccionada,
     prioridadSeleccionada,
-    porcentajeAfectacion,
     unidad,
+    alternativeUnitMeasurementValue,
   ])
   return (
     <>
@@ -1389,7 +1408,6 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
                           step="0.01"
                           min={0}
                           max={100}
-                          defaultValue={100}
                           value={porcentajeAfectacion}
                           onChange={(evt: any) => {
                             setFieldValue(field.name, evt.target.valueAsNumber)
@@ -1515,6 +1533,9 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
                                 onChange={(evt: any) => {
                                   setFieldValue(
                                     field.name,
+                                    evt.target.valueAsNumber,
+                                  )
+                                  setAlternativeUnitMeasurementValue(
                                     evt.target.valueAsNumber,
                                   )
                                 }}

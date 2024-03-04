@@ -97,16 +97,15 @@ export default function ModalNewItem(props: PropsModalNewItem) {
                           tipologia: props.itemSelected.tipologia,
                           posicion: props.itemSelected.posicion,
                           disposicion: props.itemSelected.disposicion,
-                          ancho: props.itemSelected.ancho,
-                          espesor: props.itemSelected.espesor,
-                          litro: props.itemSelected.litro,
-                          tonelada: props.itemSelected.tonelada,
+
                           observaciones: props.itemSelected.observacion,
 
                           longitud: props.itemSelected.longitud,
                           unidad: props.itemSelected.unidad,
                           porcentajeAfectacion:
                             props.itemSelected.porcentajeAfectacion,
+                          alternativeUnitMeasurementValue:
+                            props.itemSelected.alternativeUnitMeasurementValue,
                         }
                       : null
                   }

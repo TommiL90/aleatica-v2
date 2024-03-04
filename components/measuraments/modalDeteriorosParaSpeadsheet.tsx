@@ -53,13 +53,13 @@ export default function ModalDeteriorosParaSpreadsheet(props: Props) {
 
             <div className="space-y-6 p-6">
               {props.options !== null && props.deterioros !== null ? (
-                <Loading label={''} />
-              ) : (
                 <Deterioros
                   onChange={(value: any) => props.onChange(value)}
                   deteriorosList={props.options}
                   deteriorosSelected={props.deterioros}
                 />
+              ) : (
+                <Loading label={''} />
               )}
             </div>
           </div>
