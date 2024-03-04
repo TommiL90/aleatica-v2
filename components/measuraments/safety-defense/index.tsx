@@ -49,6 +49,7 @@ import { spec } from 'node:test/reporters'
 import ModalNewItem from './modalEdit'
 import ModalDetail from './modalDetail'
 import ModalDeteriorosParaSpreadsheet from '../modalDeteriorosParaSpeadsheet'
+import SearchInput from '@/components/inputs/searchInput'
 
 interface Props {
   specialty: Specialty
@@ -165,6 +166,8 @@ interface Option {
 
 const SafetyDefenseMeasurement = ({
   specialty,
+  subcat,
+  esp,
   performanceCatalogByEsp: actuaciones,
   roadSection: tramo,
   highwayIntersection: entronque,
@@ -547,29 +550,60 @@ const SafetyDefenseMeasurement = ({
             title={`Mediciones de ${specialty.label.toLowerCase()}`}
             description={`Desglose de mediciones de ${specialty.label.toLowerCase()}`}
           >
-            <div className="flex items-center py-4">
-              <div className="flex">
-                <Button className="rounded-r-none" type="button">
-                  Filtros
-                </Button>
-                <div className="relative w-full">
-                  <Input
-                    type="search"
-                    placeholder="Buscar..."
-                    className="w-60 max-w-sm rounded-l-none"
-                  />
-                  <Button
-                    type="submit"
-                    size="icon"
-                    variant="secondary"
-                    className="absolute end-0 top-0 rounded-l-none"
-                  >
-                    <BiSearch size={16} />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <form className="py-4">
+              <SearchInput
+                label=""
+                hideLabel={true}
+                selectValue={null}
+                hideFilter={false}
+                selectPlaceholder="Subcategorias"
+                inputPlaceholder="Buscar mediciones"
+                options={{
+                  filtros: {
+                    tramos: tramo.map((item: any) => ({
+                      label: item.name,
+                      value: item.id,
+                    })),
+                    subcategorias: subcat.map((item: any) => ({
+                      label: item.text,
+                      value: String(item.value),
+                    })),
+                    especialidades: esp.map((item: any) => ({
+                      label: item.name,
+                      value: String(item.id),
+                      subcategory: String(item.mtSubCategoryActionId),
+                    })),
+                  },
+                  values: {
+                    subcategoria: filtroSubcategoria,
+                    especialidad: filtroEspecialidad,
+                    tramo: filtroTramo,
+                  },
+                }}
+                searchInputValue={searchInput}
+                onChangeInput={(newValue: any) => setSearchInput(newValue)}
+                onChangeSelect={(newValue: any) => setFiltros(newValue)}
+                onSearch={async (values: any) => {
+                  console.log(values)
+                  if (
+                    'subcategoria' in values &&
+                    values.subcategoria !== undefined
+                  )
+                    setFiltroSubcategoria(values.subcategoria.value)
+
+                  if (
+                    'especialidad' in values &&
+                    values.especialidad !== undefined
+                  )
+                    setFiltroEspecialidad(values.especialidad.value)
+
+                  if ('tramo' in values && values.tramo !== undefined)
+                    setFiltroTramo(values.tramo.value)
+
+                  await mutate()
+                }}
+              />
+            </form>
 
             <Button variant="default" onClick={handleNewItem}>
               <FaPlus className="mr-2" size={14} />
