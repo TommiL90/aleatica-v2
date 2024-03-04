@@ -225,7 +225,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
   )
 
   const [longitud, setLongitud] = useState(
-    props.initValue ? props.initValue.densidad : 0,
+    props.initValue ? props.initValue.longitud : 0,
   )
 
   const [unidad, setUnidad] = useState(
@@ -284,25 +284,27 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       .trim()
       .min(2, 'Demasiado corto!')
       .max(80, 'Demasiado largo!')
-      .optional(),
+      .optional()
+      .nullable(),
     cadenamientoFinal: Yup.string()
       .trim()
       .min(2, 'Demasiado corto!')
       .max(80, 'Demasiado largo!')
-      .optional(),
+      .optional()
+      .nullable(),
     tramo: Yup.string().required('Requerido'),
-    entronque: Yup.string().optional(),
-    gaza: Yup.string().optional(),
-    carril: Yup.string().optional(),
-    deterioros: Yup.array()
-      .min(1, 'Debe seleccionar al menos un deterioro.')
-      .optional(),
+    entronque: Yup.string().optional().nullable().nullable(),
+    gaza: Yup.string().optional().nullable(),
+    carril: Yup.string().optional().nullable(),
+    deterioros: Yup.array().optional().default([]),
+    // .min(1, 'Debe seleccionar al menos un deterioro.')
+
     actuacion: Yup.string().required('Requerido'),
     compuesta: Yup.string().required('Requerido'),
     prioridad: Yup.string().required('Requerido'),
-    tipologia: Yup.string().optional(),
-    posicion: Yup.string().optional(),
-    disposicion: Yup.string().optional(),
+    tipologia: Yup.string().optional().nullable(),
+    posicion: Yup.string().optional().nullable(),
+    disposicion: Yup.string().optional().nullable(),
 
     porcentajeAfectacion: Yup.number()
       .moreThan(-1, 'Debe ser un número positivo o cero')
@@ -314,11 +316,12 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
-    unidad: Yup.number().min(1).optional(),
+    unidad: Yup.number().min(0).optional().default(0),
     longitud: Yup.number()
       .optional()
       .moreThan(-1, 'Debe ser un número positivo o cero')
       .nullable()
+      .default(0)
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined || value === null) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
@@ -330,6 +333,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       .min(0)
       .moreThan(-1, 'Debe ser un número positivo o cero')
       .optional()
+      .default(0)
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
@@ -419,6 +423,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     unidad,
     alternativeUnitMeasurementValue,
   ])
+
   return (
     <>
       <div className="text-black">
@@ -1532,6 +1537,7 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
                                 type="number"
                                 step="0.01"
                                 min="0"
+                                value={alternativeUnitMeasurementValue}
                                 onChange={(evt: any) => {
                                   setFieldValue(
                                     field.name,

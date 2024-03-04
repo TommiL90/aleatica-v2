@@ -343,18 +343,16 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
       .max(80, 'Demasiado largo!')
       .optional(),
     tramo: Yup.string().required('Requerido'),
-    entronque: Yup.string().optional(),
-    gaza: Yup.string().optional(),
-    carril: Yup.string().optional(),
-    deterioros: Yup.array()
-      .min(1, 'Debe seleccionar al menos un deterioro.')
-      .optional(),
+    entronque: Yup.string().optional().nullable(),
+    gaza: Yup.string().optional().nullable(),
+    carril: Yup.string().optional().nullable(),
+    deterioros: Yup.array().optional().default([]),
     actuacion: Yup.string().required('Requerido'),
     compuesta: Yup.string().required('Requerido'),
 
     prioridad: Yup.string().required('Requerido'),
-    tipologia: Yup.string().optional(),
-    posicion: Yup.string().optional(),
+    tipologia: Yup.string().optional().nullable(),
+    posicion: Yup.string().optional().nullable(),
 
     porcentajeAfectacion: Yup.number()
       .moreThan(-1, 'Debe ser un número positivo o cero')
@@ -366,11 +364,11 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
-    unidad: Yup.number().min(1).required('Requerido'),
+    unidad: Yup.number().min(1).optional().default(0),
     longitud: Yup.number()
       .optional()
+      .default(0)
       .moreThan(-1, 'Debe ser un número positivo o cero')
-      .nullable()
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined || value === null) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
@@ -379,25 +377,25 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
     longitudAfectadas: Yup.number()
       .optional()
       .moreThan(-1, 'Debe ser un número positivo o cero')
-      .nullable()
+      .default(0)
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined || value === null) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
     areaElemento: Yup.number()
-      .optional()
       .moreThan(-1, 'Debe ser un número positivo o cero')
-      .nullable()
+      .optional()
+      .default(0)
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined || value === null) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
     areaTotal: Yup.number()
-      .optional()
       .moreThan(-1, 'Debe ser un número positivo o cero')
-      .nullable()
+      .optional()
+      .default(0)
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined || value === null) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
