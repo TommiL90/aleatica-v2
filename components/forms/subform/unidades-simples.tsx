@@ -38,7 +38,7 @@ interface SimplyUN {
 }
 
 export function UnidadesSimples(props: UnidadesSimplesProps) {
-  const { data: subcatRes } = useSWRImmutable(
+  const { data: subcatRes, isLoading } = useSWRImmutable(
     `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
     fetcher,
   )
@@ -57,6 +57,11 @@ export function UnidadesSimples(props: UnidadesSimplesProps) {
   const [simplyUn, setSimplyUn] = useState<SimplyUN[]>([] as SimplyUN[])
 
   const newId = useId()
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
   const subCategoryOptions = subcatRes.result.map((s: any) => ({
     value: s.value,
     label: s.text,
@@ -140,10 +145,6 @@ export function UnidadesSimples(props: UnidadesSimplesProps) {
     )
     setSimplyUn(udSimpleOptions)
   }
-
-  useEffect(() => {
-    set_document(document)
-  }, [])
 
   return (
     <div className="mb-4">

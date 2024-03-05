@@ -34,6 +34,11 @@ import {
 } from './functions'
 import ModalDetail from './modal-detail'
 import ModalSimplesParaSpreadsheet from './modal-simples'
+import Breadcrumbs from '@/components/breadcrumbs'
+import { useStateCallback } from '@/hooks/useStateCallback'
+import ModalNewItem from './modal-edit'
+import { FaPlus } from 'react-icons/fa'
+import SearchInput from '@/components/inputs/searchInput'
 
 interface ComposCatalogTableProps {
   subEsp: Subspeciality[]
@@ -70,6 +75,13 @@ export interface UnidadCompuesta {
   especialidadesFilter: any[]
   newItem: boolean // indica si es elemento nuevo: true, o cagado desde bd: false
 }
+
+const breadcrumbs = [
+  { label: 'Inicio', link: '/' },
+  { label: 'Repositorio', link: null },
+  { label: 'Catálogo de unidades compuestas', link: null },
+]
+
 const ComposCatalogTable = ({
   subEsp,
   subCat,
@@ -97,6 +109,7 @@ const ComposCatalogTable = ({
   const [showDescriptionModal, setShowDescriptionModal] = useState(false)
   const [showModalSimpleUd, setShowModalSimpleUd] = useState(false)
   const [showModaldelete, setShowModalDelete] = useState(false)
+  const [modalNewItem, setModalNewItem] = useStateCallback(false)
   const [indexOfDescription, setIndexOfDescription] = useState(0)
   const [item, setItem] = useState<UnidadCompuesta>(composGetEmpty)
 
@@ -298,6 +311,11 @@ const ComposCatalogTable = ({
     [mutate, trigger, unidades],
   )
 
+  const handleNewItem = useCallback(() => {
+    setItemId((prev) => 0)
+    setModalNewItem(true, () => setItemId((prev) => 0))
+  }, [setModalNewItem])
+
   // pasar dentro de modal para optimizar componente
   const handleSetDescription = useCallback(
     (value: string) => {
@@ -336,36 +354,63 @@ const ComposCatalogTable = ({
   if (error) return <p>Error: {error}</p>
   return (
     <section>
-      <div>{`${process.env.API_URL}/CompositeCatalog/GetAllPaginated?MtSpecialtyActionId=${filtroEspecialidad}&SearchByProp=compositeUdName&SearchCriteria=${searchInput}&PageSize=2147483647`}</div>
+      <Breadcrumbs items={breadcrumbs} />
       <div style={{ margin: '0 20px' }}>
         <SpreadSheet.Root>
           <SpreadSheet.Header
-            title="Catalogo de unidades compuestas"
-            description="Repositorio de unidades compuestas"
+            title="Catálogo de unidades compuestas"
+            description="Repositório de unidades compuestas"
           >
-            <div className="flex items-center py-4">
-              <div className="flex">
-                <Button className="rounded-r-none" type="button">
-                  Filtros
-                </Button>
-                <div className="relative w-full">
-                  <Input
-                    type="search"
-                    placeholder="Buscar..."
-                    className="w-60 max-w-sm rounded-l-none"
-                  />
-                  <Button
-                    type="submit"
-                    size="icon"
-                    variant="secondary"
-                    className="absolute end-0 top-0 rounded-l-none"
-                  >
-                    <BiSearch size={16} />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <form className="py-4">
+              <SearchInput
+                label=""
+                hideLabel={true}
+                selectValue={null}
+                hideFilter={false}
+                selectPlaceholder="Subcategorias"
+                inputPlaceholder="Buscar de unidades simples"
+                options={{
+                  filtros: {
+                    subcategorias: subCat.map((item: any) => ({
+                      label: item.text,
+                      value: String(item.value),
+                    })),
+                    especialidades: esp.map((item: any) => ({
+                      label: item.name,
+                      value: String(item.id),
+                      subcategory: String(item.mtSubCategoryActionId),
+                    })),
+                  },
+                  values: {
+                    subcategoria: filtroSubcategoria,
+                    especialidad: filtroEspecialidad,
+                  },
+                }}
+                searchInputValue={searchInput}
+                onChangeInput={(newValue: any) => setSearchInput(newValue)}
+                onChangeSelect={(newValue: any[]) => {}}
+                onSearch={async (values: any) => {
+                  console.log(values)
+                  if (
+                    'subcategoria' in values &&
+                    values.subcategoria !== undefined
+                  )
+                    setFiltroSubcategoria(values.subcategoria.value)
+
+                  if (
+                    'especialidad' in values &&
+                    values.especialidad !== undefined
+                  )
+                    setFiltroEspecialidad(values.especialidad.value)
+
+                  await mutate()
+                }}
+              />
+            </form>
+            <Button variant="default" onClick={handleNewItem}>
+              <FaPlus className="mr-2" size={14} />
+              Nuevo
+            </Button>
           </SpreadSheet.Header>
           <SpreadSheet.Body
             loading={isLoading}
@@ -448,6 +493,100 @@ const ComposCatalogTable = ({
           }
           onClose={() => setShowModalSimpleUd(!showModalSimpleUd)}
           isModalOpen={showModalSimpleUd}
+        />
+      ) : null}
+      {modalNewItem ? (
+        <ModalNewItem
+          isModalOpen={modalNewItem}
+          title={itemId === 0 ? 'Nueva unidad' : 'Actualizar unidad'}
+          itemSelected={unidades.find(
+            (item: UnidadCompuesta) => item.id === itemId,
+          )}
+          simples={simpleCatalog.map((item) => ({
+            id: item.simpleUdId,
+            label: item.simpleUdName,
+            value: item.id,
+            global: item.global,
+            subcategoryId: item.mtSubCategoryActionId,
+            especialityId: item.mtSpecialtyActionId,
+            especialityName: item.mtSpecialtyAction,
+            description: item.description,
+          }))}
+          unidadesObra={unitMeasurement.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          subcategorias={subCat.map((item) => ({
+            label: item.text,
+            value: item.value,
+          }))}
+          especialidades={esp.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+            subcategory: item.mtSubCategoryActionId,
+          }))}
+          onMutate={async (values: any) => {
+            console.log(values)
+            // await mutate();
+            // if(itemId !== 0){
+            //     setModalNewItem(false)
+            // }
+
+            let toastId
+            try {
+              toastId = toast.loading('Enviando... 🚀')
+              // Submit data
+              const value: any = {
+                id: itemId,
+                compositeUdName: values.nombreUnidadCompuesta,
+                description: values.descripcionUnidadCompuesta,
+                mtSpecialtyActionId: parseInt(values.especialidadActuacion),
+                mtUnitOfMeasurementId: parseInt(values.udObra),
+                count: 0,
+                sapId: values.codigoSAP,
+                code: values.codigoCompuesto,
+                simpleCatalogsIds: values.unidadesSimples.map(
+                  (item: any) => item.value,
+                ),
+              }
+
+              let result: any = null
+
+              if (itemId === 0) result = await trigger(value)
+              else {
+                result = await fetch(
+                  `${process.env.API_URL}/CompositeCatalog/Update/${itemId}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify(value),
+                  },
+                )
+              }
+
+              if (
+                result != undefined &&
+                (result.status === 200 || result.status === 201)
+              ) {
+                toast.success('Enviado con éxito 🙌', { id: toastId })
+              }
+              if (result != undefined && result.status >= 400) {
+                toast.error('No se puede enviar 😱', { id: toastId })
+              }
+
+              await mutate()
+              if (itemId !== 0) {
+                setModalNewItem(false)
+              }
+            } catch (e) {
+              console.log(e)
+              toast.error('No se puede enviar 😱', { id: toastId })
+            }
+          }}
+          onClose={() => setModalNewItem(false)}
         />
       ) : null}
       <ModalDelete

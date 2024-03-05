@@ -15,7 +15,7 @@ const SpreadSheetHeader = ({ title, description, children }: Props) => {
   return (
     <div className="justify-between pt-4 text-left">
       <div>
-        <h2 className={cn(titleVariants({ variant: 'h3' }))}>{title}</h2>
+        <h2 className={cn(titleVariants({ variant: 'h4' }))}>{title}</h2>
         <p className={cn(textVariants({ variant: 'muted' }))}>{description}</p>
       </div>
       <div className="flex items-center justify-between">{children}</div>
