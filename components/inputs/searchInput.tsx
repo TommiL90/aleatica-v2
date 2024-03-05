@@ -7,14 +7,8 @@ import React, {
   useState,
 } from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import ModalFiltrosBusqueda from '../common-modals/filtrosBusqueda'
-import { cn } from '@/lib/utils'
-
-interface Option {
-  label: string
-  value: string
-  checked: boolean
-}
 
 interface Props {
   label: string
@@ -28,6 +22,12 @@ interface Props {
   onChangeSelect: Function
   onChangeInput: Function
   onSearch: Function
+}
+
+interface Option {
+  label: string
+  value: string
+  checked: boolean
 }
 
 export default function SearchInput(props: Props) {
@@ -91,8 +91,8 @@ export default function SearchInput(props: Props) {
           type="search"
           onChange={handlerValueInput}
           id="search-dropdown"
-          className={cn(
-            'z-20 block border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:border-l-gray-700 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500  sm:w-full md:w-96 lg:w-96 xl:w-96',
+          className={classNames(
+            'z-20 block border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:border-l-gray-700 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500  sm:w-full md:min-w-[384px] lg:min-w-[384px] xl:min-w-[384px]',
             !props.hideFilter
               ? 'rounded-r-lg border-l-2 border-l-gray-50'
               : 'rounded',

@@ -177,7 +177,6 @@ export default function Header() {
     menuDatosGenerales,
     menuCatalogosGlobales,
     menuProyecto,
-
     menuUsuario,
     menuConsultas,
   ])
@@ -411,7 +410,7 @@ export default function Header() {
   }
 
   return (
-    <header className="relative z-20 bg-primary">
+    <header className="relative z-20 bg-green-400">
       <nav
         className="flex w-full items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -932,19 +931,19 @@ export default function Header() {
                                 href="/maestros/categorias_proyecto"
                                 className="block rounded-lg pl-10 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                               >
-                                Categorías del Proyecto
+                                Categorías del Proyecto
                               </Link>
                               <Link
                                 href="/maestros/categorias_actuacion"
                                 className="block rounded-lg pl-10 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                               >
-                                Categorías de Actuación
+                                Categorías de Actuación
                               </Link>
                               <Link
                                 href="/maestros/subcategorias_actuacion"
                                 className="block rounded-lg pl-10 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                               >
-                                Subcategorías de Actuación
+                                Subcategorías de Actuación
                               </Link>
                               <Link
                                 href="/maestros/especialidades_actuacion"
@@ -1144,6 +1143,18 @@ export default function Header() {
                         >
                           Deterioros
                         </Link>
+                        <Link
+                          href="/precios/udsimples"
+                          className="block rounded-lg pl-10 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                        >
+                          Precios de unidades simples
+                        </Link>
+                        <Link
+                          href="/precios/udcompuestas"
+                          className="block rounded-lg pl-10 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                        >
+                          Precios de unidades compuestas
+                        </Link>
                       </div>
                     ) : null}
                   </div>
@@ -1240,48 +1251,27 @@ export default function Header() {
                             </div>
                           ) : null}
                         </div>
-                        <div className="px-3">
-                          <button
-                            type="button"
-                            onClick={handleMenuPreciosPlanificacionMobileClick}
-                            className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                            aria-controls="disclosure-1"
-                            aria-expanded="false"
-                          >
-                            <span className="flex items-center">
-                              <FaMapSigns className="mr-5 text-green-500" />
-                              Precios planificacion
-                            </span>
-                            <svg
-                              className="h-5 w-5 flex-none"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              aria-hidden="true"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                          {menuPreciosPlanificacionMobile ? (
-                            <div className="mt-2 space-y-2" id="disclosure-1">
-                              <Link
-                                href="/precios/udsimples"
-                                className="block rounded-lg py-2 pl-6 pr-3 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                              >
-                                Precios unidades simples
-                              </Link>
-                              <Link
-                                href="/precios/udcompuestas"
-                                className="block rounded-lg py-2 pl-6 pr-3 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                              >
-                                Precios unidades compuestas
-                              </Link>
-                            </div>
-                          ) : null}
-                        </div>
+                        {/* <div className="px-3">
+                                                                <button type="button" onClick={handleMenuPreciosPlanificacionMobileClick} className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50" aria-controls="disclosure-1" aria-expanded="false">
+                                                                    <span className="flex items-center">
+                                                                        <FaMapSigns className="mr-5 text-green-500" />
+                                                                        Precios planificacion
+                                                                    </span>
+                                                                    <svg className="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                                                                    </svg>
+                                                                </button>
+                                                                {
+                                                                    menuPreciosPlanificacionMobile ? (
+                                                                        <div className="mt-2 space-y-2" id="disclosure-1">
+                                                                            <Link href="/precios/udsimples" className="block rounded-lg py-2 pl-6 pr-3 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50">Precios unidades simples</Link>
+                                                                            <Link href="/precios/udcompuestas" className="block rounded-lg py-2 pl-6 pr-3 text-xs font-semibold leading-7 text-gray-900 hover:bg-gray-50">Precios unidades compuestas</Link>
+
+                                                                        </div>
+
+                                                                    ) : null
+                                                                }
+                                                            </div> */}
                         <div className="px-3">
                           <button
                             type="button"
