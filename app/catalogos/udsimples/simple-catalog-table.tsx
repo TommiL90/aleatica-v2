@@ -52,6 +52,11 @@ import ModalDescriptionCell from '@/components/common-modals/modal-cell-descript
 import ModalDetail from './modal-details'
 import ModalEspecialidadesParaSpreadsheet from './modalEspecialidadesParaSpreadsheet'
 import { ModalDelete } from '@/components/common-modals/modal-delete'
+import { useStateCallback } from '@/hooks/useStateCallback'
+import ModalNewItem from './modal-edit'
+import { FaPlus } from 'react-icons/fa'
+import SearchInput from '@/components/inputs/searchInput'
+import Breadcrumbs from '@/components/breadcrumbs'
 
 interface DataResponse<T> {
   status: number
@@ -113,6 +118,12 @@ interface Option {
   checked: boolean
 }
 
+const breadcrumbs = [
+  { label: 'Inicio', link: '/' },
+  { label: 'Repositorio', link: null },
+  { label: 'Catálogo de unidades simples', link: null },
+]
+
 export interface SimpleCatalogProps {
   subEsp: Subspeciality[]
   esp: SpecialtyAction[]
@@ -138,7 +149,7 @@ export default function SimpleCatalog({
   const { data, mutate, isLoading, error } = useSWR<
     DataResponse<SimpleCatalogPaginated>
   >(
-    `${process.env.API_URL}/SimpleCatalog/GetAllPaginated?${filtroEspecialidad.length ? ` MtSpecialtyActionId=${filtroEspecialidad}&` : ''}${searchInput.length ? `SearchCriteria=${searchInput}&` : ''}PageSize=2147483647`,
+    `${process.env.API_URL}/SimpleCatalog/GetAllPaginated?MtSpecialtyActionId=${filtroEspecialidad}&SearchByProp=simpleUdName&SearchCriteria=${searchInput}&PageSize=2147483647`,
     fetcher,
   )
 
@@ -152,6 +163,7 @@ export default function SimpleCatalog({
   const [indexOfDescription, setIndexOfDescription] = useState(0)
   const [item, setItem] = useState<UnidadSimple>(getEmpty)
   const [modalDetail, setModalDetail] = useState(false)
+  const [modalNewItem, setModalNewItem] = useStateCallback(false)
   // const rows = useMemo(() => getRows(people), [people])
 
   const handleLocationClick = useCallback(
@@ -357,7 +369,11 @@ export default function SimpleCatalog({
     [esp, setUnidadesSimples],
   )
 
-  // pasar dentro de modal para optimizar componente
+  const handleNewItem = useCallback(() => {
+    setItemId((prev) => 0)
+    setModalNewItem(true, () => setItemId((prev) => 0))
+  }, [setModalNewItem])
+
   const handleSetDescription = useCallback(
     (value: string) => {
       const updatedItem: UnidadSimple = {
@@ -395,36 +411,64 @@ export default function SimpleCatalog({
   if (error) return <p>Error: {error}</p>
   return (
     <section>
-      <div>{`${process.env.API_URL}/SimpleCatalog/GetAllPaginated?${filtroEspecialidad.length ? ` MtSpecialtyActionId=${filtroEspecialidad}&` : ''}${searchInput.length ? `SearchCriteria=${searchInput}&` : ''}PagesSize=2147483647`}</div>
+      <Breadcrumbs items={breadcrumbs} />
       <div style={{ margin: '0 20px' }}>
         <SpreadSheet.Root>
           <SpreadSheet.Header
-            title="Catalogo de unidades simples"
-            description="Repositorio de unidades de obra simples"
+            title="Catálogo de unidades simples"
+            description="Repositório de unidades de obra simples"
           >
-            <div className="flex items-center py-4">
-              <div className="flex">
-                <Button className="rounded-r-none" type="button">
-                  Filtros
-                </Button>
-                <div className="relative w-full">
-                  <Input
-                    type="search"
-                    placeholder="Buscar..."
-                    className="w-60 max-w-sm rounded-l-none"
-                  />
-                  <Button
-                    type="submit"
-                    size="icon"
-                    variant="secondary"
-                    className="absolute end-0 top-0 rounded-l-none"
-                  >
-                    <BiSearch size={16} />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            {' '}
+            <form className="py-4">
+              <SearchInput
+                label=""
+                hideLabel={true}
+                selectValue={null}
+                hideFilter={false}
+                selectPlaceholder="Subcategorias"
+                inputPlaceholder="Buscar de unidades simples"
+                options={{
+                  filtros: {
+                    subcategorias: subCat.map((item: any) => ({
+                      label: item.text,
+                      value: String(item.value),
+                    })),
+                    especialidades: esp.map((item: any) => ({
+                      label: item.name,
+                      value: String(item.id),
+                      subcategory: String(item.mtSubCategoryActionId),
+                    })),
+                  },
+                  values: {
+                    subcategoria: filtroSubcategoria,
+                    especialidad: filtroEspecialidad,
+                  },
+                }}
+                searchInputValue={searchInput}
+                onChangeInput={(newValue: any) => setSearchInput(newValue)}
+                onChangeSelect={(newValue: Option[]) => {}}
+                onSearch={async (values: any) => {
+                  console.log(values)
+                  if (
+                    'subcategoria' in values &&
+                    values.subcategoria !== undefined
+                  )
+                    setFiltroSubcategoria(values.subcategoria.value)
+
+                  if (
+                    'especialidad' in values &&
+                    values.especialidad !== undefined
+                  )
+                    setFiltroEspecialidad(values.especialidad.value)
+
+                  await mutate()
+                }}
+              />
+            </form>
+            <Button variant="default" onClick={handleNewItem}>
+              <FaPlus className="mr-2" size={14} />
+              Nuevo
+            </Button>
           </SpreadSheet.Header>
           <SpreadSheet.Body
             loading={isLoading}
@@ -516,6 +560,107 @@ export default function SimpleCatalog({
             subcategory: item.mtSubCategoryActionId,
           }))}
           onClose={() => setModalDetail(false)}
+        />
+      ) : null}
+      {modalNewItem ? (
+        <ModalNewItem
+          isModalOpen={modalNewItem}
+          title={itemId === 0 ? 'Nueva unidad' : 'Actualizar unidad'}
+          itemSelected={unidades.find(
+            (item: UnidadSimple) => item.id === itemId,
+          )}
+          subespecialidaddes={subEsp.map((item) => ({
+            label: item.name,
+            value: item.id,
+            subcategoryId: item.mtSubCategoryActionId,
+            especialityId: item.mtSpecialtyActionId,
+            especialityName: item.mtSpecialtyAction,
+            code: item.code,
+            route: item.route,
+          }))}
+          unidadesObra={unitMeasurement.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          subcategorias={subCat.map((item) => ({
+            label: item.text,
+            value: item.value,
+          }))}
+          especialidades={esp.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+            subcategory: item.mtSubCategoryActionId,
+          }))}
+          onMutate={async (values: any) => {
+            // await mutate();
+            // if(itemId !== 0){
+            //     setModalNewItem(false)
+            // }
+
+            let toastId
+            try {
+              toastId = toast.loading('Enviando... 🚀')
+              // Submit data
+              const value: any = {
+                id: itemId,
+                simpleUdName: values.nombreUnidadSimple,
+                description: values.descripcionUnidadSimple,
+                mtUnitOfMeasurementId: parseInt(values.udObra),
+                mtSpecialtyActionId: parseInt(values.especialidadActuacion),
+                accountantConcept: '',
+                global: values.global,
+                sapId: values.sap,
+                status: 0,
+                mtSubspecialityId:
+                  values.subEspecialidad !== null
+                    ? values.subEspecialidad.value
+                    : null,
+              }
+
+              let result: any = null
+
+              if (itemId === 0) result = await trigger(value)
+              else {
+                result = await fetch(
+                  `${process.env.API_URL}/SimpleCatalog/Update/${itemId}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify(value),
+                  },
+                )
+              }
+
+              if (
+                result != undefined &&
+                (result.status === 200 || result.status === 201)
+              ) {
+                toast.success('Enviado con éxito 🙌', { id: toastId })
+              }
+              if (result != undefined && result.status >= 400) {
+                console.log(result)
+
+                toast.error(`No se puede enviar. ${result.errorMessage}😱`, {
+                  id: toastId,
+                })
+              }
+
+              await mutate()
+              if (itemId !== 0) {
+                setModalNewItem(false)
+              }
+            } catch (e) {
+              console.log(e)
+              toast.error(
+                `No se puede enviar. Error en el servidor. Consulte a servicios 😱`,
+                { id: toastId },
+              )
+            }
+          }}
+          onClose={() => setModalNewItem(false)}
         />
       ) : null}
     </section>

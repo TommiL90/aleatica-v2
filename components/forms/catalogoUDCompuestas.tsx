@@ -531,9 +531,10 @@ function CatalogoUDCompuestasForm(props: FormProps) {
                       }: any) => (
                         <div>
                           <InputMask
-                            mask="aaa.aaa.9999"
-                            alwaysShowMask={true}
-                            maskPlaceholder="xxx.xxx.9999"
+                            // mask="aaa.aaa.9999"
+                            mask=""
+                            // alwaysShowMask={true}
+                            maskPlaceholder=""
                             maskChar="_"
                             onChange={(evt: any) => {
                               setFieldValue(field.name, evt.target.value)
@@ -546,9 +547,9 @@ function CatalogoUDCompuestasForm(props: FormProps) {
                                 : 'block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900  focus:border-blue-500 focus:ring-blue-500 focus-visible:border-blue-500 dark:focus:border-blue-500 dark:focus:ring-blue-500',
                             )}
                           />
-                          <small className="text-gray-500">
+                          {/* <small className="text-gray-500">
                             Formato: XXX.XXX.9999
-                          </small>
+                          </small> */}
                         </div>
                       )}
                     </Field>

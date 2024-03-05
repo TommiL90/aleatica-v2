@@ -434,20 +434,21 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
       .min(2, 'Demasiado corto!')
       .max(80, 'Demasiado largo!')
       .required('Requerido'),
-    // noEstructura: Yup.string().required('Requerido'),
-    // tipoEstructura: Yup.string().required('Requerido'),
-    // eje: Yup.string().required('Requerido'),
-    // lado: Yup.string().required('Requerido'),
-    // calificacion: Yup.string().required('Requerido'),
-    // deterioros: Yup.array().min(1, 'Debe seleccionar al menos un deterioro.'),
-    // actuacion: Yup.string().required('Requerido'),
-    // compuesta: Yup.string().required('Requerido'),
-    // prioridad: Yup.string().required('Requerido'),
-    // observaciones: Yup.string()
-    //   .optional()
-    //   .trim()
-    //   .min(2, 'Demasiado corto!')
-    //   .max(80, 'Demasiado largo!'),
+    noEstructura: Yup.string().required('Requerido'),
+    tipoEstructura: Yup.string().required('Requerido'),
+    eje: Yup.string().required('Requerido'),
+    lado: Yup.string().required('Requerido'),
+    calificacion: Yup.string().required('Requerido'),
+    deterioros: Yup.array().min(1, 'Debe seleccionar al menos un deterioro.'),
+    actuacion: Yup.string().required('Requerido'),
+    compuesta: Yup.string().required('Requerido'),
+    prioridad: Yup.string().required('Requerido'),
+    observaciones: Yup.string()
+      .optional()
+      .nullable()
+      .trim()
+      .min(2, 'Demasiado corto!')
+      .max(80, 'Demasiado largo!'),
     // Juntas
     anchoCalzada: Yup.number()
       .moreThan(-1, 'Debe ser un número positivo o cero')

@@ -8,7 +8,7 @@ interface BreadProps {
 export default function Breadcrumbs(props: BreadProps) {
   return (
     <nav
-      className="max-h-screen w-full bg-white p-2.5 dark:bg-gray-900 lg:m-auto lg:w-8/12"
+      className=" ml-4 w-full bg-white px-2 pt-3 dark:bg-gray-900 lg:w-8/12 "
       aria-label="Breadcrumb"
     >
       <ol className="inline-flex items-center space-x-1 md:space-x-3">
