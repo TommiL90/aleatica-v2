@@ -45,6 +45,7 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
     positionRes,
     sideRes,
     typologyRes,
+    structureTypeRes,
   } = await getRepositoriesForMeasurements(Number(esp), Number(actuacion))
   const data: DataResponse<SpecialtyAction> = await fetcher(
     `${process.env.API_URL}/MtSpecialtyAction/FindById/${esp}`,
@@ -89,7 +90,7 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
           element={elementRes.result}
           position={positionRes.result}
           side={sideRes.result}
-          typology={typologyRes.result}
+          structureType={structureTypeRes.result}
         />
       )}
       {result.mtSubCategoryActionId === 5 && result.id === 38 && (

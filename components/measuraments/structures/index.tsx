@@ -15,6 +15,7 @@ import {
   MtSide,
   MtSlipLaneRoad,
   MtStructureNumber,
+  MtStructureType,
   MtTypology,
   PerformanceCatalogByEsp,
   SubcategoryActionsGetDropdownItems,
@@ -63,7 +64,7 @@ interface Props {
   compositeCatalogByEsp: CompositeCatalogByEsp[]
   deteriorationTypeByEsp: MtDeteriorationTypeByEsp[]
   structureNumber: MtStructureNumber[]
-  typology: MtTypology[]
+  structureType: MtStructureType[]
   axis: MtAxis[]
   side: MtSide[]
   element: MtElement[]
@@ -210,7 +211,7 @@ const StructuresMeasurements = ({
   compositeCatalogByEsp: compuestas,
   deteriorationTypeByEsp: deterioros,
   structureNumber: numeroEstructura,
-  typology: tipoEstructura,
+  structureType: tipoEstructura,
   axis: eje,
   side: lado,
   element: elemento,

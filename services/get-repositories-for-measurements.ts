@@ -177,6 +177,13 @@ export interface MtDisposition {
   disabled: boolean
 }
 
+export interface MtStructureType {
+  code: string
+  name: string
+  id: number
+  disabled: boolean
+}
+
 interface Response<T> {
   status: number
   result: T[]
@@ -223,6 +230,7 @@ export const getRepositoriesForMeasurements = cache(
         calificationRes,
         positionRes,
         dispositionRes,
+        structureTypeRes,
       ] = await Promise.all([
         fetcher(
           `${process.env.API_URL}/MtSubCategoryAction/GetDropdownItems?fieldNameValue=Id&fieldNameText=Name`,
@@ -278,6 +286,9 @@ export const getRepositoriesForMeasurements = cache(
         fetcher(`${process.env.API_URL}/MtDisposition/GetAll`) as Promise<
           Response<MtDisposition>
         >,
+        fetcher(`${process.env.API_URL}/MtStructureType/GetAll`) as Promise<
+          Response<MtStructureType>
+        >,
       ])
 
       return {
@@ -299,6 +310,7 @@ export const getRepositoriesForMeasurements = cache(
         calificationRes,
         positionRes,
         dispositionRes,
+        structureTypeRes,
       }
     } catch (error) {
       console.log(error)
