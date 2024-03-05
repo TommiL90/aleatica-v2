@@ -191,7 +191,7 @@ export default function Table(props: Props) {
       {
         // props.error ? null :
         // (
-        <div className="bg-white p-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
+        <div className="bg-gray-50 p-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
           <h3>{props.titulo}</h3>
           {props.hideDescripcion == undefined || !props.hideDescripcion ? (
             <p className="mb-4 mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -258,7 +258,7 @@ export default function Table(props: Props) {
           label="Error"
           description="Ha ocurrido algun problema al contactar con el servidor"
         />
-      ) : (
+      ) : props.columsValues.length > 0 ? (
         <table
           id="myTable"
           className="w-full text-left text-sm text-gray-500 dark:text-gray-400"
@@ -444,9 +444,11 @@ export default function Table(props: Props) {
             })}
           </tbody>
         </table>
+      ) : (
+        <div className="bg-white p-8"> No hay elementos disposibles</div>
       )}
 
-      {!props.hideNavigation ? (
+      {!props.hideNavigation && props.columsValues.length > 0 ? (
         <nav
           className="mx-2 my-4 flex items-center justify-between pt-4"
           aria-label="Table navigation"

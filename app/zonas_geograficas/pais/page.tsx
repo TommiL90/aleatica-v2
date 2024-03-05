@@ -93,8 +93,6 @@ export default function Pais() {
 
   return (
     <main>
-      <Header></Header>
-
       {/* <!-- Start block --> */}
       <section className="max-h-screen w-full bg-white dark:bg-gray-900 lg:m-auto lg:w-10/12">
         <Breadcrumbs items={breadcrumbs} />

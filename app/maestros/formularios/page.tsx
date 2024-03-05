@@ -46,7 +46,7 @@ export default function MaestroFormulario() {
   ])
 
   const { data, mutate, isLoading } = useSWR(
-    `${process.env.API_URL}/MtProcessForm/GetAllPaginated?Page=${pageIndex}&PageSize=${pageSize}&SearchByProp=Code&SearchCriteria=${searchInput}&OrderByProp=Order&OrderByCriteria=asc`,
+    `${process.env.API_URL}/MtProcessForm/GetAllPaginated?Page=${pageIndex}&PageSize=${pageSize}&SearchByProp=concept&SearchCriteria=${searchInput}&OrderByProp=Order&OrderByCriteria=asc`,
     fetcher,
   )
   const mutation = useSWRMutation(

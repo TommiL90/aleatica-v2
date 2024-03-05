@@ -7,6 +7,7 @@ import Table from '@/components/tables/table'
 import { useState } from 'react'
 
 import ModalDeleteRow from '@/components/common-modals/modal-delete-row'
+import { useAppContext } from '@/context/appContext'
 
 interface Option {
   label: string
@@ -79,6 +80,9 @@ export default function PxQActuacion1() {
 
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [changedRows, setChangedRows] = useState<any[]>([])
+
+  const { unidadMonedaIndicador, seguimientoIndicadores, monedaIndicador } =
+    useAppContext()
 
   const mapFieldsOrdered = [
     { fieldName: 'unidadNegocio', fieldType: 'string' },

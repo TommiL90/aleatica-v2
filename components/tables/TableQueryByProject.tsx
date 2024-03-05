@@ -1,4 +1,5 @@
 'use client'
+
 import {
   FaEdit,
   FaEllipsisV,
@@ -6,6 +7,7 @@ import {
   FaRegTrashAlt,
   FaRegFile,
   FaArrowCircleRight,
+  FaRegSave,
 } from 'react-icons/fa'
 import Link from 'next/link'
 import React, {
@@ -20,11 +22,10 @@ import '@szhsin/react-menu/dist/transitions/slide.css'
 import Select from 'react-select'
 
 import SearchInput from '../inputs/searchInput'
-import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import ModalFiltrosBusqueda from '../common-modals/filtrosBusqueda'
-import ErrorComponent from '../error'
 import Loading from '../loading'
+import ErrorComponent from '../error'
+import ModalFiltrosBusqueda from '../common-modals/filtrosBusqueda'
 
 const udsimples: any[] = new Array(20)
 udsimples.fill(20)
@@ -66,6 +67,7 @@ interface Props {
   onChangeBussinessUnit: Function
   onChangeInput: Function
   onSearch: Function
+  onFilter: Function
 
   hideCheckboxColumn: boolean
   loading: boolean
@@ -94,16 +96,20 @@ interface Props {
 
   bussinessUnitPlaceholder: string
 
+  orderPlaceholder: string
+  orderItems: any[]
+  selectedOrderItem: any
+  onChangeOrder: Function
+
   mapFields: any[]
 
   menuRow: any[]
 }
 
-export default function Table(props: Props) {
-  const router = useRouter()
+export function TableQueryByProject(props: Props) {
   const [_document, set_document] = useState<Document>()
   const [modalFilter, setModalFilter] = useState(false)
-  console.log(props.selectedItems)
+
   useEffect(() => {
     set_document(document)
   }, [])
@@ -159,6 +165,8 @@ export default function Table(props: Props) {
     switch (iconName) {
       case 'new':
         return <FaRegFile className="mr-2" />
+      case 'save':
+        return <FaRegSave className="mr-2" />
       case 'continue':
         return <FaArrowCircleRight className="mr-2" />
       case 'edit':
@@ -187,7 +195,7 @@ export default function Table(props: Props) {
           <MenuItem key={idx} onClick={(evt: any) => opt.onClick(id)}>
             <div className="flex w-full">
               <div className="w-2/12">
-                <span className="block pt-0.5">{opt.icon}</span>
+                <span className="block pt-0.5">{getIcon(opt.icon)}</span>
               </div>
               <div className="w-2/12"></div>
               <div className="w-8/12">{opt.label}</div>
@@ -203,7 +211,7 @@ export default function Table(props: Props) {
       {
         // props.error ? null :
         // (
-        <div className="bg-white p-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
+        <div className="bg-gray-50 p-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
           <h3>{props.titulo}</h3>
           {props.hideDescripcion == undefined || !props.hideDescripcion ? (
             <p className="mb-4 mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -212,102 +220,150 @@ export default function Table(props: Props) {
           ) : null}
 
           <div className="mt-2 flex items-center justify-between pb-4">
-            <form className="mb-6 grid gap-6 md:grid-cols-4">
-              <button
-                type="button"
-                className="bg-blue-700 text-sm text-white"
-                onClick={() => setModalFilter(true)}
-              >
-                Filtros
-              </button>
+            <form>
+              <div className="mb-6 grid gap-6 md:grid-cols-3">
+                <Select
+                  id="unidad"
+                  placeholder={props.bussinessUnitPlaceholder}
+                  instanceId="unidad"
+                  options={[
+                    { label: props.bussinessUnitPlaceholder, value: 0 },
+                    ...props.bussinessItems,
+                  ]}
+                  value={props.selectedBussinessUnit}
+                  onChange={(value: any) => props.onChangeBussinessUnit(value)}
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    menuList: (base) => ({ ...base, color: 'black' }),
+                  }}
+                  menuPortalTarget={_document?.body}
+                  menuPlacement="auto"
+                  className={cn(
+                    'block w-full rounded-lg border text-sm',
+                    'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+                  )}
+                />
 
-              <Select
-                id="unidad"
-                placeholder={props.bussinessUnitPlaceholder}
-                instanceId="unidad"
-                options={[
-                  { label: props.bussinessUnitPlaceholder, value: 0 },
-                  ...props.bussinessItems,
-                ]}
-                value={props.selectedBussinessUnit}
-                onChange={(value: any) => props.onChangeBussinessUnit(value)}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  menuList: (base) => ({ ...base, color: 'black' }),
-                }}
-                menuPortalTarget={_document?.body}
-                menuPlacement="auto"
-                className={cn(
-                  'block w-full rounded-lg border text-sm',
-                  'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                )}
-              />
+                <Select
+                  id="proyecto"
+                  placeholder={props.selectPlaceholder}
+                  instanceId="proyecto"
+                  options={[
+                    { label: props.selectPlaceholder, value: 0 },
+                    ...props.projectsItems.filter(
+                      (item: any) =>
+                        props.selectedBussinessUnit !== null &&
+                        item.mtBusinessUnitId ===
+                          props.selectedBussinessUnit.value,
+                    ),
+                  ]}
+                  value={props.selectedProject}
+                  onChange={(value: any) => props.onChangeProject(value)}
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    menuList: (base) => ({ ...base, color: 'black' }),
+                  }}
+                  menuPortalTarget={_document?.body}
+                  menuPlacement="auto"
+                  className={cn(
+                    'block w-full rounded-lg border text-sm',
+                    'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+                  )}
+                />
 
-              <Select
-                id="proyecto"
-                placeholder={props.selectPlaceholder}
-                instanceId="proyecto"
-                options={[
-                  { label: props.selectPlaceholder, value: 0 },
-                  ...props.projectsItems.filter(
-                    (item: any) =>
-                      props.selectedBussinessUnit !== null &&
-                      item.mtBusinessUnitId ===
-                        props.selectedBussinessUnit.value,
-                  ),
-                ]}
-                value={props.selectedProject}
-                onChange={(value: any) => props.onChangeProject(value)}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  menuList: (base) => ({ ...base, color: 'black' }),
-                }}
-                menuPortalTarget={_document?.body}
-                menuPlacement="auto"
-                className={cn(
-                  'block w-full rounded-lg border text-sm',
-                  'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                )}
-              />
+                <Select
+                  id="order"
+                  placeholder={props.orderPlaceholder}
+                  instanceId="order"
+                  options={[
+                    { label: props.orderPlaceholder, value: 0 },
+                    ...props.orderItems,
+                  ]}
+                  value={props.selectedOrderItem}
+                  onChange={(value: any) => props.onChangeOrder(value)}
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    menuList: (base) => ({ ...base, color: 'black' }),
+                  }}
+                  menuPortalTarget={_document?.body}
+                  menuPlacement="auto"
+                  className={cn(
+                    'block w-full rounded-lg border text-sm',
+                    'bg-gray-100  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+                  )}
+                />
+              </div>
+              <div className="grid">
+                <SearchInput
+                  label=""
+                  hideLabel={true}
+                  hideFilter={props.hideFilter}
+                  selectValue={null}
+                  selectPlaceholder={props.filterText}
+                  inputPlaceholder={props.searchInputPlaceholder}
+                  options={props.options}
+                  searchInputValue={props.searchInputValue}
+                  onChangeInput={(newValue: any) =>
+                    props.onChangeInput(newValue)
+                  }
+                  onChangeSelect={(newValue: any) =>
+                    props.onChangeSelect(newValue)
+                  }
+                  onSearch={(newValue: any) => props.onSearch(newValue)}
+                />
+              </div>
+
+              {/* <button
+                                type='button' 
+                                className='text-sm bg-blue-700 text-white'
+                                onClick={()=> setModalFilter(true)}
+                            >
+                                Filtros
+                            </button> */}
 
               {modalFilter ? (
                 <ModalFiltrosBusqueda
                   filter={props.options}
                   onClose={() => setModalFilter(false)}
-                  onSearch={(values: any) => props.onSearch(values)}
+                  onSearch={(values: any) => props.onFilter(values)}
                 />
               ) : null}
 
-              <div className="hidden lg:flex">
-                {props.actions.map((item, index) => (
-                  <button
-                    key={crypto.randomUUID()}
-                    onClick={(evt: any) => item.onClick()}
-                    className={item.style}
-                  >
-                    {getIcon(item.icon)}
-                    {item.visibleLabel ? (
-                      <span className="mr-auto">{item.label}</span>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
+              {props.actions.length > 0 ? (
+                <div className="hidden lg:flex">
+                  {props.actions.map((item, index) => (
+                    <button
+                      key={crypto.randomUUID()}
+                      onClick={(evt: any) => item.onClick()}
+                      className={item.style}
+                    >
+                      {getIcon(item.icon)}
+                      {item.visibleLabel ? (
+                        <span className="mr-auto">{item.label}</span>
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </form>
           </div>
-          <div className="flex w-full items-center lg:hidden xl:hidden">
-            {props.actions.map((item, index) => (
-              <button
-                key={crypto.randomUUID()}
-                onClick={(evt: any) => item.onClick()}
-                className={item.style}
-              >
-                {getIcon(item.icon)}
-                {item.visibleLabel ? (
-                  <span className="mr-auto">{item.label}</span>
-                ) : null}
-              </button>
-            ))}
-          </div>
+
+          {props.actions.length > 0 ? (
+            <div className="flex w-full items-center lg:hidden xl:hidden">
+              {props.actions.map((item, index) => (
+                <button
+                  key={crypto.randomUUID()}
+                  onClick={(evt: any) => item.onClick()}
+                  className={item.style}
+                >
+                  {getIcon(item.icon)}
+                  {item.visibleLabel ? (
+                    <span className="mr-auto">{item.label}</span>
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         // )
@@ -320,7 +376,7 @@ export default function Table(props: Props) {
           label="Error"
           description="Ha ocurrido algun problema al contactar con el servidor"
         />
-      ) : (
+      ) : props.columsValues.length > 0 ? (
         <table
           id="myTable"
           className="w-full text-left text-sm text-gray-500 dark:text-gray-400"
@@ -493,15 +549,19 @@ export default function Table(props: Props) {
                       </th>
                     ),
                   )}
-                  <th>{dropdownMenu(props.columsActions, item.id)}</th>
+                  {props.columsActions.length > 0 ? (
+                    <th>{dropdownMenu(props.columsActions, item.id)}</th>
+                  ) : null}
                 </tr>
               )
             })}
           </tbody>
         </table>
+      ) : (
+        <div className="bg-white p-8"> No hay elementos disposibles</div>
       )}
 
-      {!props.hideNavigation ? (
+      {!props.hideNavigation && props.columsValues.length > 0 ? (
         <nav
           className="mx-2 my-4 flex items-center justify-between pt-4"
           aria-label="Table navigation"

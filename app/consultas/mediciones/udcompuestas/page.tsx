@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Inter } from 'next/font/google'
 import Header from '@/components/header'
 import Breadcrumbs from '@/components/breadcrumbs'
-import Table from '@/components/tables/TableQueryByProject'
+
 import { useState } from 'react'
 
 import { useAppContext } from '@/context/appContext'
@@ -13,6 +13,7 @@ import useSWRMutation from 'swr/mutation'
 import fetcher from '@/services/fetcher'
 import { toast } from 'sonner'
 import ModalDeleteRow from '@/components/common-modals/modal-delete-row'
+import { TableQueryByProject } from '@/components/tables/TableQueryByProject'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -49,8 +50,12 @@ const mapFieldsOrdered = [
 ]
 
 export default function MedicionesUDCOmpuestas() {
+  const [pageIndex, setPageIndex] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [projectSelected, setProjectSelected] = useState(null)
   const [businessSelected, setBusinessSelected] = useState(null)
+  const [searchInput, setSearchInput] = useState('')
+  const [order, setOrder] = useState(null)
 
   const { data: unitMRes } = useSWR(
     `${process.env.API_URL}/MtUnitOfMeasurement/GetAll`,
@@ -64,9 +69,8 @@ export default function MedicionesUDCOmpuestas() {
   const [filtroUnidadMedida, setFiltroUnidadMedida] = useState([])
   const [filtroPrioridad, setFiltroPrioridad] = useState([])
 
-  let params
+  let params = ''
   if (filtroUnidadMedida.length > 0) {
-    params = ''
     for (let i = 0; i < filtroUnidadMedida.length; i++) {
       params += `MtUnitOfMeasurementIds=${filtroUnidadMedida[i]['value']}`
     }
@@ -77,13 +81,17 @@ export default function MedicionesUDCOmpuestas() {
     for (let i = 0; i < filtroPrioridad.length; i++) {
       params += `MtPriorityIds=${filtroPrioridad[i]['value']}`
     }
+  }
+
+  if (order !== null && order['value'] !== 0) {
+    params += `OrderSentences=${order['value']}`
 
     console.log(params)
   }
 
   const { data, mutate, isLoading } = useSWR(
     projectSelected !== null && projectSelected['value'] > 0
-      ? `${process.env.API_URL}/Summary/GetCompositeCatalogSummary/${projectSelected['value']}?${params}`
+      ? `${process.env.API_URL}/Summary/GetCompositeCatalogSummary/${projectSelected['value']}?${params}&Page=${pageIndex}&PageSize=${pageSize}&SearchCriteria=${searchInput}`
       : '',
     fetcher,
   )
@@ -99,7 +107,6 @@ export default function MedicionesUDCOmpuestas() {
   const [columnsValues, setColumnsValues] = useState([])
   const [modalDelete, setModalDelete] = useState(false)
   const [rowDelete, setRowDelete] = useState('')
-  const [searchInput, setSearchInput] = useState('')
 
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [changedRows, setChangedRows] = useState<any[]>([])
@@ -153,12 +160,12 @@ export default function MedicionesUDCOmpuestas() {
         <Breadcrumbs items={breadcrumbs} />
         <div className="mx-auto max-w-screen-xl px-4 pb-8 pt-8">
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <Table
+            <TableQueryByProject
               // key={crypto.randomUUID()}
               titulo="Mediciones resumen unidades compuestas"
               descripcion="Lista resumen de unidades compuestas del proyecto."
               hideDescripcion={false}
-              hideFilter={true}
+              hideFilter={false}
               projectsItems={
                 dataProjects != undefined && dataProjects.status == 200
                   ? dataProjects.result.map((item: any) => ({
@@ -197,49 +204,16 @@ export default function MedicionesUDCOmpuestas() {
                   prioridad: filtroPrioridad,
                 },
               }}
-              pageSize={0}
-              onChangePageSize={() => {}}
-              actions={[
-                {
-                  label: 'Guardar',
-                  icon: 'new',
-                  visibleLabel: true,
-                  style:
-                    'px-3 py-2.5 flex items-center mx-1 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
-                  onClick: () => {
-                    let toastId
-                    try {
-                      if (changedRows.length == 0) {
-                        return
-                      }
-
-                      console.log(changedRows)
-                      toastId = toast.loading('Enviando... 🚀')
-                      // Submit data
-                      toast.success('Enviado con éxito 🙌', { id: toastId })
-                    } catch (e) {
-                      toast.error('No se puede enviar 😱', { id: toastId })
-                    }
-                  },
-                },
-                // {
-                //     label: 'Eliminar',
-                //     icon: 'remove',
-                //     visibleLabel: true,
-                //     style: 'px-3 py-2.5 flex items-center mx-1 text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800',
-                //     onClick: () => {
-                //         if (selectedRows.length == 0) {
-                //             return;
-                //         }
-                //         handleModalDelete('multi');
-                //     }
-                // }
-              ]}
+              pageSize={pageSize}
+              onChangePageSize={(newValue: any) => setPageSize(newValue.value)}
+              actions={[]}
+              searchInputPlaceholder={'Buscar elementos por texto'}
+              searchInputValue={searchInput}
               selectPlaceholder="Seleccionar proyecto"
-              filterText="Categorias"
+              filterText="Filtros"
               columsValues={
                 data != undefined && data.status == 200
-                  ? data.result.summary.map((item: Item) => ({
+                  ? data.result.summary.results.map((item: Item) => ({
                       concept: item.concept,
                       compositeUdId: item.compositeUdId,
 
@@ -257,7 +231,8 @@ export default function MedicionesUDCOmpuestas() {
               onChangeInput={(newValue: string) => {
                 setSearchInput(newValue)
               }}
-              onSearch={async (values: any) => {
+              onSearch={handleSearchinput}
+              onFilter={async (values: any) => {
                 if (
                   'unidadMedida' in values &&
                   values.unidadMedida !== undefined
@@ -286,8 +261,8 @@ export default function MedicionesUDCOmpuestas() {
               hideCheckboxColumn={true}
               mapFields={mapFieldsOrdered}
               columsLabels={[
-                'Obra compuesta',
-                'Codigo',
+                'Concepto',
+                'Id compuesta',
                 'Medida',
                 'Urgente',
                 'Alta',
@@ -315,11 +290,27 @@ export default function MedicionesUDCOmpuestas() {
                 ]
               }
               hideNavigation={false}
-              elementByPage={20}
-              currentPage={1}
-              totalValues={1000}
-              pagesCount={5}
-              onNavigate={() => console.log('navigate')}
+              elementByPage={
+                data != undefined && data.status == 200
+                  ? data.result.summary.pageSize
+                  : 10
+              }
+              currentPage={
+                data != undefined && data.status == 200
+                  ? data.result.summary.currentPage
+                  : 1
+              }
+              totalValues={
+                data != undefined && data.status == 200
+                  ? data.result.summary.recordCount
+                  : 10
+              }
+              pagesCount={
+                data != undefined && data.status == 200
+                  ? data.result.summary.pageCount
+                  : 1
+              }
+              onNavigate={(page: number) => setPageIndex(page)}
               selectedItems={selectedRows}
               onSelectedItems={(values: any) => {
                 setSelectedRows(values)
@@ -345,13 +336,20 @@ export default function MedicionesUDCOmpuestas() {
                 //     }
                 //     setChangedRows(updateItems);
                 // }
-              }}
-              searchInputPlaceholder={''}
-              searchInputValue={''}
+              }} // searchInputPlaceholder={''} searchInputValue={''}
+              orderPlaceholder="Ordenar elementos por ..."
+              orderItems={[
+                { label: 'Orden 1', value: 'order1:asc' },
+                { label: 'Orden 2', value: 'order2:asc' },
+                { label: 'Orden 3', value: 'order3:asc' },
+              ]}
+              selectedOrderItem={order}
+              onChangeOrder={(value: any) => setOrder(value)}
             />
           </div>
         </div>
       </section>
+
       {modalDelete ? (
         <ModalDeleteRow
           titulo={`Eliminar ${rowDelete == 'multi' ? 'mediciones' : 'medicion'}`}
@@ -360,6 +358,7 @@ export default function MedicionesUDCOmpuestas() {
           onDelete={() => {} /* handleDeleteRow() */}
         />
       ) : null}
+
       {/* <Footer></Footer> */}
     </main>
   )
