@@ -1,15 +1,15 @@
+import type { Metadata } from 'next'
 import '@/styles/globals.css'
 import '@silevis/reactgrid/styles.css'
 import '@szhsin/react-menu/dist/index.css'
 import '@szhsin/react-menu/dist/transitions/slide.css'
-import type { Metadata } from 'next'
-import { NextIntlClientProvider, useMessages } from 'next-intl'
-import { Inter } from 'next/font/google'
-import { HeaderV2 } from '@/components/header-v2'
-import { fontSans } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
+import { fontSans } from '@/lib/fonts'
 import { Toaster } from '@/components/ui/sonner'
+
 import { TailwindIndicator } from '@/components/tailwind-indicator'
+import Header from '@/components/header'
+import Provider from './Provider'
 
 export const metadata: Metadata = {
   title: 'Aleatica',
@@ -18,26 +18,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  params: { locale },
 }: Readonly<{
   children: React.ReactNode
-  params: { locale: string }
 }>) {
-  const messages = useMessages()
   return (
-    <html lang={locale}>
+    <html lang="en">
       <body
         className={cn(
           'relative bg-background font-sans antialiased',
           fontSans.variable,
         )}
       >
-        <NextIntlClientProvider messages={messages}>
-          <HeaderV2 />
-          <div className="flex-1"> {children}</div>
-          <Toaster position="top-center" richColors expand={true} />
-          <TailwindIndicator />
-        </NextIntlClientProvider>
+        <Provider>
+          <Header />
+          {children}
+        </Provider>
+        <Toaster position="top-center" richColors expand={true} />
+        <TailwindIndicator />
       </body>
     </html>
   )
