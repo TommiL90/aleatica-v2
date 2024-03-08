@@ -1,3 +1,15 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals", "@rocketseat/eslint-config/react"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-types": "off",
+    "react/no-unknown-property": "off",
+    "camelcase":"off",
+    "eqeqeq":"off",
+    "dot-notation":"off",
+    "no-unused-expressions":"off",
+    "no-empty":"off",
+    "no-sequences":"off"
+  }
 }
