@@ -2,7 +2,8 @@ import CatalogoTramosForm from '@/components/forms/catalogoTramos'
 
 import Header from '@/components/header'
 import Breadcrumbs from '@/components/breadcrumbs'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useRouter } from '@/navigation'
 import Loading from '@/components/loading'
 
 import fetcher from '@/services/fetcher'

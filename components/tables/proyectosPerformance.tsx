@@ -1,6 +1,6 @@
 // import 'swiper/css';
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import { useEffect, useState } from 'react'
 import { FaArrowAltCircleRight } from 'react-icons/fa'
 

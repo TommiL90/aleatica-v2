@@ -9,7 +9,7 @@ import {
   FaArrowCircleRight,
   FaRegSave,
 } from 'react-icons/fa'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import React, {
   MouseEvent,
   MouseEventHandler,

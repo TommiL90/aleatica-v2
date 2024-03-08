@@ -1,9 +1,9 @@
 'use client'
-import Link from 'next/link'
+import { Link, useRouter } from '@/navigation'
 
 // import 'swiper/css'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import useSWRMutation from 'swr/mutation'
 import { useState } from 'react'
 
@@ -573,14 +573,14 @@ export default function Selectors() {
           </div>
         </section>
 
-        {modalClone ? (
+        {/* {modalClone ? (
           <ModalDuplicateProject
             titulo={`Clonar proyecto`}
             mensaje={`¿Estás seguro de que deseas clonar el proyecto "${data.result.name}"? `}
             onClose={() => handleCloseModal('')}
             onClone={() => handleClone()}
           />
-        ) : null}
+        ) : null} */}
       </main>
     )
 }

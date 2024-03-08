@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-irregular-whitespace */
 'use client'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import Image from 'next/image'
 import React, { useState, MouseEvent, useEffect, useCallback } from 'react'
 import {

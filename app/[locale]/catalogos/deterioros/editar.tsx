@@ -2,7 +2,10 @@
 import RepoDeterioroForm from '@/components/forms/repoDeterioro'
 
 import Breadcrumbs from '@/components/breadcrumbs'
-import { useParams, useRouter } from 'next/navigation'
+
+import { useParams } from 'next/navigation'
+import { useRouter } from '@/navigation'
+
 import Loading from '@/components/loading'
 
 import useSWR from 'swr'

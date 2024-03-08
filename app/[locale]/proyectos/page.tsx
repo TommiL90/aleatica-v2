@@ -609,14 +609,14 @@ export default function Proyectos() {
         </div>
       </section>
 
-      {modalDelete ? (
+      {/* {modalDelete ? (
         <ModalDeleteRow
           titulo={`Eliminar ${selectedRows.length > 1 ? 'proyectos' : 'proyecto'}`}
           mensaje={`¿Estás seguro de que deseas eliminar ${selectedRows.length > 1 ? 'estos proyectos' : 'este proyecto'} de la lista? Una vez ${selectedRows.length > 1 ? 'eliminadas' : 'eliminada'}, no podrás recuperar los datos asociados. `}
           onClose={() => handleCloseModal('')}
           onDelete={() => handleDeleteRow()}
         />
-      ) : null}
+      ) : null} */}
     </main>
   )
 }

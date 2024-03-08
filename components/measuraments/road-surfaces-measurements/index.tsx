@@ -733,7 +733,7 @@ const RoadSurfacesMeasurements = ({
           onClose={() => setModalNewItem(false)}
         />
       ) : null} */}
-      {modalDetail ? (
+      {/* {modalDetail ? (
         <ModalDetail
           isModalOpen={modalDetail}
           title="Detalles de medicion"
@@ -774,7 +774,7 @@ const RoadSurfacesMeasurements = ({
           }))}
           onClose={() => setModalDetail(false)}
         />
-      ) : null}
+      ) : null} */}
       {/* {modal ? (
         <ModalDeteriorosParaSpreadsheet
           title="Deterioros"
@@ -801,7 +801,7 @@ const RoadSurfacesMeasurements = ({
           isModalOpen={modal}
         />
       ) : null} */}
-      {modalDelete ? (
+      {/* {modalDelete ? (
         <ModalDeleteRow
           titulo={`Eliminar unidad`}
           mensaje={`¿Estás seguro de que deseas eliminar esta unidad medición de la lista? `}
@@ -883,7 +883,7 @@ const RoadSurfacesMeasurements = ({
             setModalCadenamientoFinal(false)
           }}
         />
-      ) : null}
+      ) : null} */}
     </section>
   )
 }
