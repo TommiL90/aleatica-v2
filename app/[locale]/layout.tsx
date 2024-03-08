@@ -5,6 +5,8 @@ import '@/styles/globals.css'
 import { HeaderV2 } from '@/components/header-v2'
 import { fontSans } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
+import { Toaster } from '@/components/ui/sonner'
+import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 export const metadata: Metadata = {
   title: 'Aleatica',
@@ -30,6 +32,8 @@ export default function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <HeaderV2 />
           <div className="flex-1"> {children}</div>
+          <Toaster position="top-center" richColors expand={true} />
+          <TailwindIndicator />
         </NextIntlClientProvider>
       </body>
     </html>
