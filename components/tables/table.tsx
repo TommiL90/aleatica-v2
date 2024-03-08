@@ -17,11 +17,11 @@ import React, {
   useState,
 } from 'react'
 import { Menu, MenuItem, MenuButton, SubMenu } from '@szhsin/react-menu'
-// import Select from 'react-select'
+import Select from 'react-select'
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
-// import SearchInput from '../inputs/searchInput'
+import SearchInput from '../inputs/searchInput'
 import Loading from '../loading'
 import ErrorComponent from '../error'
 
@@ -200,7 +200,23 @@ export default function Table(props: Props) {
           ) : null}
 
           <div className="mt-2 flex items-center justify-between pb-4">
-            <form></form>
+            <form>
+              <SearchInput
+                label=""
+                hideLabel={true}
+                hideFilter={props.hideFilter}
+                selectValue={null}
+                selectPlaceholder={props.filterText}
+                inputPlaceholder={props.searchInputPlaceholder}
+                options={props.options}
+                searchInputValue={props.searchInputValue}
+                onChangeInput={(newValue: any) => props.onChangeInput(newValue)}
+                onChangeSelect={(newValue: any) =>
+                  props.onChangeSelect(newValue)
+                }
+                onSearch={(newValue: any) => props.onSearch(newValue)}
+              />
+            </form>
             <div className="hidden lg:flex">
               {props.actions.map((item, index) => (
                 <button
@@ -369,41 +385,40 @@ export default function Table(props: Props) {
                         }}
                       >
                         {field['inputType'] == 'select' ? (
-                          // <Select
-                          //   id={`input-${field['fieldName']}-${item['id']}`}
-                          //   instanceId={`input-${field['fieldName']}-${item['id']}`}
-                          //   placeholder=""
-                          //   styles={{
-                          //     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                          //     menuList: (base) => ({ ...base, color: 'black' }),
-                          //   }}
-                          //   menuPortalTarget={_document?.body}
-                          //   menuPlacement="auto"
-                          //   className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                          //   onChange={(elem: any) =>
-                          //     props.onChangeItem(
-                          //       elem['value'],
-                          //       item['id'],
-                          //       field['fieldName'],
-                          //     )
-                          //   }
-                          //   options={field['options'].map((elem: any) => ({
-                          //     label: `${elem['nombre']}`,
-                          //     value: elem['codigo'],
-                          //   }))}
-                          //   value={
-                          //     field['options']
-                          //       .filter(
-                          //         (elem: any) =>
-                          //           elem['codigo'] == item[field['fieldName']],
-                          //       )
-                          //       .map((elem: any) => ({
-                          //         label: `${elem['nombre']}`,
-                          //         value: elem['codigo'],
-                          //       }))[0]
-                          //   }
-                          // />
-                          <p>opa</p>
+                          <Select
+                            id={`input-${field['fieldName']}-${item['id']}`}
+                            instanceId={`input-${field['fieldName']}-${item['id']}`}
+                            placeholder=""
+                            styles={{
+                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                              menuList: (base) => ({ ...base, color: 'black' }),
+                            }}
+                            menuPortalTarget={_document?.body}
+                            menuPlacement="auto"
+                            className="block rounded-lg border bg-gray-100 text-sm  text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            onChange={(elem: any) =>
+                              props.onChangeItem(
+                                elem['value'],
+                                item['id'],
+                                field['fieldName'],
+                              )
+                            }
+                            options={field['options'].map((elem: any) => ({
+                              label: `${elem['nombre']}`,
+                              value: elem['codigo'],
+                            }))}
+                            value={
+                              field['options']
+                                .filter(
+                                  (elem: any) =>
+                                    elem['codigo'] == item[field['fieldName']],
+                                )
+                                .map((elem: any) => ({
+                                  label: `${elem['nombre']}`,
+                                  value: elem['codigo'],
+                                }))[0]
+                            }
+                          />
                         ) : (
                           <input
                             id={`input-${field['fieldName']}-${item['id']}`}
@@ -448,7 +463,7 @@ export default function Table(props: Props) {
           </span>
           <div className="flex text-sm font-normal text-gray-500">
             <span className="mx-3 pt-2.5">Tamano de pagina</span>
-            {/* <Select
+            <Select
               id="page-size"
               instanceId="page-size"
               options={[
@@ -466,8 +481,7 @@ export default function Table(props: Props) {
               }}
               menuPortalTarget={_document?.body}
               menuPlacement="auto"
-            /> */}{' '}
-            <p>opa</p>
+            />
           </div>
 
           <ul className="inline-flex h-8 -space-x-px text-sm">

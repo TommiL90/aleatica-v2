@@ -33,11 +33,18 @@ import { Button } from '@/components/ui/button'
 
 import { BiSearch } from 'react-icons/bi'
 import { FaPlus } from 'react-icons/fa'
-
+import ModalNewItem from './modal-edit'
+import ModalDetail from './modal-detail'
+import ModalDeteriorosParaSpreadsheet from '../modalDeteriorosParaSpeadsheet'
+import { ModalDelete } from '@/components/common-modals/modal-delete'
+import ModalDeleteRow from '@/components/common-modals/modal-delete-row'
+import ModalInputMask from '@/components/common-modals/modal-input-mask'
 import { MesurementBySpecialty } from '../types'
+import SearchInput from '@/components/inputs/searchInput'
+import { Specialty } from '@/app/[locale]/proyectos/[projectId]/tareas/[taskId]/mediciones/page'
 
 interface Props {
-  specialty: any
+  specialty: Specialty
   subcat: SubcategoryActionsGetDropdownItems[]
   esp: SpecialtyAction[]
   roadSection: MtRoadSection[]
@@ -506,7 +513,64 @@ const RoadSurfacesMeasurements = ({
             title="Mediciones de pavimentos"
             description="Desglose de mediciones de pavimentos"
           >
-            opa
+            {/* <form className="py-4">
+              <SearchInput
+                label=""
+                hideLabel={true}
+                selectValue={null}
+                hideFilter={false}
+                selectPlaceholder="Subcategorias"
+                inputPlaceholder="Buscar mediciones"
+                options={{
+                  filtros: {
+                    tramos: tramo.map((item: any) => ({
+                      label: item.name,
+                      value: item.id,
+                    })),
+                    subcategorias: subcat.map((item: any) => ({
+                      label: item.text,
+                      value: String(item.value),
+                    })),
+                    especialidades: esp.map((item: any) => ({
+                      label: item.name,
+                      value: String(item.id),
+                      subcategory: String(item.mtSubCategoryActionId),
+                    })),
+                  },
+                  values: {
+                    subcategoria: filtroSubcategoria,
+                    especialidad: filtroEspecialidad,
+                    tramo: filtroTramo,
+                  },
+                }}
+                searchInputValue={searchInput}
+                onChangeInput={(newValue: any) => setSearchInput(newValue)}
+                onChangeSelect={(newValue: any) => setFiltros(newValue)}
+                onSearch={async (values: any) => {
+                  console.log(values)
+                  if (
+                    'subcategoria' in values &&
+                    values.subcategoria !== undefined
+                  )
+                    setFiltroSubcategoria(values.subcategoria.value)
+
+                  if (
+                    'especialidad' in values &&
+                    values.especialidad !== undefined
+                  )
+                    setFiltroEspecialidad(values.especialidad.value)
+
+                  if ('tramo' in values && values.tramo !== undefined)
+                    setFiltroTramo(values.tramo.value)
+
+                  await mutate()
+                }}
+              />
+            </form> */}
+            <Button variant="default" onClick={handleNewItem}>
+              <FaPlus className="mr-2" size={14} />
+              Nuevo
+            </Button>
           </SpreadSheet.Header>
           <SpreadSheet.Body
             loading={isLoading}
@@ -535,6 +599,291 @@ const RoadSurfacesMeasurements = ({
           />
         </SpreadSheet.Root>
       </div>
+      {/* {modalNewItem ? (
+        <ModalNewItem
+          isModalOpen={modalNewItem}
+          title={itemId === 0 ? 'Nueva medicion' : 'Actualizar medicion'}
+          itemSelected={mediciones.find((item: Medicion) => item.id === itemId)}
+          especialidad={specialty}
+          tramos={tramo.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+            entronques: item.mtRoadSectionMtHighwayIntersections,
+          }))}
+          // entronques={
+          //   entronqueRes !== undefined && entronqueRes.status === 200 ?
+          //     entronqueRes.result.map((item: any) => ({ label: item.name, value: String(item.id) }))
+          //       : []
+          //   }
+          gazas={cuerpo.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          carriles={carril.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          deterioros={deterioros.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          actuaciones={actuaciones.map((item) => ({
+            label: item.performanceName,
+            value: String(item.id),
+            compuestas: item.compositeCatalogs.map((i) => ({
+              label: i.compositeUdName,
+              value: String(i.id),
+              mtUnitOfMeasurementId: i.mtUnitOfMeasurementId,
+            })),
+          }))}
+          // compuestas={
+          //   compuestasRes !== undefined && compuestasRes.status === 200 ?
+          //     compuestasRes.result.map((item: any) => ({ label: item.compositeUdName, value: String(item.id) }))
+          //       : []
+          // }
+          prioridades={prioridad.map((item) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          onMutate={async (values: any) => {
+            console.log(values)
+            // await mutate();
+            // if(itemId !== 0){
+            //     setModalNewItem(false)
+            // }
+            let toastId
+            try {
+              toastId = toast.loading('Enviando... 🚀')
+
+              // Submit data
+              const value: any = {
+                id: itemId,
+                previousStudiesDate: values.fechaEstudioPrevio,
+                mtRoadSectionId: values.tramo,
+                mtHigwayIntersectionId: values.entronque,
+                mtSlipLaneRoadId: values.gaza,
+                mtHighwayLaneId: values.carril,
+                performanceCatalogId: values.actuacion,
+                // interventionIdLocation: values.idIntervencion,
+                compositeCatalogId: values.compuesta,
+                mtPriorityId: values.prioridad,
+
+                mtSpecialtyActionId: specialty.value,
+                observation: values.observacion,
+                initialNumber: values.cadenamientoInicial.replace('+', ''),
+                finalNumber: values.cadenamientoFinal.replace('+', ''),
+
+                affectePercentage: values.porcentajeAfectacion,
+                length: values.longitud,
+                width: values.ancho,
+                area: values.area,
+                thickness: values.espesor,
+                volume: values.volumen,
+                density: values.densidad,
+                t: values.masa,
+
+                alternativeUnitMeasurementValue:
+                  values.alternativeUnitMeasurementValue,
+
+                mtDeteriorationTypeIds: values.deterioros.map(
+                  (item: any) => item.value,
+                ),
+              }
+              console.log(value)
+              let result: any = null
+              console.log(itemId)
+              if (itemId === 0) result = await trigger(value)
+              else {
+                result = await fetch(
+                  `${process.env.API_URL}/MeasurementTab/Update/${itemId}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify(value),
+                  },
+                )
+              }
+              console.log(result)
+              if (
+                result != undefined &&
+                (result.status === 200 || result.status === 201)
+              ) {
+                toast.success('Enviado con éxito 🙌', { id: toastId })
+              }
+              if (result != undefined && result.status >= 400) {
+                toast.error(`No se puede enviar. ${result.errorMessage}😱`, {
+                  id: toastId,
+                })
+              }
+
+              await mutate()
+              if (itemId !== 0) {
+                setModalNewItem(false)
+              }
+            } catch (e) {
+              toast.error(
+                `No se puede enviar. Error en el servidor. Consulte a servicios 😱`,
+                { id: toastId },
+              )
+            }
+          }}
+          onClose={() => setModalNewItem(false)}
+        />
+      ) : null} */}
+      {modalDetail ? (
+        <ModalDetail
+          isModalOpen={modalDetail}
+          title="Detalles de medicion"
+          itemSelected={mediciones.find((item: Medicion) => item.id === itemId)}
+          especialidad={specialty}
+          tramos={tramo.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          entronques={entronque.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          gazas={cuerpo.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          carriles={carril.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          // deterioros={
+          //   deteriorosRes !== undefined && deteriorosRes.status === 200 ?
+          //     deteriorosRes.result.map((item: any) => ({ label: item.name, value: String(item.id) }))
+          //       : []
+          // }
+          actuaciones={actuaciones.map((item: any) => ({
+            label: item.performanceName,
+            value: String(item.id),
+          }))}
+          compuestas={compuestas.map((item: any) => ({
+            label: item.compositeUdName,
+            value: String(item.id),
+          }))}
+          prioridades={prioridad.map((item: any) => ({
+            label: item.name,
+            value: String(item.id),
+          }))}
+          onClose={() => setModalDetail(false)}
+        />
+      ) : null}
+      {/* {modal ? (
+        <ModalDeteriorosParaSpreadsheet
+          title="Deterioros"
+          options={deterioros.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+            code: item.code,
+            subcategoria: item.mtActionSubCategory,
+            especialidad: item.mtSpecialtyAction,
+          }))}
+          deterioros={item.deterioros}
+          onChange={(values: any[]) => {
+            setMediciones([
+              ...mediciones.map((medicion: Medicion) => ({
+                ...medicion,
+                deterioros:
+                  medicion.idauto === item.idauto
+                    ? values
+                    : medicion.deterioros,
+              })),
+            ])
+          }}
+          onClose={() => setModal(!modal)}
+          isModalOpen={modal}
+        />
+      ) : null} */}
+      {modalDelete ? (
+        <ModalDeleteRow
+          titulo={`Eliminar unidad`}
+          mensaje={`¿Estás seguro de que deseas eliminar esta unidad medición de la lista? `}
+          onClose={() => setModalDelete(false)}
+          onDelete={async () => {
+            let toastId
+            try {
+              if (deleteItem > 0) {
+                toastId = toast.loading('Eliminando de lista... 🚀')
+                await fetch(
+                  `${process.env.API_URL}/MeasurementTab/ChangeDisabledStatus/${deleteItem}`,
+                  {
+                    method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  },
+                )
+
+                toast.success('Eliminado de lista 🙌', { id: toastId })
+                mutate()
+
+                setModalDelete(false)
+              }
+            } catch (error) {
+              console.log(error)
+              toast.error(
+                `No se puede eliminar. Error en el servidor. Consulte a servicios 😱`,
+                { id: toastId },
+              )
+            }
+          }}
+        />
+      ) : null}
+      {modalCadenamientoInicial ? (
+        <ModalInputMask
+          title={'Adicionar cadenamiento Inicial'}
+          label={''}
+          buttonText={'Guardar'}
+          isModalOpen={modalCadenamientoInicial}
+          inputValue={item.cadenamientoInicial}
+          onClose={() => setModalCadenamientoInicial(false)}
+          onChange={(value: string) => {
+            console.log(value)
+            setMediciones([
+              ...mediciones.map((medicion: Medicion) => ({
+                ...medicion,
+                cadenamientoInicial:
+                  medicion.idauto === item.idauto
+                    ? value
+                    : medicion.cadenamientoInicial,
+              })),
+            ])
+
+            setModalCadenamientoInicial(false)
+          }}
+        />
+      ) : null}
+      {modalCadenamientoFinal ? (
+        <ModalInputMask
+          title={'Adicionar cadenamiento final'}
+          label={''}
+          buttonText={'Guardar'}
+          isModalOpen={modalCadenamientoFinal}
+          inputValue={item.cadenamientoFinal}
+          onClose={() => setModalCadenamientoFinal(false)}
+          onChange={(value: string) => {
+            console.log(value)
+            setMediciones([
+              ...mediciones.map((medicion: Medicion) => ({
+                ...medicion,
+                cadenamientoFinal:
+                  medicion.idauto === item.idauto
+                    ? value
+                    : medicion.cadenamientoFinal,
+              })),
+            ])
+
+            setModalCadenamientoFinal(false)
+          }}
+        />
+      ) : null}
     </section>
   )
 }

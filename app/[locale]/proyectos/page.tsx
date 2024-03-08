@@ -9,6 +9,7 @@ import { FaEdit, FaRegTrashAlt, FaRegClone } from 'react-icons/fa'
 import fetcher from '@/services/fetcher'
 import { toast } from 'sonner'
 import Table from '@/components/tables/table'
+import ModalDeleteRow from '@/components/common-modals/modal-delete-row'
 
 interface Option {
   label: string
@@ -607,6 +608,15 @@ export default function Proyectos() {
           </div>
         </div>
       </section>
+
+      {modalDelete ? (
+        <ModalDeleteRow
+          titulo={`Eliminar ${selectedRows.length > 1 ? 'proyectos' : 'proyecto'}`}
+          mensaje={`¿Estás seguro de que deseas eliminar ${selectedRows.length > 1 ? 'estos proyectos' : 'este proyecto'} de la lista? Una vez ${selectedRows.length > 1 ? 'eliminadas' : 'eliminada'}, no podrás recuperar los datos asociados. `}
+          onClose={() => handleCloseModal('')}
+          onDelete={() => handleDeleteRow()}
+        />
+      ) : null}
     </main>
   )
 }
