@@ -26,73 +26,73 @@ export interface NavbarItem {
 
 export const navbarList: NavbarItem[] = [
   {
-    title: 'Panel',
+    title: 'dashboard',
     href: '/',
   },
   {
-    title: 'Datos Generales',
+    title: 'generalData',
     firstSubItems: [
       {
-        title: 'Unidades de Negocios',
+        title: 'businessUnits',
         description: 'Información de unidad de negocios',
         secondSubItems: [
           {
-            title: 'Maestro unidad de negocios',
+            title: 'businessUnitMaster',
             description: 'Informacion de unidad de negocios',
             thirdSubItems: [
               {
-                title: 'Ficha unidad de negocios',
+                title: 'businessUnitRepository',
                 description: 'Repositorio de unidad de negocios',
                 href: '#FichaUnidadDeNegocios',
               },
               {
-                title: 'Indicadores MR',
+                title: 'MRIndicators',
                 description: 'Breve texto introductorio del menú',
                 href: '#IndicadoresMR',
               },
               {
-                title: 'País',
+                title: 'country',
                 description: 'Breve texto introductorio del menú',
                 href: '#Pais',
               },
               {
-                title: 'Zonas geográficas',
+                title: 'geographicZones',
                 description: 'Breve texto introductorio del menú',
                 href: '#ZonasGeograficas',
               },
               {
-                title: 'Administración competente',
+                title: 'competentAdministration',
                 description: 'Breve texto introductorio del menú',
                 href: '#AdministracionCompetente',
               },
             ],
           },
           {
-            title: 'Inventario de tramos',
+            title: 'segmentInventory',
             description: 'Datos de inventarios de tramos',
             thirdSubItems: [
               {
-                title: 'Tramos',
+                title: 'segments',
                 description: 'Inventario de tramos',
                 href: '#Tramos',
               },
               {
-                title: 'Entronques',
+                title: 'junctions',
                 description: 'Inventario de entronques',
                 href: '#Entronques',
               },
               {
-                title: 'Gaza / Cuerpo',
+                title: 'gaza',
                 description: 'Inventario de gazas / cuerpos',
                 href: '#GazaCuerpo',
               },
               {
-                title: 'Calzada',
+                title: 'roadway',
                 description: 'Inventario de calzadas',
                 href: '#Calzada',
               },
               {
-                title: 'Carril',
+                title: 'lane',
                 description: 'Inventario de carriles',
                 href: '#Carril',
               },
@@ -103,7 +103,7 @@ export const navbarList: NavbarItem[] = [
             description: 'Tramos de concentracion de accidentes',
             thirdSubItems: [
               {
-                title: 'Catálogo de TCA',
+                title: 'TCACatalog',
                 description: 'Inventario de TCAs',
                 href: '#CatalogoTCA',
               },
@@ -112,101 +112,101 @@ export const navbarList: NavbarItem[] = [
         ],
       },
       {
-        title: 'Identificadores',
+        title: 'identifiers',
         description: 'Principales indicadores del sistema',
         secondSubItems: [
           {
-            title: 'Año',
+            title: 'year',
             description: 'Configuración de años de los proyectos',
             href: '#Anno',
           },
           {
-            title: 'Formularios de procesos',
+            title: 'processForms',
             description: 'Repositorio de formularios de procesos',
             href: '#FormulariosDeProcesos',
           },
           {
-            title: 'Categorías del Proyecto',
+            title: 'projectCategories',
             description: 'Repositorio de categorías del Proyecto',
             href: '#CategoriasDelProyecto',
           },
           {
-            title: 'Categorías de Actuación',
+            title: 'actingCategories',
             description: 'Repositorio de categorías de actuación',
             href: '#CategoriasDeActuacion',
           },
           {
-            title: 'Subcategorías de Actuación',
+            title: 'actingSubcategories',
             description: 'Repositorio de subcategorías de actuación',
             href: '#SubcategoriasDeActuacion',
           },
           {
-            title: 'Especialidades de Actuación',
+            title: 'actingSpecialties',
             description: 'Repositorio de especialidades de actuación',
             href: '#EspecialidadesDeActuacion',
           },
           {
-            title: 'Ámbito de Actuación',
+            title: 'scopeOfAction',
             description: 'Repositorio de ámbitos de actuación',
             href: '#AmbitoDeActuacion',
           },
           {
-            title: 'Unidad de medida',
+            title: 'unitOfMeasure',
             description: 'Repositorio de unidades de obra',
             href: '#UnidadDeObra',
           },
           {
-            title: 'Moneda',
+            title: 'currency',
             description: 'Tipos de monedas',
             href: '#Moneda',
           },
           {
-            title: 'Posición',
+            title: 'position',
             description: 'Repositorio de posiciones',
             href: '#Posicion',
           },
           {
-            title: 'Disposición',
+            title: 'disposition',
             description: 'Repositorio de disposiciones',
             href: '#Disposicion',
           },
           {
-            title: 'Lado',
+            title: 'side',
             description: 'Repositorio de lados',
             href: '#Lado',
           },
           {
-            title: 'Calificación',
+            title: 'rating',
             description: 'Repositorio de calificaciones',
             href: '#Calificacion',
           },
           {
-            title: 'Número de estructuras',
+            title: 'numberOfStructures',
             description: 'Repositorio de número de estructuras',
             href: '#NumeroDeEstructuras',
           },
           {
-            title: 'Tipo de estructura',
+            title: 'structureType',
             description: 'Repositorio de tipos de estructuras',
             href: '#TipoDeEstructura',
           },
           {
-            title: 'Elemento',
+            title: 'elementType',
             description: 'Repositorio de elementos',
             href: '#Elemento',
           },
           {
-            title: 'Eje',
+            title: 'axis',
             description: 'Repositorio de ejes',
             href: '#Eje',
           },
           {
-            title: 'Tipología',
+            title: 'typology',
             description: 'Repositorio de tipologías',
             href: '#Tipologia',
           },
           {
-            title: 'Prioridad',
+            title: 'priority',
             description: 'Repositorio de prioridades',
             href: '#Prioridad',
           },
@@ -215,149 +215,149 @@ export const navbarList: NavbarItem[] = [
     ],
   },
   {
-    title: 'Proyectos',
+    title: 'projects',
     firstSubItems: [
       {
-        title: 'Nuevo Proyecto',
+        title: 'newProject',
         description: 'Crea nuevo proyecto',
         href: '#',
       },
       {
-        title: 'Proyectos en desarrollo',
+        title: 'projectsInDevelopment',
         description: 'Listado de proyectos en desarrollo',
         href: '/proyectos',
       },
       {
-        title: 'Proyectos cerrados',
+        title: 'closedProjects',
         description: 'Listado de proyectos cerrados',
         href: '#ProyectosCerrados',
       },
     ],
   },
   {
-    title: 'Catálogos Globales',
+    title: 'globalCatalogs',
     firstSubItems: [
       {
-        title: 'Subespecialidades de Actuación',
+        title: 'actingSubspecialties',
         description: 'Repositorio de subespecialidades de actuación',
         href: '#SubespecialidadesActuacion',
       },
       {
-        title: 'Unidades simples',
+        title: 'simpleUnits',
         description: 'Breve texto introductorio del menú',
         href: '/catalogos/udsimples',
       },
       {
-        title: 'Unidades compuestas',
+        title: 'compoundUnits',
         description: 'Breve texto introductorio del menú',
         href: '/catalogos/udcompuestas',
       },
       {
-        title: 'Deterioros',
+        title: 'deteriorations',
         description: 'Breve texto introductorio del menú',
         href: '#Deterioros',
       },
     ],
   },
   {
-    title: 'Consultas y Reportes',
+    title: 'queriesAndReports',
     firstSubItems: [
       {
-        title: 'Mediciones',
+        title: 'measurements',
         description: 'Reportes preconfigurados de mediciones de proyecto',
         secondSubItems: [
           {
-            title: 'Mediciones Resumen US',
+            title: 'USSummaryMeasurements',
             description: 'Breve texto introductorio del menú',
             href: '#MedicionesResumenUS',
           },
           {
-            title: 'Mediciones Resumen UC',
+            title: 'UCSummaryMeasurements',
             description: 'Breve texto introductorio del menú',
             href: '#MedicionesResumenUC',
           },
           {
-            title: 'Mediciones Resumen Actuaciones',
+            title: 'actingSummaryMeasurements',
             description: 'Breve texto introductorio del menú',
             href: '#MedicionesResumenActuaciones',
           },
           {
-            title: 'Mediciones Resumen Actuaciones vs UOC',
+            title: 'actingVsUOCSummaryMeasurements',
             description: 'Breve texto introductorio del menú',
             href: '#MedicionesResumenActuacionesVsUOC',
           },
           {
-            title: 'Mediciones Resumen Tramos',
+            title: 'segmentsSummaryMeasurements',
             description: 'Breve texto introductorio del menú',
             href: '#MedicionesResumenTramos',
           },
           {
-            title: 'Ficha de Mediciones',
+            title: 'measurementSheet',
             description: 'Breve texto introductorio del menú',
             href: '#FichaDeMediciones',
           },
         ],
       },
       {
-        title: 'Precios planificación',
+        title: 'planningPrices',
         description:
           'Reportes preconfigurados de planificación de precios de proyecto',
         secondSubItems: [
           {
-            title: 'Precios Unidades Simples',
+            title: 'simpleUnitsPrices',
             description: 'Breve texto introductorio del menú',
             href: '#PreciosUnidadesSimples',
           },
           {
-            title: 'Precios Unidades Compuestas',
+            title: 'compoundUnitsPrices',
             description: 'Breve texto introductorio del menú',
             href: '#PreciosUnidadesCompuestas',
           },
         ],
       },
       {
-        title: 'Presupuesto planificación',
+        title: 'planningBudget',
         description:
           'Reportes preconfigurados de planificación de precios de proyecto',
         secondSubItems: [
           {
-            title: 'Presupuesto Técnico PxQ US',
+            title: 'technicalBudgetPxQUS',
             description: 'Breve texto introductorio del menú',
             href: '#PresupuestoTecnicoPxQUS',
           },
           {
-            title: 'Presupuesto Técnico PxQ UC',
+            title: 'technicalBudgetPxQUC',
             description: 'Breve texto introductorio del menú',
             href: '#PresupuestoTecnicoPxQUC',
           },
           {
-            title: 'Presupuesto Técnico PxQ Actuaciones 1',
+            title: 'technicalBudgetPxQActions1',
             description: 'Breve texto introductorio del menú',
             href: '#PresupuestoTecnicoPxQActuaciones1',
           },
           {
-            title: 'Presupuesto Técnico PxQ Actuaciones 2',
+            title: 'technicalBudgetPxQActions2',
             description: 'Breve texto introductorio del menú',
             href: '#PresupuestoTecnicoPxQActuaciones2',
           },
           {
-            title: 'Ratio Promedio de Actuaciones',
+            title: 'averageActionsRatio',
             description: 'Breve texto introductorio del menú',
             href: '#RatioPromedioActuaciones',
           },
         ],
       },
       {
-        title: 'Otras consultas',
+        title: 'otherQueries',
         description: 'Reportes dinámicos por proyecto de presupuesto',
         secondSubItems: [
           {
-            title: 'Costo de Proyectos',
+            title: 'projectCosts',
             description: 'Breve texto introductorio del menú',
             href: '#CostoDeProyectos',
           },
           {
-            title: 'Proyectos por Subcategoría',
+            title: 'projectsBySubcategory',
             description: 'Breve texto introductorio del menú',
             href: '#ProyectosPorSubcategoria',
           },
@@ -366,52 +366,52 @@ export const navbarList: NavbarItem[] = [
     ],
   },
   {
-    title: 'Usuario',
+    title: 'user',
     firstSubItems: [
       {
-        title: 'Mi perfil',
+        title: 'profile',
         description: 'Configurar mi cuenta de usuario',
         href: '#MiPerfil',
       },
       {
-        title: 'Configuración de usuarios',
+        title: 'userConfiguration',
         description: 'Defina usuarios y sus privilegios',
         href: '#ConfiguracionUsuarios',
       },
       {
-        title: 'Roles',
+        title: 'userRoles',
         description: 'Configuración de roles',
         href: '#Roles',
       },
       {
-        title: 'Permisos',
+        title: 'permissions',
         description: 'Configuración de permisos',
         href: '#Permisos',
       },
       {
-        title: 'Departamentos',
+        title: 'departments',
         description: 'Lista de departamentos de la organización',
         href: '#Departamentos',
       },
       {
-        title: 'Cargos',
+        title: 'userPosition',
         description: 'Lista de cargos de la organización',
         href: '#Cargos',
       },
       {
-        title: 'Tareas y actividades',
+        title: 'tasks',
         description: 'Tareas y actividades del usuario',
         href: '#TareasActividades',
       },
       {
-        title: 'Cerrar sesión',
+        title: 'logout',
         description: 'Salir de su cuenta de usuario',
         href: '#CerrarSesion',
       },
     ],
   },
   {
-    title: 'Documentación',
+    title: 'documentation',
     href: '#',
   },
 ]

@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { BiChevronDown } from 'react-icons/bi'
+
 
 import {
   Menubar,
@@ -18,18 +18,22 @@ import {
   NavBarSecondSubItem,
   navbarList,
 } from './navbarList'
+import { ChevronDown } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 const NavbarSubItem: React.FC<{ subItem: NavBarFirstSubItem }> = ({
   subItem,
-}) => (
-  <>
+}) => {
+  const t = useTranslations('NavbarList')
+  return (
+    <>
     {subItem.href ? (
       <MenubarItem>
-        <Link href={subItem.href}>{subItem.title}</Link>
+        <Link href={subItem.href}>{t(subItem.title)}</Link>
       </MenubarItem>
     ) : (
       <MenubarSub>
-        <MenubarSubTrigger>{subItem.title}</MenubarSubTrigger>
+        <MenubarSubTrigger>{t(subItem.title)}</MenubarSubTrigger>
         <MenubarSubContent>
           {subItem.secondSubItems &&
             subItem.secondSubItems.map((secondSubItem, idx) => (
@@ -39,45 +43,52 @@ const NavbarSubItem: React.FC<{ subItem: NavBarFirstSubItem }> = ({
       </MenubarSub>
     )}
   </>
-)
+  )
+}
 
 const NavbarSecondSubItem: React.FC<{ subItem: NavBarSecondSubItem }> = ({
   subItem,
-}) => (
-  <>
+}) => {
+  const t = useTranslations('NavbarList')
+  return (
+    <>
     {subItem.href ? (
       <MenubarItem>
-        <Link href={subItem.href}>{subItem.title}</Link>
+        <Link href={subItem.href}>{t(subItem.title)}</Link>
       </MenubarItem>
     ) : (
       <MenubarSub>
-        <MenubarSubTrigger>{subItem.title}</MenubarSubTrigger>
+        <MenubarSubTrigger>{t(subItem.title)}</MenubarSubTrigger>
         <MenubarSubContent>
           {subItem.thirdSubItems &&
             subItem.thirdSubItems.map((thirdSubItem, idx) => (
               <MenubarItem key={idx}>
-                <Link href={thirdSubItem.href}>{thirdSubItem.title}</Link>
+                <Link href={thirdSubItem.href}>{t(thirdSubItem.title)}</Link>
               </MenubarItem>
             ))}
         </MenubarSubContent>
       </MenubarSub>
     )}
   </>
-)
+  )
+}
 
-export const Navbar = () => (
+export const Navbar = () => {
+  const t = useTranslations('NavbarList')
+ return (
   <nav>
     <Menubar className="border-none bg-transparent">
       {navbarList.map((item, index) => (
         <MenubarMenu key={index}>
           {item.href ? (
             <MenubarTrigger className="cursor-pointer text-neutral-100">
-              <Link href={item.href}>{item.title}</Link>
+              
+              <Link href={item.href}>{t(item.title)}</Link>
             </MenubarTrigger>
           ) : (
             <MenubarTrigger className="group  text-neutral-100">
-              <span>{item.title}</span>
-              <BiChevronDown
+              <span>{t(item.title)}</span>
+              <ChevronDown
                 className="relative top-[1px] ml-1 h-3 w-3 transform transition-transform duration-200 group-hover:rotate-180"
                 aria-hidden="true"
               />
@@ -94,5 +105,5 @@ export const Navbar = () => (
         </MenubarMenu>
       ))}
     </Menubar>
-  </nav>
-)
+  </nav>)
+}
