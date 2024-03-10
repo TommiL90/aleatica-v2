@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   useState,
   useCallback,
@@ -34,7 +35,6 @@ import NeoprenosSubForm from './sub-form/neoprenos'
 import useSWR from 'swr'
 import fetcher from '@/services/fetcher'
 import { cn } from '@/lib/utils'
-import { isValid } from 'date-fns'
 
 // import { v4 as uuidv4 } from 'uuid';
 
@@ -147,6 +147,8 @@ interface CrearMedicion {
   cosForCalculate: boolean
   mtDeteriorationTypeIds?: number[] | null // Puede ser nulo
   mtUnitOfMeasurementId: number
+  totalJointsLength: number
+  affectedJointsLength: number
 }
 
 const initialValues: FormValues = {
@@ -341,9 +343,10 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
   )
 
   const [coseno, setCoseno] = useState(
-    props.initValue ? props.initValue.coseno : false,
+    props.initValue ? props.initValue.coseno : true,
   )
 
+  const [disableLongitudJunta, setDisableLongitudJunta] = useState(true)
   const [longitudJunta, setLongitudJunta] = useState(
     props.initValue ? props.initValue.longitudCadaJunta : null,
   )
@@ -352,6 +355,8 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     props.initValue ? props.initValue.noElementos : null,
   )
 
+  const [disableLongitudTotalJuntas, setDisableLongitudTotalJuntas] =
+    useState(true)
   const [longitudTotalJuntas, setLongitudTotalJuntas] = useState(
     props.initValue ? props.initValue.longitudTotalJuntas : null,
   )
@@ -360,6 +365,8 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     props.initValue ? props.initValue.porcentajeAfectacion : 100,
   )
 
+  const [disableLongitudJuntasAfectadas, setDisableLongitudJuntasAfectadas] =
+    useState(true)
   const [longitudJuntasAfectadas, setLongitudJuntasAfectadas] = useState(
     props.initValue ? props.initValue.longitudJuntasAfectadas : null,
   )
@@ -378,7 +385,6 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     )
 
   const [altInput, setAltInput] = useState(false)
-  const [activeZincInputs, setActiveInputs] = useState(true)
 
   const { data, isLoading } = useSWR(
     compuestaSeleccionada
@@ -434,11 +440,13 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
       .min(2, 'Demasiado corto!')
       .max(80, 'Demasiado largo!')
       .required('Requerido'),
-    noEstructura: Yup.string().required('Requerido'),
-    tipoEstructura: Yup.string().required('Requerido'),
-    eje: Yup.string().required('Requerido'),
-    lado: Yup.string().required('Requerido'),
-    calificacion: Yup.string().required('Requerido'),
+    numeroEstructura: Yup.number().required('Requerido'),
+    tipoEstructura: Yup.number().required('Requerido'),
+    eje: Yup.number().required('Requerido'),
+    lado: Yup.number().required('Requerido'),
+    calificacion: Yup.number().required('Requerido'),
+    elementoEstructura: Yup.string().required('Requerido'),
+
     deterioros: Yup.array().min(1, 'Debe seleccionar al menos un deterioro.'),
     actuacion: Yup.string().required('Requerido'),
     compuesta: Yup.string().required('Requerido'),
@@ -466,7 +474,7 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
-    coseno: Yup.boolean().optional().default(false),
+    coseno: Yup.boolean().optional().default(true),
     // calculada en backend
     longitudJunta: Yup.number()
       .optional()
@@ -512,16 +520,14 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
         return regex.test(value.toString())
       }),
     // Neoprenos
-    // noApoyos: Yup.number()
-    //   .moreThan(-1, 'Debe ser un número positivo o cero')
-    //   .positive('Debe ser un número positivo')
-    //   .optional()
-    //   .default(0),
-    // noEjes: Yup.number()
-    //   .moreThan(-1, 'Debe ser un número positivo o cero')
-    //   .positive('Debe ser un número positivo')
-    //   .optional()
-    //   .default(0),
+    noApoyos: Yup.number()
+      .moreThan(-1, 'Debe ser un número positivo o cero')
+      .optional()
+      .nullable(),
+    noEjes: Yup.number()
+      .moreThan(-1, 'Debe ser un número positivo o cero')
+      .optional()
+      .nullable(),
     // Alternative input
     alternativeUnitMeasurementValue: Yup.number()
       .typeError('Debe ser un número')
@@ -529,7 +535,6 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
       .moreThan(-1, 'Debe ser un número positivo o cero')
       .optional()
       .default(0)
-
       .test('maxDecimals', 'Máximo de dos decimales permitidos', (value) => {
         if (value === undefined) return true // Permite valores undefined
         const regex = /^\d+(\.\d{1,2})?$/
@@ -543,11 +548,16 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
   ) => {
     let data: any = values
 
-    data = {
-      ...values,
-      longitudJunta,
-      longitudTotalJuntas,
-      longitudJuntasAfectadas,
+    if (!disableLongitudJunta) {
+      data = { ...data, longitudJunta }
+    }
+
+    if (!disableLongitudTotalJuntas) {
+      data = { ...data, longitudTotalJuntas }
+    }
+
+    if (!disableLongitudJuntasAfectadas) {
+      data = { ...data, longitudJuntasAfectadas }
     }
 
     submitEnquiryForm({ ...data })
@@ -591,12 +601,18 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
         : '',
       roadAverage: anchoCalzada || 0,
       esviaje: esviaje || 0,
-      cosForCalculate: coseno ? coseno.value : false,
+      cosForCalculate: coseno ? coseno.value : true,
       elementsCount: noElementos || 0,
       affectePercentage: porcentajeAfectacion || 100,
-
       supportsAffectedCount: noApoyos || 0,
       mtUnitOfMeasurementId: alternativeUnitMeasurementValue,
+      length: disableLongitudJunta ? undefined : longitudJunta,
+      totalJointsLength: disableLongitudTotalJuntas
+        ? undefined
+        : longitudTotalJuntas,
+      affectedJointsLength: disableLongitudJuntasAfectadas
+        ? undefined
+        : longitudJuntasAfectadas,
     }
     const res = await fetch(`${process.env.API_URL}/MeasurementTab/GetInfo`, {
       method: 'POST',
@@ -628,6 +644,9 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     porcentajeAfectacion,
     prioridadSeleccionada,
     props.especialidad.value,
+    longitudJunta,
+    longitudTotalJuntas,
+    longitudJuntasAfectadas,
   ])
 
   const isFirstRender = useRef(true)
@@ -651,6 +670,9 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
     noEjes,
     alternativeUnitMeasurementValue,
     handleGetInfo,
+    longitudJunta,
+    longitudTotalJuntas,
+    longitudJuntasAfectadas,
   ])
 
   return (
@@ -1805,22 +1827,6 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
             compuestaSeleccionada ? (
               <>
                 <div className="mb-6 flex flex-col space-y-2">
-                  <div className="flex items-center">
-                    <input
-                      id="checked-checkbox"
-                      type="checkbox"
-                      checked={!activeZincInputs}
-                      onChange={() => setActiveInputs(!activeZincInputs)}
-                      className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                    />
-                    <label
-                      htmlFor="checked-checkbox"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Liberar campos de lectura grises e introducir datos
-                      manualmente
-                    </label>
-                  </div>
                   <div className="flex w-[50%] items-center">
                     <input
                       id="checked-checkbox"
@@ -1860,7 +1866,18 @@ function MedicionFichaCampoEstructurasForm(props: FormProps) {
                     setPorcentajeAfectacion={setPorcentajeAfectacion}
                     longitudJuntasAfectadas={longitudJuntasAfectadas}
                     setLongitudJuntasAfectadas={setLongitudJuntasAfectadas}
-                    activeZincInputs={activeZincInputs}
+                    disableLongitudJunta={disableLongitudJunta}
+                    setDisableLongitudJunta={setDisableLongitudJunta}
+                    disableLongitudTotalJuntas={disableLongitudTotalJuntas}
+                    setDisableLongitudTotalJuntas={
+                      setDisableLongitudTotalJuntas
+                    }
+                    disableLongitudJuntasAfectadas={
+                      disableLongitudJuntasAfectadas
+                    }
+                    setDisableLongitudJuntasAfectadas={
+                      setDisableLongitudJuntasAfectadas
+                    }
                   />
                 </div>
                 <div

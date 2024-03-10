@@ -107,27 +107,27 @@ const initialValues: FormValues = {
 }
 
 function MedicionFichaCampoSafetyForm(props: FormProps) {
-  const cadenamientoInicialRaw: string = props.initValue
-    ? props.initValue.cadenamientoInicial.toString()
-    : ''
+  // const cadenamientoInicialRaw: string = props.initValue
+  //   ? props.initValue.cadenamientoInicial.toString()
+  //   : ''
 
-  const cadenamientoInicialFormatado =
-    cadenamientoInicialRaw.substring(0, 3) +
-    '0' +
-    (cadenamientoInicialRaw.length === 7
-      ? cadenamientoInicialRaw.substring(4)
-      : cadenamientoInicialRaw.substring(3))
+  // const cadenamientoInicialFormatado =
+  //   cadenamientoInicialRaw.substring(0, 3) +
+  //   '0' +
+  //   (cadenamientoInicialRaw.length === 7
+  //     ? cadenamientoInicialRaw.substring(4)
+  //     : cadenamientoInicialRaw.substring(3))
 
-  const cadenamientoFinalRaw: string = props.initValue
-    ? props.initValue.cadenamientoFinal.toString()
-    : ''
+  // const cadenamientoFinalRaw: string = props.initValue
+  //   ? props.initValue.cadenamientoFinal.toString()
+  //   : ''
 
-  const cadenamientoFinalFormatado =
-    cadenamientoFinalRaw.substring(0, 3) +
-    '0' +
-    (cadenamientoFinalRaw.length === 7
-      ? cadenamientoFinalRaw.substring(4)
-      : cadenamientoFinalRaw.substring(3))
+  // const cadenamientoFinalFormatado =
+  //   cadenamientoFinalRaw.substring(0, 3) +
+  //   '0' +
+  //   (cadenamientoFinalRaw.length === 7
+  //     ? cadenamientoFinalRaw.substring(4)
+  //     : cadenamientoFinalRaw.substring(3))
 
   const [tabIndex, setTabIndex] = useState(0)
 
@@ -282,16 +282,13 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
 
     cadenamientoInicial: Yup.string()
       .trim()
-      .min(2, 'Demasiado corto!')
-      .max(80, 'Demasiado largo!')
-      .optional()
-      .nullable(),
+      .min(8, 'Demasiado corto!')
+      .required('Requerido, si no tiene valor, inserte 000+0000'),
+
     cadenamientoFinal: Yup.string()
       .trim()
-      .min(2, 'Demasiado corto!')
-      .max(80, 'Demasiado largo!')
-      .optional()
-      .nullable(),
+      .min(8, 'Demasiado corto!')
+      .required('Requerido, si no tiene valor, inserte 000+0000'),
     tramo: Yup.string().required('Requerido'),
     entronque: Yup.string().optional().nullable().nullable(),
     gaza: Yup.string().optional().nullable(),

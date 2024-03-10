@@ -1,9 +1,10 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import logo from '@/public/images/logo.svg'
 
 import { Navbar } from './navbar'
 import { NavbarMobile } from './navbar/navbar-mobile'
+import { LanguageToggle } from './language-toggler'
 
 export function HeaderV2() {
   return (
@@ -21,10 +22,14 @@ export function HeaderV2() {
         </Link>
         {/* <MainNav items={siteConfig.mainNav} /> */}
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <div className="lg:hidden"> {/* <NavbarMobile /> */}</div>{' '}
+          <div className="lg:hidden">
+            {' '}
+            <NavbarMobile /> <LanguageToggle />
+          </div>{' '}
           <div className="hidden lg:inline-flex">
             {' '}
             <Navbar />
+            <LanguageToggle />
           </div>
         </div>
       </div>

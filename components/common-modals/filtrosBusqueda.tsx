@@ -1,6 +1,6 @@
 'use client'
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import React, { useState } from 'react'
 import Select from 'react-select'
 

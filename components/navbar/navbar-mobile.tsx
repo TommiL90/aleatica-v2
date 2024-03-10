@@ -1,5 +1,4 @@
-import Link from 'next/link'
-import { BiMenu } from 'react-icons/bi'
+import { Link } from '@/navigation'
 
 import {
   Accordion,
@@ -19,6 +18,7 @@ import {
 
 import { Button } from '../../components/ui/button'
 import { navbarList } from './navbarList'
+import { Menu } from 'lucide-react'
 
 export function NavbarMobile() {
   return (
@@ -29,7 +29,7 @@ export function NavbarMobile() {
           size="icon"
           className="border-none bg-transparent"
         >
-          <BiMenu size={24} className="text-muted hover:text-foreground" />
+          <Menu size={24} className="text-muted hover:text-foreground" />
         </Button>
       </SheetTrigger>
       <SheetContent>

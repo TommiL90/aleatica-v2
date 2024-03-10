@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import React, {
   useState,
@@ -33,7 +34,7 @@ import { FaLessThan } from 'react-icons/fa'
 import fetcher from '@/services/fetcher'
 import { Deterioros } from '../subform/deterioros'
 import { cn } from '@/lib/utils'
-import { set } from 'date-fns'
+
 // import { v4 as uuidv4 } from 'uuid';
 
 interface CrearMedicion {
@@ -279,15 +280,19 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
   )
 
   const [altInput, setAltInput] = useState(false)
-  const [activeZincInputs, setActiveInputs] = useState(true)
 
+  const [disableLengthInput, setDisableLengthInput] = useState(true)
   const [length, setLength] = useState(
     props.initValue ? props.initValue.longitud : 0,
   )
+  const [disableAreaInput, setDisableAreaInput] = useState(true)
   const [area, setArea] = useState(props.initValue ? props.initValue.area : 0)
+
+  const [disableVolumeInput, setDisableVolumeInput] = useState(true)
   const [volume, setVolume] = useState(
     props.initValue ? props.initValue.volumen : 0,
   )
+  const [disableMasaInput, setDisableMasaInput] = useState(true)
   const [masa, setMasa] = useState(props.initValue ? props.initValue.masa : 0)
   const [alternativeUnitMeasurementValue, setAlternativeUnitMeasurementValue] =
     useState(
@@ -482,12 +487,32 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
   ) => {
     let data: any = values
 
-    data = {
-      ...values,
-      longitud: length,
-      area,
-      volumen: volume,
-      masa,
+    if (!disableLengthInput) {
+      data = {
+        ...values,
+        longitud: length,
+      }
+    }
+
+    if (!disableAreaInput) {
+      data = {
+        ...values,
+        area,
+      }
+    }
+
+    if (!disableVolumeInput) {
+      data = {
+        ...values,
+        volumen: volume,
+      }
+    }
+
+    if (!disableMasaInput) {
+      data = {
+        ...values,
+        masa,
+      }
     }
 
     submitEnquiryForm({ ...data })
@@ -534,9 +559,12 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
       affectePercentage: porcentajeAfectacion,
       density: densidad,
       mtUnitOfMeasurementId: alternativeUnitMeasurementValue,
+      length: disableLengthInput ? undefined : length,
+      area: disableAreaInput ? undefined : area,
+      volume: disableVolumeInput ? undefined : volume,
+      t: disableMasaInput ? undefined : masa,
     }
 
-    console.log(value)
     const res = await fetch(`${process.env.API_URL}/MeasurementTab/GetInfo`, {
       method: 'POST',
       headers: {
@@ -576,6 +604,10 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
     porcentajeAfectacion,
     densidad,
     alternativeUnitMeasurementValue,
+    length,
+    area,
+    volume,
+    masa,
   ])
 
   // const handleGetInfo = useCallback(async () => {
@@ -626,6 +658,10 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
     compuestaSeleccionada,
     prioridadSeleccionada,
     handleGetInfo,
+    length,
+    area,
+    volume,
+    masa,
   ])
 
   return (
@@ -1446,22 +1482,6 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
             compuestaSeleccionada ? (
               <>
                 <div className="mb-6 flex flex-col space-y-2">
-                  <div className="flex items-center">
-                    <input
-                      id="checked-checkbox"
-                      type="checkbox"
-                      checked={!activeZincInputs}
-                      onChange={() => setActiveInputs(!activeZincInputs)}
-                      className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                    />
-                    <label
-                      htmlFor="checked-checkbox"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Liberar campos de lectura grises e introducir datos
-                      manualmente
-                    </label>
-                  </div>
                   <div className="flex w-[50%] items-center">
                     <input
                       id="checked-checkbox"
@@ -1503,9 +1523,12 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           value={porcentajeAfectacion}
                           defaultValue={100}
                           onChange={(evt: any) => {
+                            setDisableLengthInput(true)
+                            setDisableAreaInput(true)
+                            setDisableVolumeInput(true)
+                            setDisableVolumeInput(true)
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setPorcentajeAfectacion(evt.target.valueAsNumber)
-                            // handleGetInfo()
                           }}
                           className={cn(
                             'block w-full rounded-lg border text-sm',
@@ -1526,9 +1549,18 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <div>
                     <label
                       htmlFor="longitud"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block space-x-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Longitud (m)
+                      <span>Longitud (m)</span>
+                      <input
+                        id="checked-checkbox"
+                        type="checkbox"
+                        checked={!disableLengthInput}
+                        onChange={() =>
+                          setDisableLengthInput(!disableLengthInput)
+                        }
+                        className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                      />
                     </label>
                     <Field name="longitud">
                       {({
@@ -1543,7 +1575,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           step="0.01"
                           min="0"
                           value={length}
-                          disabled={activeZincInputs}
+                          disabled={disableLengthInput}
                           onChange={(evt: any) => {
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setLength(evt.target.valueAsNumber)
@@ -1552,7 +1584,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             'block w-full rounded-lg border text-sm',
                             errors.longitud && touched.longitud
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                              : ` block w-full rounded-lg border-gray-300 bg-gray-100 p-2.5 text-sm text-gray-900 ${unitOfMeasurement && unitOfMeasurement.code === 'm' ? 'border-3 border-blue-500 focus:border-blue-500 focus:ring-blue-500' : 'border border-gray-300 focus:border-gray-400 focus:ring-gray-400'}`,
+                              : ` block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-gray-400 focus:ring-gray-400 ${disableLengthInput ? 'bg-gray-200' : 'bg-white'}`,
                           )}
                         />
                       )}
@@ -1580,9 +1612,12 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           min="0"
                           value={anchoSeleccionada}
                           onChange={(evt: any) => {
+                            setDisableLengthInput(true)
+                            setDisableAreaInput(true)
+                            setDisableVolumeInput(true)
+                            setDisableVolumeInput(true)
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setAnchoSeleccionada(evt.target.valueAsNumber)
-                            // handleGetInfo()
                           }}
                           className={cn(
                             'block w-full rounded-lg border text-sm',
@@ -1602,9 +1637,16 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <div>
                     <label
                       htmlFor="area"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block space-x-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Area (m2)
+                      <span>Area (m2)</span>
+                      <input
+                        id="checked-checkbox"
+                        type="checkbox"
+                        checked={!disableAreaInput}
+                        onChange={() => setDisableAreaInput(!disableAreaInput)}
+                        className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                      />
                     </label>
                     <Field name="area">
                       {({
@@ -1618,7 +1660,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           type="number"
                           step="0.01"
                           min="0"
-                          disabled={activeZincInputs}
+                          disabled={disableAreaInput}
                           value={area}
                           onChange={(evt: any) => {
                             setFieldValue(field.name, evt.target.valueAsNumber)
@@ -1628,7 +1670,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             'block w-full rounded-lg border text-sm',
                             errors.area && touched.area
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                              : ` block w-full rounded-lg border-gray-300 bg-gray-100 p-2.5 text-sm text-gray-900 ${unitOfMeasurement && unitOfMeasurement.code === 'm2' ? 'border-3 border-blue-500 focus:border-blue-500 focus:ring-blue-500' : 'border border-gray-300 focus:border-gray-400 focus:ring-gray-400'}`,
+                              : ` block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-gray-400 focus:ring-gray-400 ${disableAreaInput ? 'bg-gray-200' : 'bg-white'}`,
                           )}
                         />
                       )}
@@ -1661,9 +1703,12 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           min="0"
                           value={espesorSeleccionada}
                           onChange={(evt: any) => {
+                            setDisableLengthInput(true)
+                            setDisableAreaInput(true)
+                            setDisableVolumeInput(true)
+                            setDisableVolumeInput(true)
                             setFieldValue(field.name, evt.target.valueAsNumber)
                             setEspesorSeleccionada(evt.target.valueAsNumber)
-                            // handleGetInfo()
                           }}
                           className={cn(
                             'block w-full rounded-lg border text-sm',
@@ -1684,9 +1729,18 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <div>
                     <label
                       htmlFor="volumen"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block space-x-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Volumen (m3)
+                      <span> Volumen (m3)</span>
+                      <input
+                        id="checked-checkbox"
+                        type="checkbox"
+                        checked={!disableVolumeInput}
+                        onChange={() =>
+                          setDisableVolumeInput(!disableVolumeInput)
+                        }
+                        className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                      />
                     </label>
 
                     <Field name="volumen">
@@ -1701,7 +1755,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           type="number"
                           step="0.01"
                           min="0"
-                          disabled={activeZincInputs}
+                          disabled={disableVolumeInput}
                           name="volumen"
                           value={volume}
                           onChange={(evt: any) => {
@@ -1712,7 +1766,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             'block w-full rounded-lg border text-sm',
                             errors.volumen && touched.volumen
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                              : ` block w-full rounded-lg border-gray-300 bg-gray-100 p-2.5 text-sm text-gray-900 ${unitOfMeasurement && unitOfMeasurement.code === 'm3' ? 'border-3 border-blue-500 focus:border-blue-500 focus:ring-blue-500' : 'border border-gray-300 focus:border-gray-400 focus:ring-gray-400'}`,
+                              : ` block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-gray-400 focus:ring-gray-400 ${disableVolumeInput ? 'bg-gray-200' : 'bg-white'}`,
                           )}
                         />
                       )}
@@ -1744,10 +1798,12 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           min="0"
                           value={densidad}
                           onChange={(evt: any) => {
+                            setDisableLengthInput(true)
+                            setDisableAreaInput(true)
+                            setDisableVolumeInput(true)
+                            setDisableVolumeInput(true)
                             setFieldValue(field.name, evt.target.valueAsNumber)
-
                             setDensidad(evt.target.valueAsNumber)
-                            // handleGetInfo()
                           }}
                           className={cn(
                             'block w-full rounded-lg border text-sm',
@@ -1767,9 +1823,16 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                   <div>
                     <label
                       htmlFor="masa"
-                      className="mb-2 block  text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block space-x-2  text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Masa (t)
+                      <span>Masa (t)</span>
+                      <input
+                        id="checked-checkbox"
+                        type="checkbox"
+                        checked={!disableMasaInput}
+                        onChange={() => setDisableMasaInput(!disableMasaInput)}
+                        className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                      />
                     </label>
                     <Field name="masa">
                       {({
@@ -1783,7 +1846,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                           type="number"
                           step="0.01"
                           min="0"
-                          disabled={activeZincInputs}
+                          disabled={disableMasaInput}
                           name="masa"
                           value={masa}
                           onChange={(evt: any) => {
@@ -1794,7 +1857,7 @@ function MedicionFichaCampoPavimentosForm(props: FormProps) {
                             'block w-full rounded-lg border text-sm',
                             errors.masa && touched.masa
                               ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                              : ` block w-full rounded-lg border-gray-300 bg-gray-100 p-2.5 text-sm text-gray-900 ${unitOfMeasurement && unitOfMeasurement.code === 't' ? 'border-3 border-blue-500 focus:border-blue-500 focus:ring-blue-500' : 'border border-gray-300 focus:border-gray-400 focus:ring-gray-400'}`,
+                              : ` block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-gray-400 focus:ring-gray-400 ${disableMasaInput ? 'bg-gray-200' : 'bg-white'}`,
                           )}
                         />
                       )}

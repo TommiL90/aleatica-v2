@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import React from 'react'
 import PropTypes from 'prop-types'
 

@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-irregular-whitespace */
 'use client'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import Image from 'next/image'
 import React, { useState, MouseEvent, useEffect, useCallback } from 'react'
 import {
@@ -35,6 +36,7 @@ import MenuConsultas from './MenuConsultas'
 import MenuUsuario from './MenuUsuario'
 import MenuDatosGenerales from './MenuDatosGenerales'
 import MenuCatalogosGlobales from './MenuCatalogosGlobales'
+import { LanguageToggle } from '../language-toggler'
 
 export default function Header() {
   const [menuProyecto, setMenuProyecto] = useState(false)
@@ -410,7 +412,7 @@ export default function Header() {
   }
 
   return (
-    <header className="relative z-20 bg-green-400">
+    <header className="relative z-20 bg-primary">
       <nav
         className="flex w-full items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -418,13 +420,7 @@ export default function Header() {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
-            <Image
-              src="/images/logo.svg"
-              alt="logo"
-              className="h-11 "
-              height={64}
-              width={256}
-            />
+            <img src="/images/logo.svg" alt="logo" className="h-11" />
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -607,6 +603,7 @@ export default function Header() {
           <a href="#" className="text-sm font-semibold leading-6 text-white">
             Documentacion
           </a>
+          <LanguageToggle />
         </div>
       </nav>
 

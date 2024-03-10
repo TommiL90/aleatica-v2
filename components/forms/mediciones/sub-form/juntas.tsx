@@ -20,7 +20,12 @@ interface JuntasSubFormProps {
   setPorcentajeAfectacion: Dispatch<number>
   longitudJuntasAfectadas: number
   setLongitudJuntasAfectadas: Dispatch<number>
-  activeZincInputs: boolean
+  disableLongitudJunta: boolean
+  setDisableLongitudJunta: Dispatch<boolean>
+  disableLongitudTotalJuntas: boolean
+  setDisableLongitudTotalJuntas: Dispatch<boolean>
+  disableLongitudJuntasAfectadas: boolean
+  setDisableLongitudJuntasAfectadas: Dispatch<boolean>
 }
 const customStyleSelect = (isValid: boolean) => {
   return {
@@ -49,7 +54,12 @@ const JuntasSubForm = ({
   setPorcentajeAfectacion,
   longitudJuntasAfectadas,
   setLongitudJuntasAfectadas,
-  activeZincInputs,
+  disableLongitudJunta,
+  setDisableLongitudJunta,
+  disableLongitudJuntasAfectadas,
+  disableLongitudTotalJuntas,
+  setDisableLongitudJuntasAfectadas,
+  setDisableLongitudTotalJuntas,
 }: JuntasSubFormProps) => {
   return (
     <>
@@ -74,6 +84,9 @@ const JuntasSubForm = ({
               min={0}
               value={anchoCalzada}
               onChange={(evt: any) => {
+                setDisableLongitudJunta(true)
+                setDisableLongitudTotalJuntas(true)
+                setDisableLongitudJuntasAfectadas(true)
                 setFieldValue(field.name, evt.target.valueAsNumber)
                 setAnchoCalzada(evt.target.valueAsNumber)
               }}
@@ -113,6 +126,9 @@ const JuntasSubForm = ({
               min={0}
               value={esviaje}
               onChange={(evt: any) => {
+                setDisableLongitudJunta(true)
+                setDisableLongitudTotalJuntas(true)
+                setDisableLongitudJuntasAfectadas(true)
                 setFieldValue(field.name, evt.target.valueAsNumber)
                 setEsviaje(evt.target.valueAsNumber)
               }}
@@ -157,6 +173,9 @@ const JuntasSubForm = ({
                 ]}
                 value={coseno}
                 onChange={(option: any) => {
+                  setDisableLongitudJunta(true)
+                  setDisableLongitudTotalJuntas(true)
+                  setDisableLongitudJuntasAfectadas(true)
                   setFieldValue(field.name, option ? option.value : null)
                   setCoseno(option)
                 }}
@@ -180,9 +199,16 @@ const JuntasSubForm = ({
       <div>
         <label
           htmlFor="longitudJunta"
-          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          className=" mb-2  block space-x-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-          Longitud de cada Junta (m)
+          <span>Long. de cada Junta (m)</span>
+          <input
+            id="checked-checkbox"
+            type="checkbox"
+            checked={!disableLongitudJunta}
+            onChange={() => setDisableLongitudJunta(!disableLongitudJunta)}
+            className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+          />
         </label>
         <Field name="longitudJunta">
           {({
@@ -197,7 +223,7 @@ const JuntasSubForm = ({
               step="0.01"
               min={0}
               value={longitudJunta}
-              disabled={activeZincInputs}
+              disabled={disableLongitudJunta}
               onChange={(evt: any) => {
                 setFieldValue(field.name, evt.target.valueAsNumber)
                 setLongitudJunta(evt.target.valueAsNumber)
@@ -206,7 +232,7 @@ const JuntasSubForm = ({
                 'block w-full rounded-lg border text-sm',
                 errors.longitudJunta && touched.longitudJunta
                   ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                  : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+                  : ` block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-gray-400 focus:ring-gray-400 ${disableLongitudJunta ? 'bg-gray-200' : 'bg-white'}`,
               )}
             />
           )}
@@ -238,6 +264,9 @@ const JuntasSubForm = ({
               min="0"
               value={noElementos}
               onChange={(evt: any) => {
+                setDisableLongitudJunta(true)
+                setDisableLongitudTotalJuntas(true)
+                setDisableLongitudJuntasAfectadas(true)
                 setFieldValue(field.name, evt.target.valueAsNumber)
                 setNoElementos(evt.target.valueAsNumber)
               }}
@@ -260,9 +289,18 @@ const JuntasSubForm = ({
       <div>
         <label
           htmlFor="longitudTotalJuntas"
-          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          className="mb-2 block space-x-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-          longitud total juntas (m)
+          <span>Long. total juntas (m)</span>
+          <input
+            id="checked-checkbox"
+            type="checkbox"
+            checked={!disableLongitudTotalJuntas}
+            onChange={() =>
+              setDisableLongitudTotalJuntas(!disableLongitudTotalJuntas)
+            }
+            className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+          />
         </label>
         <Field name="longitudTotalJuntas">
           {({
@@ -276,7 +314,7 @@ const JuntasSubForm = ({
               type="number"
               step="0.01"
               min={0}
-              disabled={activeZincInputs}
+              disabled={disableLongitudTotalJuntas}
               value={longitudTotalJuntas}
               onChange={(evt: any) => {
                 setFieldValue(field.name, evt.target.valueAsNumber)
@@ -286,7 +324,7 @@ const JuntasSubForm = ({
                 'block w-full rounded-lg border text-sm',
                 errors.longitudTotalJuntas && touched.longitudTotalJuntas
                   ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                  : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+                  : ` block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-gray-400 focus:ring-gray-400 ${disableLongitudTotalJuntas ? 'bg-gray-200' : 'bg-white'}`,
               )}
             />
           )}
@@ -320,6 +358,9 @@ const JuntasSubForm = ({
               max={100}
               value={porcentajeAfectacion}
               onChange={(evt: any) => {
+                setDisableLongitudJunta(true)
+                setDisableLongitudTotalJuntas(true)
+                setDisableLongitudJuntasAfectadas(true)
                 setFieldValue(field.name, evt.target.valueAsNumber)
                 setPorcentajeAfectacion(evt.target.valueAsNumber)
               }}
@@ -341,9 +382,18 @@ const JuntasSubForm = ({
       <div>
         <label
           htmlFor="longitudJuntasAfectadas"
-          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          className="mb-2 block space-x-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-          Long. afect. (m)
+          <span>Long. afect. (m)</span>
+          <input
+            id="checked-checkbox"
+            type="checkbox"
+            checked={!disableLongitudJuntasAfectadas}
+            onChange={() =>
+              setDisableLongitudJuntasAfectadas(!disableLongitudJuntasAfectadas)
+            }
+            className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+          />
         </label>
         <Field name="longitudJuntasAfectadas">
           {({
@@ -357,7 +407,7 @@ const JuntasSubForm = ({
               type="number"
               step="0.01"
               min={0}
-              disabled={activeZincInputs}
+              disabled={disableLongitudJuntasAfectadas}
               value={longitudJuntasAfectadas}
               onChange={(evt: any) => {
                 setFieldValue(field.name, evt.target.valueAsNumber)
@@ -368,7 +418,7 @@ const JuntasSubForm = ({
                 errors.longitudJuntasAfectadas &&
                   touched.longitudJuntasAfectadas
                   ? 'border-red-400 bg-red-100 text-red-800 focus:border-red-400 focus:ring-red-400 dark:border-red-600 dark:bg-red-700 dark:text-red-400 dark:placeholder-red-400 dark:focus:border-red-500 dark:focus:ring-red-500'
-                  : 'border-gray-300 bg-gray-100 text-gray-900 focus:border-gray-400 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+                  : ` block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-gray-400 focus:ring-gray-400 ${disableLongitudJuntasAfectadas ? 'bg-gray-200' : 'bg-white'}`,
               )}
             />
           )}

@@ -90,8 +90,8 @@ interface FormValues {
   gaza: any
   carril: any
 
-  cadenamientoInicial: number
-  cadenamientoFinal: number
+  cadenamientoInicial: string
+  cadenamientoFinal: string
   deterioros: any[]
   actuacion: any
   compuesta: any
@@ -135,8 +135,8 @@ const initialValues: FormValues = {
   gaza: null,
   carril: null,
 
-  cadenamientoInicial: 0,
-  cadenamientoFinal: 0,
+  cadenamientoInicial: '',
+  cadenamientoFinal: '',
   deterioros: [],
   actuacion: null,
   compuesta: null,
@@ -152,27 +152,27 @@ const initialValues: FormValues = {
 }
 
 function MedicionFichaCampoSafetyForm(props: FormProps) {
-  const cadenamientoInicialRaw: string = props.initValue
-    ? props.initValue.cadenamientoInicial.toString()
-    : ''
+  // const cadenamientoInicialRaw: string = props.initValue
+  //   ? props.initValue.cadenamientoInicial.toString()
+  //   : ''
 
-  const cadenamientoInicialFormatado =
-    cadenamientoInicialRaw.substring(0, 3) +
-    '0' +
-    (cadenamientoInicialRaw.length === 7
-      ? cadenamientoInicialRaw.substring(4)
-      : cadenamientoInicialRaw.substring(3))
+  // const cadenamientoInicialFormatado =
+  //   cadenamientoInicialRaw.substring(0, 3) +
+  //   '0' +
+  //   (cadenamientoInicialRaw.length === 7
+  //     ? cadenamientoInicialRaw.substring(4)
+  //     : cadenamientoInicialRaw.substring(3))
 
-  const cadenamientoFinalRaw: string = props.initValue
-    ? props.initValue.cadenamientoFinal.toString()
-    : ''
+  // const cadenamientoFinalRaw: string = props.initValue
+  //   ? props.initValue.cadenamientoFinal.toString()
+  //   : ''
 
-  const cadenamientoFinalFormatado =
-    cadenamientoFinalRaw.substring(0, 3) +
-    '0' +
-    (cadenamientoFinalRaw.length === 7
-      ? cadenamientoFinalRaw.substring(4)
-      : cadenamientoFinalRaw.substring(3))
+  // const cadenamientoFinalFormatado =
+  //   cadenamientoFinalRaw.substring(0, 3) +
+  //   '0' +
+  //   (cadenamientoFinalRaw.length === 7
+  //     ? cadenamientoFinalRaw.substring(4)
+  //     : cadenamientoFinalRaw.substring(3))
 
   const [tabIndex, setTabIndex] = useState(0)
 
@@ -213,10 +213,13 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
   )
 
   const [cadenamientoInicialSeleccionada, setCadenamientoInicialSeleccionada] =
-    useState(cadenamientoInicialFormatado)
+    useState(props.initValue ? props.initValue.cadenamientoInicial : '')
   const [cadenamientoFinalSeleccionada, setCadenamientoFinalSeleccionada] =
-    useState(cadenamientoFinalFormatado)
-
+    useState(props.initValue ? props.initValue.cadenamientoFinal : '')
+  console.log(
+    'cadenamientoInicialSeleccionada',
+    cadenamientoInicialSeleccionada,
+  )
   const [actuacionSeleccionada, setActuacionSeleccionada] = useState(
     props.initValue
       ? props.actuaciones.filter(
@@ -334,14 +337,13 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
 
     cadenamientoInicial: Yup.string()
       .trim()
-      .min(2, 'Demasiado corto!')
-      .max(80, 'Demasiado largo!')
-      .optional(),
+      .min(8, 'Demasiado corto!')
+      .required('Requerido, si no tiene valor, inserte 000+0000'),
+
     cadenamientoFinal: Yup.string()
       .trim()
-      .min(2, 'Demasiado corto!')
-      .max(80, 'Demasiado largo!')
-      .optional(),
+      .min(8, 'Demasiado corto!')
+      .required('Requerido, si no tiene valor, inserte 000+0000'),
     tramo: Yup.string().required('Requerido'),
     entronque: Yup.string().optional().nullable(),
     gaza: Yup.string().optional().nullable(),
@@ -364,7 +366,10 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
-    unidad: Yup.number().min(1).optional().default(0),
+    unidad: Yup.number()
+      .moreThan(-1, 'Debe ser un número positivo o cero')
+      .optional()
+      .default(0),
     longitud: Yup.number()
       .optional()
       .default(0)
@@ -401,7 +406,10 @@ function MedicionFichaCampoSafetyForm(props: FormProps) {
         const regex = /^\d+(\.\d{1,2})?$/
         return regex.test(value.toString())
       }),
-    noElementosPuntuales: Yup.number().min(1).required('Requerido'),
+    noElementosPuntuales: Yup.number()
+      .moreThan(-1, 'Debe ser un número positivo o cero')
+      .optional()
+      .default(0),
 
     alternativeUnitMeasurementValue: Yup.number()
       .typeError('Debe ser un número')
