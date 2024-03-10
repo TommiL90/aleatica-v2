@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/navigation'
 import logo from '@/public/images/logo.svg'
 
 import { Navbar } from './navbar'
@@ -22,7 +22,10 @@ export function HeaderV2() {
         </Link>
         {/* <MainNav items={siteConfig.mainNav} /> */}
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <div className="lg:hidden"> <NavbarMobile />  <LanguageToggle /></div>{' '}
+          <div className="lg:hidden">
+            {' '}
+            <NavbarMobile /> <LanguageToggle />
+          </div>{' '}
           <div className="hidden lg:inline-flex">
             {' '}
             <Navbar />
