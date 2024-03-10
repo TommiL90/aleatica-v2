@@ -1,5 +1,5 @@
 'use client'
-import { Specialty } from '@/app/proyectos/[projectId]/tareas/[taskId]/mediciones/page'
+import { Specialty } from '@/app/[locale]/proyectos/[projectId]/tareas/[taskId]/mediciones/page'
 import fetcher from '@/services/fetcher'
 import {
   CompositeCatalogByEsp,
@@ -32,7 +32,7 @@ import { useStateCallback } from '@/hooks/useStateCallback'
 import { MesurementBySpecialty } from '../types'
 import { SpreadSheet } from '@/components/spread-sheet'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+
 import { BiSearch } from 'react-icons/bi'
 import { FaPlus } from 'react-icons/fa'
 import ModalDeleteRow from '@/components/common-modals/modal-delete-row'

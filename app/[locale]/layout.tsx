@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import Provider from './Provider'
+import Header from '@/components/header'
 
 export const metadata: Metadata = {
   title: 'Aleatica',
@@ -35,7 +36,7 @@ export default function RootLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <Provider>
-            <HeaderV2 />
+            <Header />
             <div className="flex-1"> {children}</div>
           </Provider>
           <Toaster position="top-center" richColors expand={true} />

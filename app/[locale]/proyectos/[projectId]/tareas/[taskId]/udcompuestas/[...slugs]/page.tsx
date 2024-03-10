@@ -9,10 +9,10 @@ import { toast } from 'sonner'
 import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
 import ModalDetail from './modalDetail'
-import { UnidadCompuesta } from '@/app/catalogos/udcompuestos/compost-catalog-table'
 import { FaEye } from 'react-icons/fa'
 import Table from '@/components/tables/table'
 import Breadcrumbs from '@/components/breadcrumbs'
+import { UnidadCompuesta } from '@/app/[locale]/catalogos/udcompuestos/compost-catalog-table'
 
 interface Option {
   label: string

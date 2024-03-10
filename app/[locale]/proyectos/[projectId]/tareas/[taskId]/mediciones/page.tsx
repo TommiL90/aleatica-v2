@@ -70,7 +70,7 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
           deteriorationTypeByEsp={deteriorationTypeByEspRes.result}
         />
       )}
-      {/* {result.mtSubCategoryActionId === 3 && (
+      {result.mtSubCategoryActionId === 3 && (
         <StructuresMeasurements
           specialty={specialty}
           subcat={subcatRes.result}
@@ -92,8 +92,8 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
           side={sideRes.result}
           structureType={structureTypeRes.result}
         />
-      )} */}
-      {/* {result.mtSubCategoryActionId === 5 && result.id === 38 && (
+      )}
+      {result.mtSubCategoryActionId === 5 && result.id === 38 && (
         <SafetyDefenseMeasurement
           specialty={specialty}
           subcat={subcatRes.result}
@@ -115,8 +115,8 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
           side={sideRes.result}
           typology={typologyRes.result}
         />
-      )} */}
-      {/* {result.mtSubCategoryActionId === 5 && result.id !== 38 && (
+      )}
+      {result.mtSubCategoryActionId === 5 && result.id !== 38 && (
         <SafetyMeasurement
           specialty={specialty}
           subcat={subcatRes.result}
@@ -138,7 +138,7 @@ const MeasurementsPage = async ({ params, searchParams }: Props) => {
           side={sideRes.result}
           typology={typologyRes.result}
         />
-      )} */}
+      )}
     </Suspense>
   )
 }

@@ -1,5 +1,4 @@
 'use client'
-import { creator } from '@/app/catalogos/udsimples/functions'
 import { useStateCallback } from '@/hooks/useStateCallback'
 import fetcher from '@/services/fetcher'
 import {
@@ -37,10 +36,6 @@ import {
 } from './functions'
 import { SpreadSheet } from '@/components/spread-sheet'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { BiSearch } from 'react-icons/bi'
-import { FlagCell } from '@/components/cells/flag'
-import { ButtonCell } from '@/components/cells/button'
 import { toast } from 'sonner'
 import { DataResponse } from '@/types/data-response'
 import ModalNewItem from './modal-edit'
@@ -49,6 +44,7 @@ import ModalDetail from './modal-details'
 import { ModalDelete } from '@/components/common-modals/modal-delete'
 import { FaPlus } from 'react-icons/fa'
 import SearchInput from '@/components/inputs/searchInput'
+import { creator } from '@/app/[locale]/catalogos/udsimples/functions'
 
 interface ActionsTableProps {
   uoc: CompositeCatalog[]

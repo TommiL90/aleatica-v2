@@ -4,11 +4,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
-import fetcher from '../../../services/fetcher'
-import Breadcrumbs from '../../../components/breadcrumbs'
-import Loading from '../../../components/loading'
 import { toast } from 'sonner'
 import ProyectoForm from '@/components/forms/proyecto'
+import fetcher from '@/services/fetcher'
+import Breadcrumbs from '@/components/breadcrumbs'
+import Loading from '@/components/loading'
 
 const updater = async (
   url: string,

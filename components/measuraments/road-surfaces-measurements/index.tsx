@@ -513,7 +513,7 @@ const RoadSurfacesMeasurements = ({
             title="Mediciones de pavimentos"
             description="Desglose de mediciones de pavimentos"
           >
-            {/* <form className="py-4">
+            <form className="py-4">
               <SearchInput
                 label=""
                 hideLabel={true}
@@ -566,7 +566,7 @@ const RoadSurfacesMeasurements = ({
                   await mutate()
                 }}
               />
-            </form> */}
+            </form>
             <Button variant="default" onClick={handleNewItem}>
               <FaPlus className="mr-2" size={14} />
               Nuevo
@@ -599,7 +599,7 @@ const RoadSurfacesMeasurements = ({
           />
         </SpreadSheet.Root>
       </div>
-      {/* {modalNewItem ? (
+      {modalNewItem ? (
         <ModalNewItem
           isModalOpen={modalNewItem}
           title={itemId === 0 ? 'Nueva medicion' : 'Actualizar medicion'}
@@ -732,8 +732,8 @@ const RoadSurfacesMeasurements = ({
           }}
           onClose={() => setModalNewItem(false)}
         />
-      ) : null} */}
-      {/* {modalDetail ? (
+      ) : null}
+      {modalDetail ? (
         <ModalDetail
           isModalOpen={modalDetail}
           title="Detalles de medicion"
@@ -774,8 +774,8 @@ const RoadSurfacesMeasurements = ({
           }))}
           onClose={() => setModalDetail(false)}
         />
-      ) : null} */}
-      {/* {modal ? (
+      ) : null}
+      {modal ? (
         <ModalDeteriorosParaSpreadsheet
           title="Deterioros"
           options={deterioros.map((item: any) => ({
@@ -800,8 +800,8 @@ const RoadSurfacesMeasurements = ({
           onClose={() => setModal(!modal)}
           isModalOpen={modal}
         />
-      ) : null} */}
-      {/* {modalDelete ? (
+      ) : null}
+      {modalDelete ? (
         <ModalDeleteRow
           titulo={`Eliminar unidad`}
           mensaje={`¿Estás seguro de que deseas eliminar esta unidad medición de la lista? `}
@@ -883,7 +883,7 @@ const RoadSurfacesMeasurements = ({
             setModalCadenamientoFinal(false)
           }}
         />
-      ) : null} */}
+      ) : null}
     </section>
   )
 }
