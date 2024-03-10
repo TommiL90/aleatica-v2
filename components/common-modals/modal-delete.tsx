@@ -9,7 +9,6 @@ import { KeyedMutator, mutate } from 'swr'
 import { DataResponse } from '@/types/data-response'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
