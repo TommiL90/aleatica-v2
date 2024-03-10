@@ -36,6 +36,7 @@ import MenuConsultas from './MenuConsultas'
 import MenuUsuario from './MenuUsuario'
 import MenuDatosGenerales from './MenuDatosGenerales'
 import MenuCatalogosGlobales from './MenuCatalogosGlobales'
+import { LanguageToggle } from '../language-toggler'
 
 export default function Header() {
   const [menuProyecto, setMenuProyecto] = useState(false)
@@ -602,6 +603,7 @@ export default function Header() {
           <a href="#" className="text-sm font-semibold leading-6 text-white">
             Documentacion
           </a>
+          <LanguageToggle />
         </div>
       </nav>
 
